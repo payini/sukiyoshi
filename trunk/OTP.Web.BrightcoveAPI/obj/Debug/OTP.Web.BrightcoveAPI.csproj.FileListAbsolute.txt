@@ -1,0 +1,5 @@
+D:\wwwroot\karmaloop_tv\OTP.Web.BrightcoveAPI\obj\Debug\ResolveAssemblyReference.cache
+D:\wwwroot\karmaloop_tv\OTP.Web.BrightcoveAPI\bin\Debug\OTP.Web.BrightcoveAPI.dll
+D:\wwwroot\karmaloop_tv\OTP.Web.BrightcoveAPI\bin\Debug\OTP.Web.BrightcoveAPI.pdb
+D:\wwwroot\karmaloop_tv\OTP.Web.BrightcoveAPI\obj\Debug\OTP.Web.BrightcoveAPI.dll
+D:\wwwroot\karmaloop_tv\OTP.Web.BrightcoveAPI\obj\Debug\OTP.Web.BrightcoveAPI.pdb
