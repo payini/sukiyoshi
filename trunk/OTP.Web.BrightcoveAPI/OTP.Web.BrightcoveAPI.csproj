@@ -56,10 +56,13 @@
     <Compile Include="BCAPI.cs" />
     <Compile Include="BCAPIConfig.cs" />
     <Compile Include="BCAPIRequest.cs" />
+    <Compile Include="BCCuePoint.cs" />
     <Compile Include="BCErrorException.cs" />
+    <Compile Include="BCImage.cs" />
     <Compile Include="BCObject.cs" />
     <Compile Include="BCPlaylist.cs" />
     <Compile Include="BCQueryResult.cs" />
+    <Compile Include="BCRendition.cs" />
     <Compile Include="BCVideo.cs" />
     <Compile Include="BCCollection.cs" />
     <Compile Include="BCVideoComparer.cs" />
