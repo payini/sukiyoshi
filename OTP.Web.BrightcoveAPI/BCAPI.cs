@@ -87,10 +87,7 @@ namespace OTP.Web.BrightcoveAPI
 
 				//trim if specified
 				if (qr.Videos.Count > qr.MaxToGet && !qr.MaxToGet.Equals(-1) && qr.MaxToGet < Convert.ToInt32(qr.TotalCount)) {
-
-					BCCollection<BCVideo> bcv = new BCCollection<BCVideo>();
-					bcv.AddRange(qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet)));
-					qr.Videos = bcv;
+					qr.Videos = (BCCollection<BCVideo>)qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet));
 				}
 			}
 			
@@ -1358,6 +1355,21 @@ namespace OTP.Web.BrightcoveAPI
 		///// <returns></returns>
 		//public static long AddImage(string image, string filename, long maxsize, string file, string file_checksum, long video_id, string video_reference_id, bool resize) {
 			
+			//{
+			//    "method" : "add_image",
+			//    "params" : {
+			//        "token" : "riBfgveLvpRb-rHGiBBouSAXs-Q8NmphGxt0z04kE.",
+			//        "image" : {
+			//            "referenceId" : "wicklow-1",
+			//            "displayName" : "Wicklow the Bunny",
+			//            "type" : "THUMBNAIL"
+			//        },
+			//        "file_checksum" : "d1c9c2b112993a0079a0128ecb9b36dd",
+			//        "video_id" : 17035
+			//    }
+			//}
+
+
 		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 		//    //Build the REST parameter list
@@ -1486,13 +1498,13 @@ namespace OTP.Web.BrightcoveAPI
 
 	public enum BCSortOrderType { ASC, DESC };
 
-	public enum UploadStatusEnum { UPLOADING, PROCESSING, COMPLETE, ERROR }
+	public enum UploadStatusEnum { UPLOADING, PROCESSING, COMPLETE, ERROR };
 
-	public enum EconomicsEnum { FREE, AD_SUPPORTED }
+	public enum EconomicsEnum { FREE, AD_SUPPORTED };
 
-	public enum ItemStateEnum { ACTIVE, INACTIVE, DELETED }
+	public enum ItemStateEnum { ACTIVE, INACTIVE, DELETED };
 
-	public enum PlaylistTypeEnum { EXPLICIT, OLDEST_TO_NEWEST, NEWEST_TO_OLDEST, ALPHABETICAL, PLAYS_TOTAL, PLAYS_TRAILING_WEEK }
+	public enum PlaylistTypeEnum { EXPLICIT, OLDEST_TO_NEWEST, NEWEST_TO_OLDEST, ALPHABETICAL, PLAYS_TOTAL, PLAYS_TRAILING_WEEK };
 
 	//public enum PublicPlaylist.FieldsEnum {	ID, REFERENCEID, NAME, SHORTDESCRIPTION, VIDEOIDS, VIDEOS, THUMBNAILURL, FILTERTAGS, PLAYLISTTYPE, ACCOUNTID }
 
@@ -1506,13 +1518,17 @@ namespace OTP.Web.BrightcoveAPI
 										ALLOWEDCOUNTRIES, ACCOUNTID, FLVFULLLENGTH, VIDEOFULLLENGTH 
 										}*/
 
-	public enum VideoCodecEnum { UNDEFINED, NONE, SORENSON, ON2, H264 }
+	public enum VideoCodecEnum { UNDEFINED, NONE, SORENSON, ON2, H264 };
+
+	public enum CuePointType { AD = 0, CODE = 1, CHAPTER = 2 };
+
+	public enum BCVideoEconomics { FREE, AD_SUPPORTED };
 	
-	public enum ImageTypeEnum { VIDEO_STILL, SYNDICATION_STILL, THUMBNAIL, BACKGROUND, LOGO, LOGO_OVERLAY }
+	public enum ImageTypeEnum { VIDEO_STILL, SYNDICATION_STILL, THUMBNAIL, BACKGROUND, LOGO, LOGO_OVERLAY };
 
-	public enum VideoTypeEnum { FLV_PREVIEW, FLV_FULL, FLV_BUMPER, DIGITAL_MASTER }
+	public enum VideoTypeEnum { FLV_PREVIEW, FLV_FULL, FLV_BUMPER, DIGITAL_MASTER };
 
-	public enum ItemCollection { total_count, items, page_number, page_size }
+	public enum ItemCollection { total_count, items, page_number, page_size };
 
 	#endregion Public Enums
 }
