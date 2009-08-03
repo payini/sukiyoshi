@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{50C4A45B-2773-4703-8866-8622BF107EA1}</ProjectGuid>
+    <ProjectGuid>{9207B754-3ED2-4524-AF64-371FD9256B64}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OTP.Web.BrightcoveAPI</RootNamespace>
@@ -36,6 +36,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -56,17 +57,25 @@
     <Compile Include="BCAPI.cs" />
     <Compile Include="BCAPIConfig.cs" />
     <Compile Include="BCAPIRequest.cs" />
-    <Compile Include="BCCuePoint.cs" />
-    <Compile Include="BCErrorException.cs" />
-    <Compile Include="BCImage.cs" />
-    <Compile Include="BCObject.cs" />
-    <Compile Include="BCPlaylist.cs" />
-    <Compile Include="BCQueryResult.cs" />
-    <Compile Include="BCRendition.cs" />
-    <Compile Include="BCVideo.cs" />
     <Compile Include="BCCollection.cs" />
-    <Compile Include="BCVideoComparer.cs" />
+    <Compile Include="BCErrorException.cs" />
+    <Compile Include="BCQueryResult.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Media\BCComparers.cs" />
+    <Compile Include="Media\BCCuePoint.cs" />
+    <Compile Include="Media\BCImage.cs" />
+    <Compile Include="Media\BCObject.cs" />
+    <Compile Include="Media\BCPlaylist.cs" />
+    <Compile Include="Media\BCRendition.cs" />
+    <Compile Include="Media\BCVideo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryResultPair.cs" />
+    <Compile Include="UI\UpdatePlayer.cs" />
+    <Compile Include="UI\RemovePlayer.cs" />
+    <Compile Include="UI\VideoPlayer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Resources\AddRemovePlayer.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

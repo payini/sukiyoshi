@@ -11,33 +11,33 @@ namespace OTP.Web.BrightcoveAPI
 	public class BCErrorException : Exception
 	{
 		private string stringInfo;
-		
-		public override string Message
-		{
-			get
-			{
+
+		public override string Message {
+			get {
 				string message = base.Message;
-				if (stringInfo != null)
-				{
+				if (stringInfo != null) {
 					message += Environment.NewLine + stringInfo;
 				}
 				return message;
 			}
 		}
-				
-		public BCErrorException() : base() {
-		    
+
+		public BCErrorException()
+			: base() {
+
 		}
 
-		public BCErrorException(string Message) : base(Message) {
+		public BCErrorException(string Message)
+			: base(Message) {
 		}
 
-		public BCErrorException(string Message, Exception innerException) : base(Message, innerException) {
+		public BCErrorException(string Message, Exception innerException)
+			: base(Message, innerException) {
 		}
-		
+
 		public override void GetObjectData(SerializationInfo info, StreamingContext context) {
 			info.AddValue("StringInfo", stringInfo);
-			
+
 			base.GetObjectData(info, context);
 		}
 	}

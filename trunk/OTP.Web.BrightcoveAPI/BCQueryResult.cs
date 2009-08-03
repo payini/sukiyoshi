@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using OTP.Web.BrightcoveAPI.Media;
 
 namespace OTP.Web.BrightcoveAPI
 {
@@ -14,23 +15,27 @@ namespace OTP.Web.BrightcoveAPI
 		[DataMember(Name = "playlists")]
 		public BCCollection<BCPlaylist> Playlists;
 		[DataMember(Name = "page_number")]
-		public string PageNumber { get; set; }
+		public int PageNumber { get; set; }
 		[DataMember(Name = "page_size")]
-		public string PageSize { get; set; }
+		public int PageSize { get; set; }
 		[DataMember(Name = "total_count")]
-		public string TotalCount { get; set; }
+		public int TotalCount { get; set; }
 
 		public int MaxToGet = 0;
-		public List<string> RequestCall = new List<string>();
+		public List<QueryResultPair> QueryResults = new List<QueryResultPair>();
 
 		public BCQueryResult() {
 			Playlists = new BCCollection<BCPlaylist>();
 			Videos = new BCCollection<BCVideo>();
+			PageNumber = 0;
+			PageSize = 0;
+			TotalCount = 0;
 		}
 
 		public void Merge(BCQueryResult qr) {
-			
-			//qr.RequestCall.AddRange(qr.RequestCall);
+
+			//if (qr.QueryResults != null && qr.QueryResults.Count > 0)
+			//        QueryResults.Add(qr.QueryResults[qr.QueryResults.Count -1]);
 			if (qr.Videos != null) Videos.AddRange(qr.Videos);
 			if(qr.Playlists != null) Playlists.AddRange(qr.Playlists);
 			PageNumber = qr.PageNumber;

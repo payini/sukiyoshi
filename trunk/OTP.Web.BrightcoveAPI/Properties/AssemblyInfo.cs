@@ -1,6 +1,10 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Web.UI;
+
+//this is to be able to access the Add Remove javascript for the player
+[assembly: WebResource("OTP.Web.BrightcoveAPI.UI.Resources.AddRemovePlayer.js", "text/javascript")]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -20,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e3d427aa-dee3-4d3a-98a0-acd767c389c1")]
+[assembly: Guid("7586135c-541a-45cd-a63a-4d7c31218596")]
 
 // Version information for an assembly consists of the following four values:
 //

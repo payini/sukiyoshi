@@ -5,14 +5,14 @@ using System.Text;
 using System.Web;
 using System.Runtime.Serialization;
 
-namespace OTP.Web.BrightcoveAPI
+namespace OTP.Web.BrightcoveAPI.Media
 {
 	/// <summary>
 	/// The Video object is an aggregation of metadata and asset information associated with a video
 	/// </summary>
 	[DataContract]
 	public class BCVideo : BCObject, IComparable<BCVideo>
-	{		
+	{
 		/// <summary>
 		/// A number that uniquely identifies this Video, assigned by Brightcove when the Video is created.
 		/// </summary>
@@ -37,15 +37,15 @@ namespace OTP.Web.BrightcoveAPI
 		[DataMember]
 		public string longDescription { get; set; }
 
-		[DataMember(Name="creationDate")]
+		[DataMember(Name = "creationDate")]
 		private string createDate { get; set; }
 
 		/// <summary>
 		/// The date this Video was created, represented as the number of milliseconds since the Unix epoch.
 		/// </summary> 
-		public DateTime creationDate { 
+		public DateTime creationDate {
 			get {
-				return DateFromUnix(createDate);	
+				return DateFromUnix(createDate);
 			}
 			set {
 				createDate = DateToUnix(value);
@@ -111,36 +111,22 @@ namespace OTP.Web.BrightcoveAPI
 		/// </summary> 
 		[DataMember]
 		public string thumbnailURL { get; set; }
-
-		[DataMember(Name = "referenceId")]
-		private string refId { get; set; }
-
+				
 		/// <summary>
 		/// A user-specified id that uniquely identifies this Video. ReferenceID can be used as a foreign-key to identify this video in another system. 
 		/// </summary> 
-		public long referenceId {
-			get {
-				try {
-					return long.Parse(refId);
-				}
-				catch (ArgumentNullException ex) {
-					return -1;
-				}
-			}
-			set {
-				refId = value.ToString();
-			}
-		}
+		[DataMember]
+		public string referenceId { get; set; }
 
 		/// <summary>
 		/// The length of this video in milliseconds.
 		/// </summary> 
 		[DataMember]
 		public string length { get; set; }
-				
-		[DataMember(Name="economics")]
+
+		[DataMember(Name = "economics")]
 		private string ecs { get; set; }
-		
+
 		/// <summary>
 		/// Either FREE or AD_SUPPORTED. AD_SUPPORTED means that ad requests are enabled for this Video.
 		/// </summary> 
@@ -161,17 +147,43 @@ namespace OTP.Web.BrightcoveAPI
 			}
 		}
 
+		[DataMember(Name = "playsTotal")]
+		private string plays { get; set; }
+
 		/// <summary>
 		/// How many times this Video has been played since its creation.
 		/// </summary> 
-		[DataMember]
-		public long playsTotal { get; set; }
+		public long playsTotal {
+			get {
+				if (!String.IsNullOrEmpty(plays)) {
+					return long.Parse(plays);
+				} else {
+					return 0;
+				}
+			}
+			set {
+				plays = value.ToString();
+			}
+		}
+
+		[DataMember(Name = "playsTrailingWeek")]
+		private string playsWeek { get; set; }
 
 		/// <summary>
 		/// How many times this Video has been played within the past seven days, exclusive of today.
 		/// </summary> 
-		[DataMember]
-		public long playsTrailingWeek { get; set; }
+		public long playsTrailingWeek {
+			get {
+				if(!String.IsNullOrEmpty(playsWeek)) {
+					return long.Parse(playsWeek);
+				} else {
+					return 0;
+				}
+			}
+			set {
+				playsWeek = value.ToString();
+			}
+		}
 
 		public BCVideo() {
 			tags = new BCCollection<string>();
@@ -182,7 +194,7 @@ namespace OTP.Web.BrightcoveAPI
 		public int CompareTo(BCVideo other) {
 			return name.CompareTo(other.name);
 		}
-		
+
 		//CREATION_DATE
 		public static Comparison<BCVideo> CreationDateComparison =
 			delegate(BCVideo v1, BCVideo v2)
@@ -210,7 +222,7 @@ namespace OTP.Web.BrightcoveAPI
 			{
 				return v1.lastModifiedDate.CompareTo(v2.lastModifiedDate);
 			};
-		
+
 		//PLAYS_TRAILING_WEEK
 		public static Comparison<BCVideo> PlaysTrailingComparison =
 			delegate(BCVideo v1, BCVideo v2)
@@ -219,6 +231,6 @@ namespace OTP.Web.BrightcoveAPI
 			};
 
 		#endregion
-				
+
 	}
 }

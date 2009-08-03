@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace OTP.Web.BrightcoveAPI
+{
+	#region Public Enums
+
+	public enum ActionType { READ, WRITE };
+	
+	public enum BCEncodeType { MP4, FLV };
+
+	public enum BCObjectType { videos, playlists };
+
+	public enum BCSortByType { PUBLISH_DATE, CREATION_DATE, MODIFIED_DATE, PLAYS_TOTAL, PLAYS_TRAILING_WEEK };
+
+	public enum BCSortOrderType { ASC, DESC };
+
+	public enum UploadStatusEnum { UPLOADING, PROCESSING, COMPLETE, ERROR, UNDEFINED };
+
+	public enum EconomicsEnum { FREE, AD_SUPPORTED };
+
+	public enum ItemStateEnum { ACTIVE, INACTIVE, DELETED };
+
+	public enum PlaylistTypeEnum { EXPLICIT, OLDEST_TO_NEWEST, NEWEST_TO_OLDEST, ALPHABETICAL, PLAYS_TOTAL, PLAYS_TRAILING_WEEK };
+
+	public enum PlaylistFields {	ID, REFERENCEID, NAME, SHORTDESCRIPTION, VIDEOIDS, VIDEOS, THUMBNAILURL, FILTERTAGS, PLAYLISTTYPE, ACCOUNTID }
+
+	public enum VideoFields { 
+										ID, NAME, SHORTDESCRIPTION, LONGDESCRIPTION, CREATIONDATE, PUBLISHEDDATE, 
+										LASTMODIFIEDDATE, STARTDATE, ENDDATE, LINKURL, LINKTEXT, TAGS, VIDEOSTILLURL, 
+										THUMBNAILURL, REFERENCEID, LENGTH, ECONOMICS, ITEMSTATE, PLAYSTOTAL, PLAYSTRAILINGWEEK, VERSION,
+										CUEPOINTS, SUBMISSIONINFO, CUSTOMFIELDS, RELEASEDATE, FLVURL, RENDITIONS, GEOFILTERED, 
+										GEORESTRICTED, GEOFILTEREXCLUDE, EXCLUDELISTEDCOUNTRIES, GEOFILTEREDCOUNTRIES, 
+										ALLOWEDCOUNTRIES, ACCOUNTID, FLVFULLLENGTH, VIDEOFULLLENGTH 
+										}
+
+	public enum VideoCodecEnum { UNDEFINED, NONE, SORENSON, ON2, H264 };
+
+	public enum CuePointType { AD = 0, CODE = 1, CHAPTER = 2 };
+
+	public enum BCVideoEconomics { FREE, AD_SUPPORTED };
+
+	public enum ImageTypeEnum { VIDEO_STILL, SYNDICATION_STILL, THUMBNAIL, BACKGROUND, LOGO, LOGO_OVERLAY };
+
+	public enum VideoTypeEnum { FLV_PREVIEW, FLV_FULL, FLV_BUMPER, DIGITAL_MASTER };
+
+	public enum ItemCollection { total_count, items, page_number, page_size };
+
+	#endregion Public Enums
+}

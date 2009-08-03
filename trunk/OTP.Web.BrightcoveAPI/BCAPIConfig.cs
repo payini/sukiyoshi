@@ -13,7 +13,7 @@ namespace OTP.Web.BrightcoveAPI
 				try {
 					return ConfigurationManager.AppSettings["BC_ReadToken"].ToString();
 				}
-				catch(Exception ex)  {
+				catch (Exception ex) {
 					throw new Exception("Application Setting string missing from the web.config - 'BC_ReadToken'", ex);
 				}
 			}
@@ -24,7 +24,7 @@ namespace OTP.Web.BrightcoveAPI
 				try {
 					return ConfigurationManager.AppSettings["BC_WriteToken"].ToString();
 				}
-				catch(Exception ex) {
+				catch (Exception ex) {
 					throw new Exception("Application Setting string missing from the web.config - 'BC_WriteToken'", ex);
 				}
 			}
@@ -35,7 +35,7 @@ namespace OTP.Web.BrightcoveAPI
 				try {
 					return ConfigurationManager.AppSettings["BC_ServiceURL"].ToString();
 				}
-				catch(Exception ex){
+				catch (Exception ex) {
 					throw new Exception("Application Setting string missing from the web.config - 'BC_ServiceURL'", ex);
 				}
 			}
