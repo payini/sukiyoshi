@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace OTP.Web.BrightcoveAPI
+namespace OTP.Web.BrightcoveAPI.Media
 {
 	[DataContract]
 	public class BCObject

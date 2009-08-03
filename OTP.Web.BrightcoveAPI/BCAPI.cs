@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Web;
+using OTP.Web.BrightcoveAPI.Media;
 
 namespace OTP.Web.BrightcoveAPI
 {
@@ -10,15 +11,20 @@ namespace OTP.Web.BrightcoveAPI
 	{
 		#region Main Helper Methods
 
-		public static BCQueryResult MultipleQueryHandler(Dictionary<String, String> reqparams, BCObjectType itemType) {
+		private static BCQueryResult MultipleQueryHandler(Dictionary<String, String> reqparams, BCObjectType itemType) {
 
 			//Get the JSon reader returned from the APIRequest
 			BCQueryResult qr = new BCQueryResult();
-			qr.TotalCount = "0";
-			
+			qr.TotalCount = 0;
+
 			//set some global request paramameters
 			reqparams.Add("page_number", "0");
-			
+
+			// workaround for search by creation date
+			if (reqparams.ContainsKey("sort_by") && itemType.Equals(BCObjectType.videos) && reqparams["sort_by"].Equals("CREATION_DATE")) {
+				reqparams["sort_by"] = "MODIFIED_DATE";
+			}
+
 			//set if not set or 
 			if (!reqparams.ContainsKey("page_size")) {
 				qr.MaxToGet = -1;
@@ -26,24 +32,28 @@ namespace OTP.Web.BrightcoveAPI
 			else {
 				qr.MaxToGet = Convert.ToInt32(reqparams["page_size"]);
 			}
-			
+
 			//get initial query
 			int pageNum = 0;
 			bool stillMore = true;
 
 			//if there are more to get move to next page and keep getting them
-			while (stillMore){
-								
+			while (stillMore) {
+
 				//update page each iteration
 				reqparams["page_number"] = pageNum.ToString();
-				string jsonStr = BCAPIRequest.Execute(reqparams);
-
+				QueryResultPair qrp = BCAPIRequest.Execute(reqparams);
+				string jsonStr = qrp.JsonResult;
 				jsonStr = jsonStr.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
+				QueryResultPair qrp2 = new QueryResultPair(qrp.Query, jsonStr);
 				//merge results with other
-				qr.Merge(JSONHelper.Deserialize<BCQueryResult>(jsonStr));
-				
+				//HttpContext.Current.Response.Write(qrp2.JsonResult);
+				BCQueryResult qr2 = JSONHelper.Deserialize<BCQueryResult>(qrp2.JsonResult);
+				qr.QueryResults.Add(qrp2);
+				qr.Merge(qr2);
+								
 				//check to see if there are any more to get
-				if (!qr.TotalCount.Equals("-1")) {
+				if (!qr.TotalCount.Equals(-1)) {
 					stillMore = false;
 				}
 				else if (itemType.Equals(BCObjectType.videos)) {
@@ -58,7 +68,7 @@ namespace OTP.Web.BrightcoveAPI
 
 			//sorting on our end
 
-			if (itemType.Equals(BCObjectType.videos)) {
+			if (itemType.Equals(BCObjectType.videos) && reqparams.ContainsKey("sort_by")) {
 				//PUBLISH_DATE, 
 				if (reqparams["sort_by"].Equals("PUBLISH_DATE")) {
 					qr.Videos.Sort(BCVideo.PublishDateComparison);
@@ -90,7 +100,7 @@ namespace OTP.Web.BrightcoveAPI
 					qr.Videos = (BCCollection<BCVideo>)qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet));
 				}
 			}
-			
+
 			return qr;
 		}
 
@@ -99,7 +109,7 @@ namespace OTP.Web.BrightcoveAPI
 			foreach (String s in values) {
 				result = result + s + ",";
 			}
-			return result;
+			return result.TrimEnd(Convert.ToChar(","));
 		}
 
 		private static String Implode(List<long> values) {
@@ -107,7 +117,7 @@ namespace OTP.Web.BrightcoveAPI
 			foreach (long l in values) {
 				result = result + l.ToString() + ",";
 			}
-			return result;
+			return result.TrimEnd(Convert.ToChar(","));
 		}
 
 		#endregion Main Helper Methods
@@ -116,6 +126,10 @@ namespace OTP.Web.BrightcoveAPI
 
 		#region Find All Videos
 
+		public static BCQueryResult FindAllVideos() {
+			return FindAllVideos(-1);
+		}
+		
 		public static BCQueryResult FindAllVideos(int howMany) {
 			return FindAllVideos(howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
@@ -139,7 +153,7 @@ namespace OTP.Web.BrightcoveAPI
 		public static BCQueryResult FindAllVideos(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields) {
 			return FindAllVideos(howMany, sortBy, sortOrder, video_fields, null);
 		}
-		
+
 		/// <summary>
 		/// This will return a generic search for videos
 		/// </summary>
@@ -162,7 +176,7 @@ namespace OTP.Web.BrightcoveAPI
 		/// Returns a BCQueryResult item
 		/// </returns>
 		public static BCQueryResult FindAllVideos(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<string> video_fields, List<string> custom_fields) {
-			
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
@@ -180,31 +194,31 @@ namespace OTP.Web.BrightcoveAPI
 
 		#region Find Videos By User ID
 
-		public static BCQueryResult FindVideosByUserId(string userId) {
+		public static BCQueryResult FindVideosByUserId(long userId) {
 			return FindVideosByUserId(userId, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
 
-		public static BCQueryResult FindVideosByUserId(string userId, int howMany) {
+		public static BCQueryResult FindVideosByUserId(long userId, int howMany) {
 			return FindVideosByUserId(userId, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
 
-		public static BCQueryResult FindVideosByUserId(string userId, BCSortOrderType sortOrder) {
+		public static BCQueryResult FindVideosByUserId(long userId, BCSortOrderType sortOrder) {
 			return FindVideosByUserId(userId, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
 		}
 
-		public static BCQueryResult FindVideosByUserId(string userId, BCSortByType sortBy) {
+		public static BCQueryResult FindVideosByUserId(long userId, BCSortByType sortBy) {
 			return FindVideosByUserId(userId, -1, sortBy, BCSortOrderType.ASC, null, null);
 		}
 
-		public static BCQueryResult FindVideosByUserId(string userId, BCSortByType sortBy, BCSortOrderType sortOrder) {
+		public static BCQueryResult FindVideosByUserId(long userId, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByUserId(userId, -1, sortBy, sortOrder, null, null);
 		}
 
-		public static BCQueryResult FindVideosByUserId(string userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+		public static BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByUserId(userId, howMany, sortBy, sortOrder, null, null);
 		}
 
-		public static BCQueryResult FindVideosByUserId(string userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields) {
+		public static BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields) {
 			return FindVideosByUserId(userId, howMany, sortBy, sortOrder, video_fields, null);
 		}
 
@@ -232,13 +246,13 @@ namespace OTP.Web.BrightcoveAPI
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public static BCQueryResult FindVideosByUserId(string userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields, List<string> custom_fields) {
+		public static BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields, List<string> custom_fields) {
 
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_videos_by_user_id");
-			reqparams.Add("user_id", userId);
+			reqparams.Add("user_id", userId.ToString());
 			if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
@@ -259,7 +273,7 @@ namespace OTP.Web.BrightcoveAPI
 		public static BCQueryResult FindVideosByCampaignId(long campaignId, int howMany) {
 			return FindVideosByCampaignId(campaignId, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
-				
+
 		public static BCQueryResult FindVideosByCampaignId(long campaignId, BCSortOrderType sortOrder) {
 			return FindVideosByCampaignId(campaignId, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
 		}
@@ -395,32 +409,32 @@ namespace OTP.Web.BrightcoveAPI
 		#endregion Find Videos By Text
 
 		#region Find Videos By Tags
-		
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags) {
+
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags) {
 			return FindVideosByTags(and_tags, or_tags, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
 
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags, int howMany) {
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany) {
 			return FindVideosByTags(and_tags, or_tags, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
 
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags, BCSortByType sortBy) {
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, BCSortByType sortBy) {
 			return FindVideosByTags(and_tags, or_tags, -1, sortBy, BCSortOrderType.ASC);
 		}
 
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags, BCSortOrderType sortOrder) {
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, BCSortOrderType sortOrder) {
 			return FindVideosByTags(and_tags, or_tags, -1, BCSortByType.CREATION_DATE, sortOrder);
 		}
 
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags, BCSortByType sortBy, BCSortOrderType sortOrder) {
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByTags(and_tags, or_tags, -1, sortBy, sortOrder);
 		}
 
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByTags(and_tags, or_tags, howMany, sortBy, sortOrder, null);
 		}
 
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<string> video_fields) {
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<string> video_fields) {
 			return FindVideosByTags(and_tags, or_tags, howMany, sortBy, sortOrder, video_fields, null);
 		}
 
@@ -451,14 +465,14 @@ namespace OTP.Web.BrightcoveAPI
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public static BCQueryResult FindVideosByTags(String and_tags, String or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields, List<String> custom_fields) {
+		public static BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields, List<String> custom_fields) {
 
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
+			
 			//Build the REST parameter list
 			reqparams.Add("command", "find_videos_by_tags");
-			reqparams.Add("and_tags", and_tags);
-			reqparams.Add("or_tags", or_tags);
+			if (and_tags != null) reqparams.Add("and_tags", Implode(and_tags));
+			if (or_tags != null) reqparams.Add("or_tags", Implode(or_tags));
 			if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
@@ -639,7 +653,8 @@ namespace OTP.Web.BrightcoveAPI
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 
 			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.Execute(reqparams);
+			string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
+			
 			return JSONHelper.Deserialize<BCVideo>(jsonStr);
 		}
 
@@ -671,7 +686,7 @@ namespace OTP.Web.BrightcoveAPI
 		/// Returns a BCVideo item
 		/// </returns>
 		public static BCVideo FindVideoByReferenceId(String referenceId, List<String> video_fields, List<String> custom_fields) {
-			
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
@@ -681,18 +696,22 @@ namespace OTP.Web.BrightcoveAPI
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 
 			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.Execute(reqparams);
+			string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
 			return JSONHelper.Deserialize<BCVideo>(jsonStr);
 		}
 
 		#endregion Find Video By Reference ID
-		
+
 		#endregion Video Read
 
 		#region Playlist Read
 
 		#region Find All Playlists
 
+		public static BCQueryResult FindAllPlaylists() {
+			return FindAllPlaylists(-1);
+		}
+		
 		public static BCQueryResult FindAllPlaylists(int howMany) {
 			return FindAllPlaylists(howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
@@ -742,7 +761,7 @@ namespace OTP.Web.BrightcoveAPI
 		/// Returns a BCQueryResult item
 		/// </returns>
 		public static BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<String> video_fields, List<String> custom_fields, List<string> playlist_fields) {
-			
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
@@ -753,14 +772,14 @@ namespace OTP.Web.BrightcoveAPI
 			if (playlist_fields != null) reqparams.Add("playlist_fields", Implode(playlist_fields));
 			if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-			
+
 			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists);
-			
+
 			return qr;
 		}
 
 		#endregion Find All Playlists
-		
+
 		#region Find Playlist By Id
 
 		public static BCPlaylist FindPlaylistById(long playlist_id) {
@@ -794,20 +813,21 @@ namespace OTP.Web.BrightcoveAPI
 		/// Returns a BCPlaylist item
 		/// </returns>
 		public static BCPlaylist FindPlaylistById(long playlist_id, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
-			
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlist_by_id");
+			reqparams.Add("playlist_id", playlist_id.ToString());
 			if (playlist_fields != null) reqparams.Add("playlist_fields", Implode(playlist_fields));
 			if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 
 			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.Execute(reqparams);
-			return JSONHelper.Deserialize<BCPlaylist>(jsonStr);
+			QueryResultPair qrp = BCAPIRequest.Execute(reqparams);
+			return JSONHelper.Deserialize<BCPlaylist>(qrp.JsonResult);
 		}
-		 
+
 		#endregion Find Playlist By Id
 
 		#region Find Playlists By Ids
@@ -843,7 +863,7 @@ namespace OTP.Web.BrightcoveAPI
 		/// Returns a BCQueryResult item
 		/// </returns>
 		public static BCQueryResult FindPlaylistsByIds(List<long> playlist_ids, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
-			
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
@@ -852,9 +872,9 @@ namespace OTP.Web.BrightcoveAPI
 			if (playlist_fields != null) reqparams.Add("playlist_fields", Implode(playlist_fields));
 			if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-			
+
 			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists);
-			
+
 			return qr;
 
 		}
@@ -863,15 +883,15 @@ namespace OTP.Web.BrightcoveAPI
 
 		#region Find Playlist By Reference Id
 
-		public static BCPlaylist FindPlaylistByReferenceId(long reference_id) {
+		public static BCPlaylist FindPlaylistByReferenceId(string reference_id) {
 			return FindPlaylistByReferenceId(reference_id, null);
 		}
 
-		public static BCPlaylist FindPlaylistByReferenceId(long reference_id, List<string> video_fields) {
+		public static BCPlaylist FindPlaylistByReferenceId(string reference_id, List<string> video_fields) {
 			return FindPlaylistByReferenceId(reference_id, video_fields, null);
 		}
 
-		public static BCPlaylist FindPlaylistByReferenceId(long reference_id, List<string> video_fields, List<string> custom_fields) {
+		public static BCPlaylist FindPlaylistByReferenceId(string reference_id, List<string> video_fields, List<string> custom_fields) {
 			return FindPlaylistByReferenceId(reference_id, video_fields, custom_fields, null);
 		}
 
@@ -893,18 +913,19 @@ namespace OTP.Web.BrightcoveAPI
 		/// <returns>
 		/// Returns a BCPlaylist item
 		/// </returns>
-		public static BCPlaylist FindPlaylistByReferenceId(long reference_id, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
-			
+		public static BCPlaylist FindPlaylistByReferenceId(string reference_id, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlist_by_reference_id");
+			reqparams.Add("reference_id", reference_id);
 			if (playlist_fields != null) reqparams.Add("playlist_fields", Implode(playlist_fields));
 			if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 
 			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.Execute(reqparams);
+			string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
 			return JSONHelper.Deserialize<BCPlaylist>(jsonStr);
 		}
 
@@ -912,16 +933,16 @@ namespace OTP.Web.BrightcoveAPI
 
 		#region Find Playlists By Reference Ids
 
-		public static BCQueryResult FindPlaylistsByReferenceIds(List<long> reference_ids) {
+		public static BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids) {
 			return FindPlaylistsByReferenceIds(reference_ids, null);
 		}
 
-		public static BCQueryResult FindPlaylistsByReferenceIds(List<long> reference_ids, List<string> video_fields) {
+		public static BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<string> video_fields) {
 			return FindPlaylistsByReferenceIds(reference_ids, video_fields, null);
 		}
 
-		public static BCQueryResult FindPlaylistsByReferenceIds(List<long> reference_ids, List<string> video_fields, List<string> custom_fields) {
-			return FindPlaylistsByReferenceIds(reference_ids, video_fields, custom_fields);
+		public static BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<string> video_fields, List<string> custom_fields) {
+			return FindPlaylistsByReferenceIds(reference_ids, video_fields, custom_fields, null);
 		}
 
 		/// <summary>
@@ -942,8 +963,8 @@ namespace OTP.Web.BrightcoveAPI
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public static BCQueryResult FindPlaylistsByReferenceIds(List<long> reference_ids, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
-			
+		public static BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
@@ -954,7 +975,7 @@ namespace OTP.Web.BrightcoveAPI
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			
 			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists);
-			
+
 			return qr;
 		}
 
@@ -962,20 +983,20 @@ namespace OTP.Web.BrightcoveAPI
 
 		#region Find Playlists For Player Id
 
-		public static BCQueryResult FindPlaylistsByReferenceIds(long player_id) {
-			return FindPlaylistsByReferenceIds(player_id, -1);
+		public static BCQueryResult FindPlaylistsForPlayerId(long player_id) {
+			return FindPlaylistsForPlayerId(player_id, -1);
 		}
 
-		public static BCQueryResult FindPlaylistsByReferenceIds(long player_id, int howMany) {
-			return FindPlaylistsByReferenceIds(player_id, howMany, null);
+		public static BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany) {
+			return FindPlaylistsForPlayerId(player_id, howMany, null);
 		}
 
-		public static BCQueryResult FindPlaylistsByReferenceIds(long player_id, int howMany, List<string> video_fields) {
-			return FindPlaylistsByReferenceIds(player_id, howMany, video_fields, null);
+		public static BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<string> video_fields) {
+			return FindPlaylistsForPlayerId(player_id, howMany, video_fields, null);
 		}
 
-		public static BCQueryResult FindPlaylistsByReferenceIds(long player_id, int howMany, List<string> video_fields, List<string> custom_fields) {
-			return FindPlaylistsByReferenceIds(player_id, howMany, video_fields, custom_fields, null);
+		public static BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<string> video_fields, List<string> custom_fields) {
+			return FindPlaylistsForPlayerId(player_id, howMany, video_fields, custom_fields, null);
 		}
 
 		/// <summary>
@@ -999,157 +1020,163 @@ namespace OTP.Web.BrightcoveAPI
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public static BCQueryResult FindPlaylistsByReferenceIds(long player_id, int howMany, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
-		
+		public static BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<string> video_fields, List<string> custom_fields, List<string> playlist_fields) {
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlists_for_player_id");
-			reqparams.Add("player_id", player_id.ToString()); 
+			reqparams.Add("player_id", player_id.ToString());
 			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
 			if (playlist_fields != null) reqparams.Add("playlist_fields", Implode(playlist_fields));
 			if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-			
+
 			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists);
-			
+
 			return qr;
 		}
 
 		#endregion Find Playlists For Player Id
-			
+
 		#endregion Playlist Read
 
 		#region Video Write
+
+		#region Create Video
 		
-		//#region Create Video
+		public static long CreateVideo(BCVideo video, string file) {
+			return CreateVideo(video, null, -1, file, null, BCEncodeType.FLV, false, false, false);
+		}
+		public static long CreateVideo(BCVideo video, string file, BCEncodeType encode_to) {
+			return CreateVideo(video, null, -1, file, null, encode_to, false, false, false);
+		}
 
-		//public static long CreateVideo(string video) {
-		//    return CreateVideo(video, null);
-		//}
+		public static long CreateVideo(BCVideo video, string file, long maxsize) {
+			return CreateVideo(video, null, maxsize, file, null, BCEncodeType.FLV, false, false, false);
+		}
+		public static long CreateVideo(BCVideo video, string file, BCEncodeType encode_to, long maxsize) {
+			return CreateVideo(video, null, maxsize, file, null, encode_to, false, false, false);
+		}
 
-		//public static long CreateVideo(string video, string filename) {
-		//    return CreateVideo(video, filename, -1);
-		//}
+		public static long CreateVideo(BCVideo video, string file, long maxsize, string file_checksum) {
+			return CreateVideo(video, null, maxsize, file, file_checksum, BCEncodeType.FLV, false, false, false);
+		}
+		public static long CreateVideo(BCVideo video, string file, BCEncodeType encode_to, long maxsize, string file_checksum) {
+			return CreateVideo(video, null, maxsize, file, file_checksum, encode_to, false, false, false);
+		}
 
-		//public static long CreateVideo(string video, string filename, long maxsize) {
-		//    return CreateVideo(video, filename, maxsize, null);
-		//}
+		public static long CreateVideo(BCVideo video, string file, long maxsize, string file_checksum, string filename) {
+			return CreateVideo(video, filename, maxsize, file, file_checksum, BCEncodeType.FLV, false, false, false);
+		}
+		public static long CreateVideo(BCVideo video, string file, BCEncodeType encode_to, long maxsize, string file_checksum, string filename) {
+			return CreateVideo(video, filename, maxsize, file, file_checksum, encode_to, false, false, false);
+		}
 
-		//public static long CreateVideo(string video, string filename, long maxsize, string file) {
-		//    return CreateVideo(video, filename, maxsize, file, null);
-		//}
+		//favors no processing renditions
+		public static long CreateVideo(BCVideo video, string file, long maxsize, string file_checksum, string filename, bool H264NoProcessing) {
+			return CreateVideo(video, filename, maxsize, file, file_checksum, BCEncodeType.MP4, false, H264NoProcessing, false);
+		}
 
-		//public static long CreateVideo(string video, string filename, long maxsize, string file, string file_checksum) {
-		//    return CreateVideo(video, filename, maxsize, file, file_checksum, BCEncodeType.FLV);
-		//}
+		//favors multiple renditions
+		public static long CreateVideo(BCVideo video, string file, long maxsize, string file_checksum, string filename, bool create_multiple_renditions, bool preserve_source_rendition) {
+			return CreateVideo(video, filename, maxsize, file, file_checksum, BCEncodeType.MP4, create_multiple_renditions, false, preserve_source_rendition);
+		}
 
-		//public static long CreateVideo(string video, string filename, long maxsize, string file, string file_checksum, BCEncodeType encode_to) {
-		//    return CreateVideo(video, filename, maxsize, file, file_checksum, encode_to, false);
-		//}
+		/// <summary>
+		/// Upload a file to your Brightcove account
+		/// </summary>
+		/// <param name="video">
+		/// The metadata for the video you'd like to create. This takes the form of a 
+		/// JSON object of name/value pairs, each of which corresponds to a settable 
+		/// property of the Video object.
+		/// </param>
+		/// <param name="filename">
+		/// The name of the file that's being uploaded. You don't need to specify this in 
+		/// the JSON if it is specified in the file part of the POST. 
+		/// </param>
+		/// <param name="maxsize">
+		/// The maximum size that the file will be. This is used as a limiter to know when 
+		/// something has gone wrong with the upload. The maxSize is same as the file you uploaded. 
+		/// You don't need to specify this in the JSON if it is specified in the file part of the POST.  
+		/// </param>
+		/// <param name="file">
+		/// An input stream associated with the video file you're uploading. This takes the 
+		/// form of a file part, in a multipart/form-data HTTP request. This input stream and 
+		/// the filename and maxSide parameters are automatically inferred from that file part.
+		/// </param>
+		/// <param name="file_checksum">
+		/// An optional MD5 hash of the file. The checksum can be used to verify that the file checked 
+		/// into your Brightcove Media Library is the same as the file you uploaded. 
+		/// </param>
+		/// <param name="encode_to">
+		/// If the file requires transcoding, use this parameter to specify the target encoding. Valid 
+		/// values are MP4 or FLV, representing the H264 and VP6 codecs respectively. Note that transcoding 
+		/// of FLV files to another codec is not currently supported. This parameter is optional and defaults to FLV.
+		/// </param>
+		/// <param name="create_multiple_renditions">
+		/// If the file is a supported transcodeable type, this optional flag can be used to control the 
+		/// number of transcoded renditions. If true (default), multiple renditions at varying encoding 
+		/// rates and dimensions are created. Setting this to false will cause a single transcoded VP6 
+		/// rendition to be created at the standard encoding rate and dimensions. 
+		/// </param>
+		/// <param name="H264NoProcessing">
+		/// If the video file is H.264 encoded and if create_multiple_ renditions=true, then multiple 
+		/// VP6 renditions are created and in addition the H.264 source is retained as an additional rendition. 
+		/// </param>
+		/// <param name="preserve_source_rendition">
+		/// Use this option to prevent H.264 source files from being transcoded. This parameter cannot be 
+		/// used in combination with create_multiple_renditions. It is optional and defaults to false.
+		/// </param>
+		/// <returns>
+		/// The id of the video that's been created.
+		/// </returns>
+		private static long CreateVideo(BCVideo video, string filename, long maxsize, string file, string file_checksum, BCEncodeType encode_to, bool create_multiple_renditions, bool H264NoProcessing, bool preserve_source_rendition) {
 
-		//public static long CreateVideo(string video, string filename, long maxsize, string file, string file_checksum, BCEncodeType encode_to, bool create_multiple_renditions) {
-		//    return CreateVideo(video, filename, maxsize, file, file_checksum, encode_to, create_multiple_renditions, false);
-		//}
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
-		//public static long CreateVideo(string video, string filename, long maxsize, string file, string file_checksum, BCEncodeType encode_to, bool create_multiple_renditions, bool H264NoProcessing) {
-		//    return CreateVideo(video, filename, maxsize, file, file_checksum, encode_to, create_multiple_renditions, H264NoProcessing, false);
-		//}
+			//Build the REST parameter list
+			reqparams.Add("command", "create_video");
+			reqparams.Add("video", JSONHelper.Serialize<BCVideo>(video));
+			if (filename != null) reqparams.Add("filename", filename);
+			if (maxsize >= 0) reqparams.Add("maxsize", maxsize.ToString());
+			if (file != null) reqparams.Add("file", file);
+			if (file_checksum != null) reqparams.Add("file_checksum", file_checksum);
+			if (encode_to != null) reqparams.Add("encode_to", encode_to.ToString());
+			if (create_multiple_renditions != null) reqparams.Add("create_multiple_renditions", create_multiple_renditions.ToString());
+			if (H264NoProcessing != null) reqparams.Add("H264NoProcessing", H264NoProcessing.ToString());
+			if (preserve_source_rendition != null) reqparams.Add("preserve_source_rendition", preserve_source_rendition.ToString());
 
-		///// <summary>
-		///// Upload a file to your Brightcove account
-		///// </summary>
-		///// <param name="video">
-		///// The metadata for the video you'd like to create. This takes the form of a 
-		///// JSON object of name/value pairs, each of which corresponds to a settable 
-		///// property of the Video object.
-		///// </param>
-		///// <param name="filename">
-		///// The name of the file that's being uploaded. You don't need to specify this in 
-		///// the JSON if it is specified in the file part of the POST. 
-		///// </param>
-		///// <param name="maxsize">
-		///// The maximum size that the file will be. This is used as a limiter to know when 
-		///// something has gone wrong with the upload. The maxSize is same as the file you uploaded. 
-		///// You don't need to specify this in the JSON if it is specified in the file part of the POST.  
-		///// </param>
-		///// <param name="file">
-		///// An input stream associated with the video file you're uploading. This takes the 
-		///// form of a file part, in a multipart/form-data HTTP request. This input stream and 
-		///// the filename and maxSide parameters are automatically inferred from that file part.
-		///// </param>
-		///// <param name="file_checksum">
-		///// An optional MD5 hash of the file. The checksum can be used to verify that the file checked 
-		///// into your Brightcove Media Library is the same as the file you uploaded. 
-		///// </param>
-		///// <param name="encode_to">
-		///// If the file requires transcoding, use this parameter to specify the target encoding. Valid 
-		///// values are MP4 or FLV, representing the H264 and VP6 codecs respectively. Note that transcoding 
-		///// of FLV files to another codec is not currently supported. This parameter is optional and defaults to FLV.
-		///// </param>
-		///// <param name="create_multiple_renditions">
-		///// If the file is a supported transcodeable type, this optional flag can be used to control the 
-		///// number of transcoded renditions. If true (default), multiple renditions at varying encoding 
-		///// rates and dimensions are created. Setting this to false will cause a single transcoded VP6 
-		///// rendition to be created at the standard encoding rate and dimensions. 
-		///// </param>
-		///// <param name="H264NoProcessing">
-		///// If the video file is H.264 encoded and if create_multiple_ renditions=true, then multiple 
-		///// VP6 renditions are created and in addition the H.264 source is retained as an additional rendition. 
-		///// </param>
-		///// <param name="preserve_source_rendition">
-		///// Use this option to prevent H.264 source files from being transcoded. This parameter cannot be 
-		///// used in combination with create_multiple_renditions. It is optional and defaults to false.
-		///// </param>
-		///// <returns>
-		///// The id of the video that's been created.
-		///// </returns>
-		//public static long CreateVideo(string video, string filename, long maxsize, string file, string file_checksum, BCEncodeType encode_to, bool create_multiple_renditions, bool H264NoProcessing, bool preserve_source_rendition) {
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.Execute(reqparams, ActionType.WRITE).JsonResult; 
+			return JSONHelper.Deserialize<BCVideo>(jsonStr).id;
+		}
 
-		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
+		#endregion Create Video
 
-		//    //Build the REST parameter list
-		//    reqparams.Add("command", "create_video");
-		//    reqparams.Add("video", video);
-		//    if (filename != null) reqparams.Add("filename", filename);
-		//    if (maxsize >= 0) reqparams.Add("maxsize", maxsize.ToString());
-		//    if (file != null) reqparams.Add("file", file);
-		//    if (file_checksum != null) reqparams.Add("file_checksum", file_checksum);
-		//    if (encode_to != null) reqparams.Add("encode_to", encode_to.ToString());
-		//    if (create_multiple_renditions != null) reqparams.Add("create_multiple_renditions", create_multiple_renditions.ToString());
-		//    if (H264NoProcessing != null) reqparams.Add("H264NoProcessing", H264NoProcessing.ToString());
-		//    if (preserve_source_rendition != null) reqparams.Add("preserve_source_rendition", preserve_source_rendition.ToString());
+		#region Update Video
 
-		//    //Get the JSon reader returned from the APIRequest
-		//    string jsonStr = BCAPIRequest.Execute(reqparams);
-		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
-		//}
+		/// <summary>
+		/// Updates the video you specify
+		/// </summary>
+		/// <param name="video">
+		/// The metadata for the video you'd like to update. This takes the form of a JSON object of name/value pairs, each of which corresponds to a settable property of the Video object. 
+		/// </param>
+		/// <returns></returns>
+		public static BCVideo UpdateVideo(BCVideo video) {
 
-		//#endregion Create Video
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
-		//#region Update Video
+			//Build the REST parameter list
+			reqparams.Add("command", "update_video");
+			reqparams.Add("video", JSONHelper.Serialize<BCVideo>(video));
 
-		///// <summary>
-		///// Updates the video you specify
-		///// </summary>
-		///// <param name="video">
-		///// The metadata for the video you'd like to update. This takes the form of a JSON object of name/value pairs, each of which corresponds to a settable property of the Video object. 
-		///// </param>
-		///// <returns></returns>
-		//public static BCVideo UpdateVideo(string video) {
-					
-		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.Execute(reqparams, ActionType.WRITE).JsonResult;
+			return JSONHelper.Deserialize<BCVideo>(jsonStr);
+		}
 
-		//    //Build the REST parameter list
-		//    reqparams.Add("command", "update_video");
-		//    reqparams.Add("video", video);
-			
-		//    //Get the JSon reader returned from the APIRequest
-		//    string jsonStr = BCAPIRequest.Execute(reqparams);
-		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
-		//}
-
-		//#endregion Update Video
+		#endregion Update Video
 
 		#region Delete Video
 
@@ -1188,101 +1215,112 @@ namespace OTP.Web.BrightcoveAPI
 		/// Note that this will delete all shared copies from sharee accounts, regardless 
 		/// of whether or not those accounts are currently using the video in playlists or players.
 		/// </param>
-		public static void DeleteVideo(long video_id, string reference_id, bool cascade, bool delete_shares){
-			
+		public static void DeleteVideo(long video_id, string reference_id, bool cascade, bool delete_shares) {
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "delete_video");
-			if(video_id >= 0) reqparams.Add("video_id", video_id.ToString());
+			if (video_id >= 0) reqparams.Add("video_id", video_id.ToString());
 			if (reference_id != null) reqparams.Add("reference_id", reference_id);
 			if (cascade != null) reqparams.Add("cascade", cascade.ToString());
 			if (delete_shares != null) reqparams.Add("delete_shares", delete_shares.ToString());
-			
+
 			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.Execute(reqparams);
+			string jsonStr = BCAPIRequest.Execute(reqparams, ActionType.WRITE).JsonResult;
 		}
 
 		#endregion Delete Video
 
-		//#region Get Upload Status
+		#region Get Upload Status
 
-		//public static UploadStatusEnum GetUploadStatus(string reference_id) {
-		//    return GetUploadStatus(-1, reference_id);
-		//}
+		public static UploadStatusEnum GetUploadStatus(string reference_id) {
+			return GetUploadStatus(-1, reference_id);
+		}
 
-		//public static UploadStatusEnum GetUploadStatus(long video_id) {
-		//    return GetUploadStatus(video_id, null);
-		//}
+		public static UploadStatusEnum GetUploadStatus(long video_id) {
+			return GetUploadStatus(video_id, null);
+		}
 
-		///// <summary>
-		///// Call this function in an HTTP POST request to determine the status of an upload.
-		///// </summary>
-		///// <param name="video_id">
-		///// The id of the video whose status you'd like to get.
-		///// </param>
-		///// <param name="reference_id">
-		///// The publisher-assigned reference id of the video whose status you'd like to get.
-		///// </param>
-		///// <returns>
-		///// an UploadStatusEnum that specifies the current state of the upload.
-		///// </returns>
-		//public static UploadStatusEnum GetUploadStatus(long video_id, string reference_id){
-			
-		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
+		/// <summary>
+		/// Call this function in an HTTP POST request to determine the status of an upload.
+		/// </summary>
+		/// <param name="video_id">
+		/// The id of the video whose status you'd like to get.
+		/// </param>
+		/// <param name="reference_id">
+		/// The publisher-assigned reference id of the video whose status you'd like to get.
+		/// </param>
+		/// <returns>
+		/// an UploadStatusEnum that specifies the current state of the upload.
+		/// </returns>
+		public static UploadStatusEnum GetUploadStatus(long video_id, string reference_id) {
 
-		//    //Build the REST parameter list
-		//    reqparams.Add("command", "get_upload_status");
-		//    if(video_id >= 0) reqparams.Add("video_id", video_id.ToString());
-		//    if (reference_id != null) reqparams.Add("reference_id", reference_id);
-						
-		//    //Get the JSon reader returned from the APIRequest
-		//    string jsonStr = BCAPIRequest.Execute(reqparams);
-		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
-		//}
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
-		//#endregion Get Upload Status
-		
-		//#region Share Video
+			//Build the REST parameter list
+			reqparams.Add("command", "get_upload_status");
+			if (video_id >= 0) reqparams.Add("video_id", video_id.ToString());
+			if (reference_id != null) reqparams.Add("reference_id", reference_id);
 
-		//public static long ShareVideo(long video_id, long sharee_account_ids) {
-		//    return ShareVideo(video_id, false, sharee_account_ids);
-		//}
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.Execute(reqparams, ActionType.WRITE).JsonResult;
+			switch (jsonStr) {
+				case "COMPLETE":
+					return UploadStatusEnum.COMPLETE;
+				case "ERROR":
+					return UploadStatusEnum.ERROR;
+				case "PROCESSING":
+					return UploadStatusEnum.PROCESSING;
+				case "UPLOADING":
+					return UploadStatusEnum.UPLOADING;
+				default:
+					return UploadStatusEnum.UNDEFINED;
+			}
+		}
 
-		///// <summary>
-		///// Shares the specified video with a list of sharee accounts
-		///// </summary>
-		///// <param name="video_id">
-		///// The id of the video whose status you'd like to get.
-		///// </param>
-		///// <param name="auto_accept">
-		///// If the target account has the option enabled, setting this flag to true will bypass 
-		///// the approval process, causing the shared video to automatically appear in the target 
-		///// account's library. If the target account does not have the option enabled, or this 
-		///// flag is unspecified or false, then the shared video will be queued up to be approved 
-		///// by the target account before appearing in their library.	
-		///// </param>
-		///// <param name="sharee_account_ids">
-		///// List of Account IDs to share video with.
-		///// </param>
-		///// <returns></returns>
-		//public static long ShareVideo(long video_id, bool auto_accept, long sharee_account_ids) {
-			
-		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
+		#endregion Get Upload Status
 
-		//    //Build the REST parameter list
-		//    reqparams.Add("command", "share_video");
-		//    reqparams.Add("video_id", video_id.ToString());
-		//    if (auto_accept != null) reqparams.Add("auto_accept", auto_accept.ToString());
-		//    reqparams.Add("sharee_account_ids", sharee_account_ids.ToString());
-			
-		//    //Get the JSon reader returned from the APIRequest
-		//    string jsonStr = BCAPIRequest.Execute(reqparams);
-		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
-		//}
-		
-		//#endregion Share Video
-		
+		#region Share Video
+
+		public static BCCollection<long> ShareVideo(long video_id, List<long> sharee_account_ids) {
+			return ShareVideo(video_id, false, sharee_account_ids);
+		}
+
+		/// <summary>
+		/// Shares the specified video with a list of sharee accounts
+		/// </summary>
+		/// <param name="video_id">
+		/// The id of the video whose status you'd like to get.
+		/// </param>
+		/// <param name="auto_accept">
+		/// If the target account has the option enabled, setting this flag to true will bypass 
+		/// the approval process, causing the shared video to automatically appear in the target 
+		/// account's library. If the target account does not have the option enabled, or this 
+		/// flag is unspecified or false, then the shared video will be queued up to be approved 
+		/// by the target account before appearing in their library.	
+		/// </param>
+		/// <param name="sharee_account_ids">
+		/// List of Account IDs to share video with.
+		/// </param>
+		/// <returns></returns>
+		public static BCCollection<long> ShareVideo(long video_id, bool auto_accept, List<long> sharee_account_ids) {
+
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "share_video");
+			reqparams.Add("video_id", video_id.ToString());
+			if (auto_accept != null) reqparams.Add("auto_accept", auto_accept.ToString());
+			reqparams.Add("sharee_account_ids", Implode(sharee_account_ids));
+
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.Execute(reqparams, ActionType.WRITE);
+			return JSONHelper.Deserialize<BCCollection<long>>(jsonStr);
+		}
+
+		#endregion Share Video
+
 		//#region Add Image
 
 		//public static long AddImage(string image) {
@@ -1354,20 +1392,20 @@ namespace OTP.Web.BrightcoveAPI
 		///// </param>
 		///// <returns></returns>
 		//public static long AddImage(string image, string filename, long maxsize, string file, string file_checksum, long video_id, string video_reference_id, bool resize) {
-			
-			//{
-			//    "method" : "add_image",
-			//    "params" : {
-			//        "token" : "riBfgveLvpRb-rHGiBBouSAXs-Q8NmphGxt0z04kE.",
-			//        "image" : {
-			//            "referenceId" : "wicklow-1",
-			//            "displayName" : "Wicklow the Bunny",
-			//            "type" : "THUMBNAIL"
-			//        },
-			//        "file_checksum" : "d1c9c2b112993a0079a0128ecb9b36dd",
-			//        "video_id" : 17035
-			//    }
-			//}
+
+		//{
+		//    "method" : "add_image",
+		//    "params" : {
+		//        "token" : "riBfgveLvpRb-rHGiBBouSAXs-Q8NmphGxt0z04kE.",
+		//        "image" : {
+		//            "referenceId" : "wicklow-1",
+		//            "displayName" : "Wicklow the Bunny",
+		//            "type" : "THUMBNAIL"
+		//        },
+		//        "file_checksum" : "d1c9c2b112993a0079a0128ecb9b36dd",
+		//        "video_id" : 17035
+		//    }
+		//}
 
 
 		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
@@ -1382,7 +1420,7 @@ namespace OTP.Web.BrightcoveAPI
 		//    if (video_id >= 0) reqparams.Add("video_id", video_id.ToString());
 		//    if (video_reference_id != null) reqparams.Add("video_reference_id", video_reference_id);
 		//    if (resize != null) reqparams.Add("resize", resize.ToString());
-			
+
 		//    //Get the JSon reader returned from the APIRequest
 		//    string jsonStr = BCAPIRequest.Execute(reqparams);
 		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
@@ -1391,11 +1429,11 @@ namespace OTP.Web.BrightcoveAPI
 		//#endregion Add Image
 
 		#endregion Video Write
-		
+
 		#region Playlist Write
-		
+
 		//#region Create Playlist
-				
+
 		///// <summary>
 		///// Creates a playlist. This method must be called using an HTTP POST request and JSON parameters.
 		///// </summary>
@@ -1408,22 +1446,22 @@ namespace OTP.Web.BrightcoveAPI
 		///// The ID of the Playlist you created.
 		///// </returns>
 		//public static long CreatePlaylist(string playlist){
-					
+
 		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 		//    //Build the REST parameter list
 		//    reqparams.Add("command", "create_playlist");
 		//    reqparams.Add("playlist", playlist);
-			
+
 		//    //Get the JSon reader returned from the APIRequest
 		//    string jsonStr = BCAPIRequest.Execute(reqparams);
 		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
 		//}
-		
+
 		//#endregion Create Playlist
-		
+
 		//#region Update Playlist
-		
+
 		///// <summary>
 		///// Updates a playlist, specified by playlist id. This method must be called 
 		///// using an HTTP POST request and JSON parameters.
@@ -1436,20 +1474,20 @@ namespace OTP.Web.BrightcoveAPI
 		///// </param>
 		///// <returns></returns>
 		//public static long UpdatePlaylist(string playlist) {
-			
+
 		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 		//    //Build the REST parameter list
 		//    reqparams.Add("command", "update_playlist");
 		//    reqparams.Add("playlist", playlist);
-			
+
 		//    //Get the JSon reader returned from the APIRequest
 		//    string jsonStr = BCAPIRequest.Execute(reqparams);
 		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
 		//}
-		
+
 		//#endregion Update Playlist
-		
+
 		#region Delete Playlist
 
 		public static void DeletePlaylist(string reference_id) {
@@ -1470,65 +1508,21 @@ namespace OTP.Web.BrightcoveAPI
 		///	The publisher-assigned reference id of the playlist you'd like to delete.
 		/// </param>
 		public static void DeletePlaylist(long playlist_id, string reference_id) {
-					
+
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "delete_playlist");
 			if (playlist_id >= 0) reqparams.Add("playlist_id", playlist_id.ToString());
 			if (reference_id != null) reqparams.Add("reference_id", reference_id);
-			
+
 			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.Execute(reqparams);
+			string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
 			//return JSONHelper.Deserialize<BCVideo>(jsonStr);
 		}
-		
+
 		#endregion Delete Playlist
-		
+
 		#endregion Playlist Write
 	}
-
-	#region Public Enums
-
-	public enum BCEncodeType { MP4, FLV };
-
-	public enum BCObjectType { videos, playlists };
-
-	public enum BCSortByType { PUBLISH_DATE, CREATION_DATE, MODIFIED_DATE, PLAYS_TOTAL, PLAYS_TRAILING_WEEK };
-
-	public enum BCSortOrderType { ASC, DESC };
-
-	public enum UploadStatusEnum { UPLOADING, PROCESSING, COMPLETE, ERROR };
-
-	public enum EconomicsEnum { FREE, AD_SUPPORTED };
-
-	public enum ItemStateEnum { ACTIVE, INACTIVE, DELETED };
-
-	public enum PlaylistTypeEnum { EXPLICIT, OLDEST_TO_NEWEST, NEWEST_TO_OLDEST, ALPHABETICAL, PLAYS_TOTAL, PLAYS_TRAILING_WEEK };
-
-	//public enum PublicPlaylist.FieldsEnum {	ID, REFERENCEID, NAME, SHORTDESCRIPTION, VIDEOIDS, VIDEOS, THUMBNAILURL, FILTERTAGS, PLAYLISTTYPE, ACCOUNTID }
-
-	/*
-	public enum PublicVideo.FieldsEnum { 
-										ID, NAME, SHORTDESCRIPTION, LONGDESCRIPTION, CREATIONDATE, PUBLISHEDDATE, 
-										LASTMODIFIEDDATE, STARTDATE, ENDDATE, LINKURL, LINKTEXT, TAGS, VIDEOSTILLURL, 
-										THUMBNAILURL, REFERENCEID, LENGTH, ECONOMICS, ITEMSTATE, PLAYSTOTAL, PLAYSTRAILINGWEEK, VERSION
-										CUEPOINTS, SUBMISSIONINFO, CUSTOMFIELDS, RELEASEDATE, FLVURL, RENDITIONS, GEOFILTERED, 
-										GEORESTRICTED, GEOFILTEREXCLUDE, EXCLUDELISTEDCOUNTRIES, GEOFILTEREDCOUNTRIES, 
-										ALLOWEDCOUNTRIES, ACCOUNTID, FLVFULLLENGTH, VIDEOFULLLENGTH 
-										}*/
-
-	public enum VideoCodecEnum { UNDEFINED, NONE, SORENSON, ON2, H264 };
-
-	public enum CuePointType { AD = 0, CODE = 1, CHAPTER = 2 };
-
-	public enum BCVideoEconomics { FREE, AD_SUPPORTED };
-	
-	public enum ImageTypeEnum { VIDEO_STILL, SYNDICATION_STILL, THUMBNAIL, BACKGROUND, LOGO, LOGO_OVERLAY };
-
-	public enum VideoTypeEnum { FLV_PREVIEW, FLV_FULL, FLV_BUMPER, DIGITAL_MASTER };
-
-	public enum ItemCollection { total_count, items, page_number, page_size };
-
-	#endregion Public Enums
 }

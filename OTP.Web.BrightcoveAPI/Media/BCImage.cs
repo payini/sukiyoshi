@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace OTP.Web.BrightcoveAPI
+namespace OTP.Web.BrightcoveAPI.Media
 {	
 	/// <summary>
 	/// This object represents metadata about an image file in your account. 
@@ -20,25 +20,11 @@ namespace OTP.Web.BrightcoveAPI
 		[DataMember]
 		public long id { get; set; }
 
-		[DataMember(Name = "referenceId")]
-		private string refId { get; set; }
-
 		/// <summary>
 		/// A user-specified id that uniquely identifies this Image. ReferenceID can be used as a foreign-key to identify this Image in another system. 
 		/// </summary> 
-		public long referenceId {
-			get {
-				try {
-					return long.Parse(refId);
-				}
-				catch (ArgumentNullException ex) {
-					return -1;
-				}
-			}
-			set {
-				refId = value.ToString();
-			}
-		}
+		[DataMember]
+		public long referenceId { get; set; }
 
 		[DataMember(Name="type")]
 		private string imageType { get; set; }

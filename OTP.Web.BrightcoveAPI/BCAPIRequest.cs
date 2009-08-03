@@ -11,10 +11,39 @@ namespace OTP.Web.BrightcoveAPI
 {
 	public class BCAPIRequest
 	{
-		public static string Execute(Dictionary<String, String> reqParams) {
+		public static QueryResultPair Execute(Dictionary<String, String> reqParams) {
+			return Execute(reqParams, ActionType.READ);
+		}
+		
+		public static QueryResultPair Execute(Dictionary<String, String> reqParams, ActionType type) {
 
-			if(!reqParams.ContainsKey("token")) reqParams.Add("token", BCAPIConfig.ReadToken);
+			if (!reqParams.ContainsKey("token")) {
+				if (type.Equals(ActionType.READ)) {
+					reqParams.Add("token", BCAPIConfig.ReadToken);
+				}
+				else {
+					reqParams.Add("token", BCAPIConfig.WriteToken);
+				}
+			}
 			if (!reqParams.ContainsKey("get_item_count")) reqParams.Add("get_item_count", "true");
+			
+			String reqUrl = BuildQuery(reqParams);
+
+			HttpWebRequest webRequest = WebRequest.Create(reqUrl) as HttpWebRequest;
+			HttpWebResponse response = webRequest.GetResponse() as HttpWebResponse;
+			TextReader textreader = new StreamReader(response.GetResponseStream());
+
+			//otp added this to handle the embedded anchors that were not json compliant1
+			//remove \" and replace with '
+			string jsonStr = textreader.ReadToEnd();
+			jsonStr = jsonStr.Replace("\\\"", "'");
+
+			QueryResultPair qrp = new QueryResultPair(reqUrl, jsonStr);
+
+			return qrp;
+		}
+
+		public static String BuildQuery(Dictionary<String, String> reqParams) {
 
 			String reqUrl = BCAPIConfig.ServiceURL + "?";
 			int i = 0;
@@ -23,26 +52,16 @@ namespace OTP.Web.BrightcoveAPI
 				reqUrl += String.Format("{0}={1}", key, HttpUtility.UrlEncode(reqParams[key]));
 				i++;
 			}
-			//HttpContext.Current.Response.Write(reqUrl + "<br/><br/>");
-			
-			HttpWebRequest webRequest = WebRequest.Create(reqUrl) as HttpWebRequest;
-			HttpWebResponse response = webRequest.GetResponse() as HttpWebResponse;
-			TextReader textreader = new StreamReader(response.GetResponseStream());
-			
-			//otp added this to handle the embedded anchors that were not json compliant1
-			//remove \" and replace with '
-			string jsonStr = textreader.ReadToEnd();
-			jsonStr = jsonStr.Replace("\\\"", "'");
-			
-			return jsonStr;
-		}
-	}
 
+			return reqUrl;
+
+		}
+	
+	}
 
 	public class JSONHelper
 	{
-		public static string Serialize<T>(T obj)
-		{
+		public static string Serialize<T>(T obj) {
 			System.Runtime.Serialization.Json.DataContractJsonSerializer serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(obj.GetType());
 			MemoryStream ms = new MemoryStream();
 			serializer.WriteObject(ms, obj);
@@ -50,8 +69,7 @@ namespace OTP.Web.BrightcoveAPI
 			return retVal;
 		}
 
-		public static T Deserialize<T>(string json)
-		{
+		public static T Deserialize<T>(string json) {
 			T obj = Activator.CreateInstance<T>();
 			MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(json));
 			System.Runtime.Serialization.Json.DataContractJsonSerializer serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(obj.GetType());

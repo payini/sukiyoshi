@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace OTP.Web.BrightcoveAPI
+namespace OTP.Web.BrightcoveAPI.Media
 {
 	/// <summary>
 	/// The CuePoint object is a marker set at a precise time point in the 

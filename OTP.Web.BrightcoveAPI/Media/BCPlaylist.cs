@@ -5,7 +5,7 @@ using System.Text;
 using System.Web;
 using System.Runtime.Serialization;
 
-namespace OTP.Web.BrightcoveAPI
+namespace OTP.Web.BrightcoveAPI.Media
 {
 	/// <summary>
 	/// The Playlist object is an aggregation of metadata and asset information associated with a Playlist
@@ -13,33 +13,19 @@ namespace OTP.Web.BrightcoveAPI
 	[DataContract]
 	public class BCPlaylist : BCObject, IComparable<BCPlaylist>
 	{
-		
+
 		/// <summary>
 		/// A number that uniquely identifies this Playlist, assigned by Brightcove when the Playlist is created.
 		/// </summary>
 		[DataMember]
 		public long id { get; set; }
 
-		[DataMember(Name = "referenceId")]
-		private string refId { get; set; }
-
 		/// <summary>
 		/// A user-specified id that uniquely identifies this Video. ReferenceID can be used as a foreign-key to identify this Playlist in another system. 
 		/// </summary> 
-		public long referenceId {
-			get {
-				try {
-					return long.Parse(refId);
-				}
-				catch (ArgumentNullException ex) {
-					return -1;
-				}
-			}
-			set {
-				refId = value.ToString();
-			}
-		}
-	
+		[DataMember]
+		public string referenceId { get; set; }
+
 		/// <summary>
 		/// The name of this Playlist.
 		/// </summary> 
@@ -98,7 +84,7 @@ namespace OTP.Web.BrightcoveAPI
 		public int CompareTo(BCPlaylist other) {
 			return name.CompareTo(other.name);
 		}
-				
+
 		#endregion
 	}
 }
