@@ -62,11 +62,37 @@ namespace OTP.Web.BrightcoveAPI.Media
 		[DataMember]
 		public BCCollection<string> filterTags;
 
+		[DataMember(Name = "playlistType")]
+		private string pType { get; set; }
+
 		/// <summary>
 		/// The type of this Playlist.
 		/// </summary> 
-		[DataMember]
-		public string playlistType { get; set; }
+		public PlaylistTypeEnum playlistType {
+			get {
+				if (pType.Equals(PlaylistTypeEnum.ALPHABETICAL.ToString())) {
+					return PlaylistTypeEnum.ALPHABETICAL;
+				}
+				if (pType.Equals(PlaylistTypeEnum.EXPLICIT.ToString())) {
+					return PlaylistTypeEnum.EXPLICIT;
+				}
+				if (pType.Equals(PlaylistTypeEnum.OLDEST_TO_NEWEST.ToString())) {
+					return PlaylistTypeEnum.OLDEST_TO_NEWEST;
+				}
+				if (pType.Equals(PlaylistTypeEnum.PLAYS_TOTAL.ToString())) {
+					return PlaylistTypeEnum.PLAYS_TOTAL;
+				}
+				if (pType.Equals(PlaylistTypeEnum.PLAYS_TRAILING_WEEK.ToString())) {
+					return PlaylistTypeEnum.PLAYS_TRAILING_WEEK;
+				}
+				else {
+					return PlaylistTypeEnum.NEWEST_TO_OLDEST;
+				}
+			}
+			set {
+				pType = value.ToString();
+			}
+		}
 
 		/// <summary>
 		/// The account id associated with this Playlist.
