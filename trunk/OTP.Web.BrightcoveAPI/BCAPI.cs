@@ -1311,191 +1311,184 @@ namespace OTP.Web.BrightcoveAPI
 			//Build the REST parameter list
 			reqparams.Add("command", "share_video");
 			reqparams.Add("video_id", video_id.ToString());
-			if (auto_accept != null) reqparams.Add("auto_accept", auto_accept.ToString());
+			if (auto_accept) reqparams.Add("auto_accept", auto_accept.ToString());
 			reqparams.Add("sharee_account_ids", Implode(sharee_account_ids));
 
 			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.Execute(reqparams, ActionType.WRITE);
+			string jsonStr = BCAPIRequest.Execute(reqparams, ActionType.WRITE).JsonResult;
 			return JSONHelper.Deserialize<BCCollection<long>>(jsonStr);
 		}
 
 		#endregion Share Video
 
-		//#region Add Image
+		#region Add Image
 
-		//public static long AddImage(string image) {
-		//    return AddImage(image, null);
-		//}
+		//using video id
+		public static BCImage AddImage(BCImage image, string file, long video_id) {
+			return AddImage(image, file, video_id, false);
+		}
+		public static BCImage AddImage(BCImage image, string file, long video_id, bool resize) {
+			return AddImage(image, file, video_id, null, resize);
+		}
+		public static BCImage AddImage(BCImage image, string file, long video_id, string filename, bool resize) {
+			return AddImage(image, file, video_id, filename, -1, resize);
+		}
+		public static BCImage AddImage(BCImage image, string file, long video_id, string filename, long maxsize, bool resize) {
+			return AddImage(image, file, video_id, filename, maxsize, null, resize);
+		}
+		public static BCImage AddImage(BCImage image, string file, long video_id, string filename, long maxsize, string file_checksum, bool resize) {
+			return AddImage(image, filename, maxsize, file, file_checksum, video_id, null, resize);
+		}
 
-		//public static long AddImage(string image, long video_id) {
-		//    return AddImage(image, null, -1, null, null, video_id, null);
-		//}
+		//using ref id
+		public static BCImage AddImage(BCImage image, string file, string video_reference_id) {
+			return AddImage(image, file, video_reference_id, false);
+		}
+		public static BCImage AddImage(BCImage image, string file, string video_reference_id, bool resize) {
+			return AddImage(image, file, video_reference_id, null, resize);
+		}
+		public static BCImage AddImage(BCImage image, string file, string video_reference_id, string filename, bool resize) {
+			return AddImage(image, file, video_reference_id, filename, -1, resize);
+		}
+		public static BCImage AddImage(BCImage image, string file, string video_reference_id, string filename, long maxsize, bool resize) {
+			return AddImage(image, file, video_reference_id, filename, maxsize, null, resize);
+		}
+		public static BCImage AddImage(BCImage image, string file, string video_reference_id, string filename, long maxsize, string file_checksum, bool resize) {
+			return AddImage(image, filename, maxsize, file, file_checksum, -1, video_reference_id, resize);
+		}
 
-		//public static long AddImage(string image, string filename) {
-		//    return AddImage(image, filename, -1);
-		//}
+		/// <summary>
+		/// Add a new thumbnail or video still image to a video, or assign an existing image to another video.
+		/// </summary>
+		/// <param name="image">
+		/// The metadata for the image you'd like to create (or update). This takes the form of a 
+		/// JSON object of name/value pairs, each of which corresponds to a property of the Image object. 
+		/// </param>
+		/// <param name="filename">
+		/// The name of the file that's being uploaded. You don't need to specify this in the JSON 
+		/// if it is specified in the file part of the POST. 
+		/// </param>
+		/// <param name="maxsize">
+		/// The maximum size that the file will be. This is used as a limiter to know when something 
+		/// has gone wrong with the upload. The maxSize is same as the file you uploaded. You don't 
+		/// need to specify this in the JSON if it is specified in the file part of the POST.
+		/// </param>
+		/// <param name="file">
+		/// An input stream associated with the image file you're uploading. This takes the form of a 
+		/// file part, in a multipart/form-data HTTP request. This input stream and the filename and 
+		/// maxSide parameters are automatically inferred from that file part. 
+		/// </param>
+		/// <param name="file_checksum">
+		/// An optional MD5 hash of the file. The checksum can be used to verify that the file checked 
+		/// into your Brightcove Media Library is the same as the file you uploaded. 
+		/// </param>
+		/// <param name="video_id">
+		/// The ID of the video you'd like to assign an image to.
+		/// </param>
+		/// <param name="video_reference_id">
+		/// The publisher-assigned reference ID of the video you'd like to assign an image to.
+		/// </param>
+		/// <param name="resize">
+		/// Set this to false if you don't want your image to be automatically resized to the default 
+		/// size for its type. By default images will be resized. 
+		/// </param>
+		/// <returns></returns>
+		private static BCImage AddImage(BCImage image, string filename, long maxsize, string file, string file_checksum, long video_id, string video_reference_id, bool resize) {
 
-		//public static long AddImage(string image, string filename, long maxsize) {
-		//    return AddImage(image, filename, maxsize, null);
-		//}
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
-		//public static long AddImage(string image, string filename, long maxsize, string file) {
-		//    return AddImage(image, filename, maxsize, file, null);
-		//}
+		    //Build the REST parameter list
+		    reqparams.Add("command", "add_image");
+		    reqparams.Add("image", JSONHelper.Serialize<BCImage>(image));
+		    if (filename != null) reqparams.Add("filename", filename);
+		    if (maxsize >= 0) reqparams.Add("maxsize", maxsize.ToString());
+		    if (file != null) reqparams.Add("file", file);
+		    if (file_checksum != null) reqparams.Add("file_checksum", file_checksum);
+		    if (video_id >= 0) reqparams.Add("video_id", video_id.ToString());
+		    if (video_reference_id != null) reqparams.Add("video_reference_id", video_reference_id);
+		    if (resize) reqparams.Add("resize", resize.ToString().ToLower());
 
-		//public static long AddImage(string image, string filename, long maxsize, string file, string file_checksum) {
-		//    return AddImage(image, filename, maxsize, file, file_checksum, -1);
-		//}
+		    //Get the JSon reader returned from the APIRequest
+		    string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
+		    return JSONHelper.Deserialize<BCImage>(jsonStr);
+		}
 
-		//public static long AddImage(string image, string filename, long maxsize, string file, string file_checksum, long video_id) {
-		//    return AddImage(image, filename, maxsize, file, file_checksum, video_id, null);
-		//}
-
-		//public static long AddImage(string image, string filename, long maxsize, string file, string file_checksum, long video_id, string video_reference_id) {
-		//    return AddImage(image, filename, maxsize, file, file_checksum, video_id, video_reference_id, false);
-		//}
-
-		///// <summary>
-		///// Add a new thumbnail or video still image to a video, or assign an existing image to another video.
-		///// </summary>
-		///// <param name="image">
-		///// The metadata for the image you'd like to create (or update). This takes the form of a 
-		///// JSON object of name/value pairs, each of which corresponds to a property of the Image object. 
-		///// </param>
-		///// <param name="filename">
-		///// The name of the file that's being uploaded. You don't need to specify this in the JSON 
-		///// if it is specified in the file part of the POST. 
-		///// </param>
-		///// <param name="maxsize">
-		///// The maximum size that the file will be. This is used as a limiter to know when something 
-		///// has gone wrong with the upload. The maxSize is same as the file you uploaded. You don't 
-		///// need to specify this in the JSON if it is specified in the file part of the POST.
-		///// </param>
-		///// <param name="file">
-		///// An input stream associated with the image file you're uploading. This takes the form of a 
-		///// file part, in a multipart/form-data HTTP request. This input stream and the filename and 
-		///// maxSide parameters are automatically inferred from that file part. 
-		///// </param>
-		///// <param name="file_checksum">
-		///// An optional MD5 hash of the file. The checksum can be used to verify that the file checked 
-		///// into your Brightcove Media Library is the same as the file you uploaded. 
-		///// </param>
-		///// <param name="video_id">
-		///// The ID of the video you'd like to assign an image to.
-		///// </param>
-		///// <param name="video_reference_id">
-		///// The publisher-assigned reference ID of the video you'd like to assign an image to.
-		///// </param>
-		///// <param name="resize">
-		///// Set this to false if you don't want your image to be automatically resized to the default 
-		///// size for its type. By default images will be resized. 
-		///// </param>
-		///// <returns></returns>
-		//public static long AddImage(string image, string filename, long maxsize, string file, string file_checksum, long video_id, string video_reference_id, bool resize) {
-
-		//{
-		//    "method" : "add_image",
-		//    "params" : {
-		//        "token" : "riBfgveLvpRb-rHGiBBouSAXs-Q8NmphGxt0z04kE.",
-		//        "image" : {
-		//            "referenceId" : "wicklow-1",
-		//            "displayName" : "Wicklow the Bunny",
-		//            "type" : "THUMBNAIL"
-		//        },
-		//        "file_checksum" : "d1c9c2b112993a0079a0128ecb9b36dd",
-		//        "video_id" : 17035
-		//    }
-		//}
-
-
-		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
-		//    //Build the REST parameter list
-		//    reqparams.Add("command", "add_image");
-		//    reqparams.Add("image", image);
-		//    if (filename != null) reqparams.Add("filename", filename);
-		//    if (maxsize >= 0) reqparams.Add("maxsize", maxsize.ToString());
-		//    if (file != null) reqparams.Add("file", file);
-		//    if (file_checksum != null) reqparams.Add("file_checksum", file_checksum);
-		//    if (video_id >= 0) reqparams.Add("video_id", video_id.ToString());
-		//    if (video_reference_id != null) reqparams.Add("video_reference_id", video_reference_id);
-		//    if (resize != null) reqparams.Add("resize", resize.ToString());
-
-		//    //Get the JSon reader returned from the APIRequest
-		//    string jsonStr = BCAPIRequest.Execute(reqparams);
-		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
-		//}
-
-		//#endregion Add Image
+		#endregion Add Image
 
 		#endregion Video Write
 
 		#region Playlist Write
 
-		//#region Create Playlist
+		#region Create Playlist
 
-		///// <summary>
-		///// Creates a playlist. This method must be called using an HTTP POST request and JSON parameters.
-		///// </summary>
-		///// <param name="playlist">
-		///// The metadata for the playlist you'd like to create. This takes the form of a JSON object of 
-		///// name/value pairs, each of which corresponds to a settable property of the Playlist object. 
-		///// Populate the videoIds property of the playlist, not the videos property. 
-		///// </param>
-		///// <returns>
-		///// The ID of the Playlist you created.
-		///// </returns>
-		//public static long CreatePlaylist(string playlist){
+		/// <summary>
+		/// Creates a playlist. This method must be called using an HTTP POST request and JSON parameters.
+		/// </summary>
+		/// <param name="playlist">
+		/// The metadata for the playlist you'd like to create. This takes the form of a JSON object of 
+		/// name/value pairs, each of which corresponds to a settable property of the Playlist object. 
+		/// Populate the videoIds property of the playlist, not the videos property. 
+		/// </param>
+		/// <returns>
+		/// The ID of the Playlist you created.
+		/// </returns>
+		public static long CreatePlaylist(BCPlaylist playlist) {
 
-		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
-		//    //Build the REST parameter list
-		//    reqparams.Add("command", "create_playlist");
-		//    reqparams.Add("playlist", playlist);
+			//Build the REST parameter list
+			reqparams.Add("command", "create_playlist");
+			reqparams.Add("playlist", JSONHelper.Serialize <BCPlaylist>(playlist));
 
-		//    //Get the JSon reader returned from the APIRequest
-		//    string jsonStr = BCAPIRequest.Execute(reqparams);
-		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
-		//}
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
+			return long.Parse(jsonStr);
+		}
 
-		//#endregion Create Playlist
+		#endregion Create Playlist
 
-		//#region Update Playlist
+		#region Update Playlist
 
-		///// <summary>
-		///// Updates a playlist, specified by playlist id. This method must be called 
-		///// using an HTTP POST request and JSON parameters.
-		///// </summary>
-		///// <param name="playlist">
-		///// The metadata for the playlist you'd like to create. This takes the form of a 
-		///// JSON object of name/value pairs, each of which corresponds to a settable 
-		///// property of the Playlist object. Populate the videoIds property of the 
-		///// playlist, not the videos property. 
-		///// </param>
-		///// <returns></returns>
-		//public static long UpdatePlaylist(string playlist) {
+		/// <summary>
+		/// Updates a playlist, specified by playlist id. This method must be called 
+		/// using an HTTP POST request and JSON parameters.
+		/// </summary>
+		/// <param name="playlist">
+		/// The metadata for the playlist you'd like to create. This takes the form of a 
+		/// JSON object of name/value pairs, each of which corresponds to a settable 
+		/// property of the Playlist object. Populate the videoIds property of the 
+		/// playlist, not the videos property. 
+		/// </param>
+		/// <returns></returns>
+		public static BCPlaylist UpdatePlaylist(BCPlaylist playlist) {
 
-		//    Dictionary<String, String> reqparams = new Dictionary<string, string>();
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
-		//    //Build the REST parameter list
-		//    reqparams.Add("command", "update_playlist");
-		//    reqparams.Add("playlist", playlist);
+			//Build the REST parameter list
+			reqparams.Add("command", "update_playlist");
+			reqparams.Add("playlist", JSONHelper.Serialize<BCPlaylist>(playlist));
 
-		//    //Get the JSon reader returned from the APIRequest
-		//    string jsonStr = BCAPIRequest.Execute(reqparams);
-		//    //return JSONHelper.Deserialize<BCVideo>(jsonStr);
-		//}
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
+			return JSONHelper.Deserialize<BCPlaylist>(jsonStr);
+		}
 
-		//#endregion Update Playlist
+		#endregion Update Playlist
 
 		#region Delete Playlist
 
 		public static void DeletePlaylist(string reference_id) {
-			DeletePlaylist(-1, reference_id);
+			DeletePlaylist(reference_id, false);
+		}
+		public static void DeletePlaylist(string reference_id, bool cascade) {
+			DeletePlaylist(-1, reference_id, cascade);
 		}
 
 		public static void DeletePlaylist(long playlist_id) {
-			DeletePlaylist(playlist_id, null);
+			DeletePlaylist(playlist_id, false);
+		}
+		public static void DeletePlaylist(long playlist_id, bool cascade) {
+			DeletePlaylist(playlist_id, null, cascade);
 		}
 
 		/// <summary>
@@ -1507,7 +1500,7 @@ namespace OTP.Web.BrightcoveAPI
 		/// <param name="reference_id">
 		///	The publisher-assigned reference id of the playlist you'd like to delete.
 		/// </param>
-		public static void DeletePlaylist(long playlist_id, string reference_id) {
+		private static void DeletePlaylist(long playlist_id, string reference_id, bool cascade) {
 
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
@@ -1515,6 +1508,7 @@ namespace OTP.Web.BrightcoveAPI
 			reqparams.Add("command", "delete_playlist");
 			if (playlist_id >= 0) reqparams.Add("playlist_id", playlist_id.ToString());
 			if (reference_id != null) reqparams.Add("reference_id", reference_id);
+			if (cascade) reqparams.Add("cascade", cascade.ToString().ToLower());
 
 			//Get the JSon reader returned from the APIRequest
 			string jsonStr = BCAPIRequest.Execute(reqparams).JsonResult;
