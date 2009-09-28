@@ -113,4 +113,75 @@ namespace OTP.Web.BrightcoveAPI.Media
 
 		#endregion
 	}
+
+	public static class BCPlaylistExtensions
+	{		
+
+		#region Extension Methods
+
+		public static string ToUpdateJSON(this BCPlaylist playlist) {
+			return ToJSON(playlist, JSONType.Update);
+		}
+
+		public static string ToCreateJSON(this BCPlaylist playlist) {
+			return ToJSON(playlist, JSONType.Create);
+		}
+
+		private static string ToJSON(this BCPlaylist playlist, JSONType t) {
+
+			//--Build Playlist in JSON -------------------------------------//
+
+			//id
+			string jsonPlaylist = "{\"id\": " + playlist.id.ToString();
+
+			//name
+			if (!string.IsNullOrEmpty(playlist.name)) {
+				jsonPlaylist += ",\"name\": \"" + playlist.name + "\"";
+			}
+
+			if(t.Equals(JSONType.Create)){
+				//playlist type
+				jsonPlaylist += ",\"playlistType\": \"" + playlist.playlistType.ToString() + "\"";
+
+				//Video Ids should be a list of strings
+				if (playlist.videoIds != null && playlist.videoIds.Count > 0) {
+					jsonPlaylist += ",\"videoIds\": [";
+					string append = "";
+					foreach (long id in playlist.videoIds) {
+						jsonPlaylist += append + "" + id.ToString() + "";
+						append = ",";
+					}
+					jsonPlaylist += "]";
+				}
+			}
+
+			//filter tags should be a list of strings
+			if (playlist.filterTags != null && playlist.filterTags.Count > 0) {
+				jsonPlaylist += ",\"filterTags\": [";
+				string append = "";
+				foreach (string tag in playlist.filterTags) {
+					jsonPlaylist += append + "\"" + tag + "\"";
+					append = ",";
+				}
+				jsonPlaylist += "]";
+			}
+
+			//referenceId
+			if (playlist.referenceId != null) {
+				jsonPlaylist += ",\"referenceId\": \"" + playlist.referenceId + "\"";
+			}
+
+
+			//shortDescription
+			if (!string.IsNullOrEmpty(playlist.shortDescription)) {
+				jsonPlaylist += ",\"shortDescription\": \"" + playlist.shortDescription + "\"";
+			}
+						
+			jsonPlaylist += "}";
+
+			return jsonPlaylist;
+		}
+
+		#endregion
+	}
 }

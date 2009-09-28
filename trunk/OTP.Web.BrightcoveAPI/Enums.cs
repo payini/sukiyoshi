@@ -7,9 +7,13 @@ namespace OTP.Web.BrightcoveAPI
 {
 	#region Public Enums
 
+	public enum AccountType { Video, Audio }
+
+	public enum JSONType { Create, Update }
+
 	public enum ActionType { READ, WRITE };
 	
-	public enum BCEncodeType { MP4, FLV };
+	public enum BCEncodeType { MP4, FLV, UNDEFINED };
 
 	public enum BCObjectType { videos, playlists };
 
