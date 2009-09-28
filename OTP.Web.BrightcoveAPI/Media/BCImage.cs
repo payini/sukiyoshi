@@ -24,7 +24,7 @@ namespace OTP.Web.BrightcoveAPI.Media
 		/// A user-specified id that uniquely identifies this Image. ReferenceID can be used as a foreign-key to identify this Image in another system. 
 		/// </summary> 
 		[DataMember]
-		public long referenceId { get; set; }
+		public string referenceId { get; set; }
 
 		[DataMember(Name="type")]
 		private string imageType { get; set; }
@@ -77,6 +77,26 @@ namespace OTP.Web.BrightcoveAPI.Media
 
 		public int CompareTo(BCImage other) {
 			return id.CompareTo(other.id);
+		}
+
+		#endregion
+
+	}
+
+	public static class BCImageExtensions {
+
+		#region Extension Methods
+
+		public static string ToJSON(this BCImage image) {
+			
+			//Build Image in JSON 
+			string jsonImage = "{\"displayName\": \"" + image.displayName + "\"";
+			if(!image.referenceId.Equals("")){
+				jsonImage += ", \"referenceId\": \"" + image.referenceId + "\"";
+			}
+			jsonImage += ", \"type\": " + image.type.ToString() + "}";
+
+			return jsonImage;
 		}
 
 		#endregion

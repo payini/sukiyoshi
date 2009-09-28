@@ -21,6 +21,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRules>
+    </CodeAnalysisRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -55,11 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BCAPI.cs" />
-    <Compile Include="BCAPIConfig.cs" />
     <Compile Include="BCAPIRequest.cs" />
     <Compile Include="BCCollection.cs" />
     <Compile Include="BCErrorException.cs" />
     <Compile Include="BCQueryResult.cs" />
+    <Compile Include="BrightcoveConfig.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Media\BCComparers.cs" />
     <Compile Include="Media\BCCuePoint.cs" />
@@ -72,10 +75,24 @@
     <Compile Include="QueryResultPair.cs" />
     <Compile Include="UI\UpdatePlayer.cs" />
     <Compile Include="UI\RemovePlayer.cs" />
+    <Compile Include="UI\UploadVideo.cs" />
     <Compile Include="UI\VideoPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\Resources\AddRemovePlayer.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="APIDiagram.cd" />
+    <None Include="EnumDiagram.cd" />
+    <None Include="Media\MediaDiagram.cd" />
+    <None Include="UI\UIDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OTP\OTP.csproj">
+      <Project>{7D8C8F22-80EC-4866-86EC-8E88990A6950}</Project>
+      <Name>OTP</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

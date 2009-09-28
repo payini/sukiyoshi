@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 
 namespace OTP.Web.BrightcoveAPI
 {
@@ -12,7 +13,7 @@ namespace OTP.Web.BrightcoveAPI
 
 		public string Query {
 			get {
-				return _query;
+				return HttpUtility.UrlDecode(_query);
 			}
 		}
 		public string JsonResult {

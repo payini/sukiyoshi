@@ -132,7 +132,10 @@ namespace OTP.Web.BrightcoveAPI.Media
 		/// </summary> 
 		public BCVideoEconomics economics {
 			get {
-				if (ecs.Equals(BCVideoEconomics.AD_SUPPORTED.ToString())) {
+				if (ecs == null) {
+					return BCVideoEconomics.AD_SUPPORTED;
+				}
+				else if (ecs.Equals(BCVideoEconomics.AD_SUPPORTED.ToString())) {
 					return BCVideoEconomics.AD_SUPPORTED;
 				}
 				else if (ecs.Equals(BCVideoEconomics.FREE.ToString())) {
@@ -231,6 +234,69 @@ namespace OTP.Web.BrightcoveAPI.Media
 			};
 
 		#endregion
+	}
 
+	public static class BCVideoExtensions {
+		
+		#region Extension Methods
+
+		public static string ToCreateJSON(this BCVideo video) {
+			return ToJSON(video, JSONType.Create);
+		}
+
+		public static string ToJSON(this BCVideo video) {
+			return ToJSON(video, JSONType.Update);
+		}
+		private static string ToJSON(this BCVideo video, JSONType type) {
+
+			//--Build Video in JSON -------------------------------------//
+
+			string jsonVideo = "{";
+
+			if(type.Equals(JSONType.Update)){
+				//id
+				jsonVideo += "\"id\": " + video.id.ToString() + ",";
+			}
+
+			//name
+			if (!string.IsNullOrEmpty(video.name)) {
+				jsonVideo += "\"name\": \"" + video.name + "\"";
+			}
+
+			//shortDescription
+			if (!string.IsNullOrEmpty(video.shortDescription)) {
+				jsonVideo += ",\"shortDescription\": \"" + video.shortDescription + "\"";
+			}
+
+			//Tags should be a list of strings
+			if (video.tags != null && video.tags.Count > 0) {
+				jsonVideo += ",\"tags\": [";
+				string append = "";
+				foreach (string tag in video.tags) {
+					jsonVideo += append + "\"" + tag + "\"";
+					append = ",";
+				}
+				jsonVideo += "]";
+			}
+
+			//referenceId
+			if (video.referenceId != null) {
+				jsonVideo += ",\"referenceId\": \"" + video.referenceId + "\"";
+			}
+
+			//longDescription
+			if (!string.IsNullOrEmpty(video.longDescription)) {
+				jsonVideo += ",\"longDescription\": \"" + video.longDescription + "\"";
+			}
+
+			//economics
+			jsonVideo += ",\"economics\": \"" + video.economics.ToString() + "\"";
+
+			jsonVideo += "}";
+
+			return jsonVideo;
+		}
+
+		#endregion
 	}
 }
