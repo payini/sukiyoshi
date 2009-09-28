@@ -3,6 +3,14 @@
 = Details =
 
 {{{
+public BCAPI bc;
+
+protected void Page_Load(object sender, EventArgs e) {
+
+	BrightcoveConfig config = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
+	bc = new BCAPI(config.Accounts[0].PublisherID);
+
+}
 protected void FindAllVideos() {
         BCQueryResult result = bc.FindAllVideos(BCSortByType.PUBLISH_DATE);
         int i = 0;
