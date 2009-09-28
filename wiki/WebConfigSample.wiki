@@ -1,0 +1,46 @@
+#This is a sample of the web.config setup that will work for this sdk
+
+= Introduction =
+
+To be able to support multiple accounts per website I've added support for a custom config section. A sample of the config setup is below and a sample of how to call the config and make calls are also below.
+
+
+= Details =
+
+*Web.Config*
+
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <configSections>
+    ...
+    <section name="brightcove" type="OTP.Web.BrightcoveAPI.BrightcoveConfig, OTP.Web.BrightcoveAPI"></section>
+  </configSections>
+  ...
+  <brightcove>
+    <accounts>
+      <add name="name of account" type="Video" publisherId="0000000000">
+        <ReadToken value="tokenValue"></ReadToken>
+	<ReadURL value="http://api.brightcove.com/services/library"></ReadURL>
+	<WriteToken value="tokenValue"></WriteToken>
+	<WriteURL value="http://api.brightcove.com/services/post"></WriteURL>
+      </add>
+      <add name="name of account2" type="Video" publisherId="0000000000">
+	<ReadToken value="tokenValue"></ReadToken>
+	<ReadURL value="http://api.brightcove.com/services/library"></ReadURL>
+	<WriteToken value="tokenValue"></WriteToken>
+        <WriteURL value="http://api.brightcove.com/services/post"></WriteURL>
+      </add>
+    </accounts>
+  </brightcove>
+  ...
+</configuration>
+}}}
+
+*Classes To Access Config*
+
+{{{
+BrightcoveConfig config = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
+BCAPI bc = new BCAPI(config.Accounts[0].PublisherID);
+bc.FindAllPlaylists();
+}}}
