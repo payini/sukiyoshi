@@ -131,21 +131,43 @@ namespace OTP.Web.BrightcoveAPI.Media
 
 			//--Build Playlist in JSON -------------------------------------//
 
+			string jsonPlaylist = "";
+			
 			//id
-			string jsonPlaylist = "{\"id\": " + playlist.id.ToString();
+			if(t.Equals(JSONType.Update)){
+				jsonPlaylist += "\"id\": " + playlist.id.ToString();
+			}
 
 			//name
 			if (!string.IsNullOrEmpty(playlist.name)) {
-				jsonPlaylist += ",\"name\": \"" + playlist.name + "\"";
+				if (jsonPlaylist.Length > 0) {
+					jsonPlaylist += ",";
+				}
+				jsonPlaylist += "\"name\": \"" + playlist.name + "\"";
 			}
 
-			if(t.Equals(JSONType.Create)){
-				//playlist type
-				jsonPlaylist += ",\"playlistType\": \"" + playlist.playlistType.ToString() + "\"";
+			//referenceId
+			if (!string.IsNullOrEmpty(playlist.referenceId)) {
+				if (jsonPlaylist.Length > 0) {
+					jsonPlaylist += ",";
+				}
+				jsonPlaylist += "\"referenceId\": \"" + playlist.referenceId + "\"";
+			}
 
+			//playlist type
+			if (jsonPlaylist.Length > 0) {
+				jsonPlaylist += ",";
+			}
+			jsonPlaylist += "\"playlistType\": \"" + playlist.playlistType.ToString() + "\"";
+
+			if(t.Equals(JSONType.Create)){
+								
 				//Video Ids should be a list of strings
 				if (playlist.videoIds != null && playlist.videoIds.Count > 0) {
-					jsonPlaylist += ",\"videoIds\": [";
+					if (jsonPlaylist.Length > 0) {
+						jsonPlaylist += ",";
+					}
+					jsonPlaylist += "\"videoIds\": [";
 					string append = "";
 					foreach (long id in playlist.videoIds) {
 						jsonPlaylist += append + "" + id.ToString() + "";
@@ -157,7 +179,10 @@ namespace OTP.Web.BrightcoveAPI.Media
 
 			//filter tags should be a list of strings
 			if (playlist.filterTags != null && playlist.filterTags.Count > 0) {
-				jsonPlaylist += ",\"filterTags\": [";
+				if (jsonPlaylist.Length > 0) {
+					jsonPlaylist += ",";
+				} 
+				jsonPlaylist += "\"filterTags\": [";
 				string append = "";
 				foreach (string tag in playlist.filterTags) {
 					jsonPlaylist += append + "\"" + tag + "\"";
@@ -165,19 +190,16 @@ namespace OTP.Web.BrightcoveAPI.Media
 				}
 				jsonPlaylist += "]";
 			}
-
-			//referenceId
-			if (playlist.referenceId != null) {
-				jsonPlaylist += ",\"referenceId\": \"" + playlist.referenceId + "\"";
-			}
-
-
+			
 			//shortDescription
 			if (!string.IsNullOrEmpty(playlist.shortDescription)) {
-				jsonPlaylist += ",\"shortDescription\": \"" + playlist.shortDescription + "\"";
+				if (jsonPlaylist.Length > 0) {
+					jsonPlaylist += ",";
+				} 
+				jsonPlaylist += "\"shortDescription\": \"" + playlist.shortDescription + "\"";
 			}
 						
-			jsonPlaylist += "}";
+			jsonPlaylist = "{" + jsonPlaylist + "}";
 
 			return jsonPlaylist;
 		}

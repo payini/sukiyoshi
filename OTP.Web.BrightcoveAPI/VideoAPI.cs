@@ -10,7 +10,7 @@ using System.Configuration;
 
 namespace OTP.Web.BrightcoveAPI
 {
-	public class BCAPI
+	public class VideoAPI
 	{
 		#region Properties
 
@@ -20,7 +20,7 @@ namespace OTP.Web.BrightcoveAPI
 
 		#region Constructors
 
-		public BCAPI(string accountName) {
+		public VideoAPI(string accountName) {
 			BrightcoveConfig bc = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
 			foreach (AccountConfigElement a in bc.Accounts) {
 				if(a.Name.Equals(accountName)){
@@ -29,7 +29,7 @@ namespace OTP.Web.BrightcoveAPI
 			}
 		}
 
-		public BCAPI(long publisherId) {
+		public VideoAPI(long publisherId) {
 			BrightcoveConfig bc = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
 			foreach (AccountConfigElement a in bc.Accounts) {
 				if (a.PublisherID.Equals(publisherId)) {

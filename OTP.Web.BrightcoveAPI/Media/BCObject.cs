@@ -10,7 +10,7 @@ namespace OTP.Web.BrightcoveAPI.Media
 	public class BCObject
 	{
 		public static DateTime DateFromUnix(string value) {
-			long millisecs = long.Parse(value.ToString());
+			double millisecs = double.Parse(value.ToString());
 			double secs = millisecs / 1000;
 			return new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(secs);
 		}

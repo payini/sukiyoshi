@@ -91,7 +91,7 @@ namespace OTP.Web.BrightcoveAPI.Media
 			
 			//Build Image in JSON 
 			string jsonImage = "{\"displayName\": \"" + image.displayName + "\"";
-			if(!image.referenceId.Equals("")){
+			if(!string.IsNullOrEmpty(image.referenceId)){
 				jsonImage += ", \"referenceId\": \"" + image.referenceId + "\"";
 			}
 			jsonImage += ", \"type\": " + image.type.ToString() + "}";
