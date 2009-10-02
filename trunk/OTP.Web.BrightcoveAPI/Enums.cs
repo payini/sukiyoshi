@@ -22,9 +22,7 @@ namespace OTP.Web.BrightcoveAPI
 	public enum BCSortOrderType { ASC, DESC };
 
 	public enum UploadStatusEnum { UPLOADING, PROCESSING, COMPLETE, ERROR, UNDEFINED };
-
-	public enum EconomicsEnum { FREE, AD_SUPPORTED };
-
+		
 	public enum ItemStateEnum { ACTIVE, INACTIVE, DELETED };
 
 	public enum PlaylistTypeEnum { EXPLICIT, OLDEST_TO_NEWEST, NEWEST_TO_OLDEST, ALPHABETICAL, PLAYS_TOTAL, PLAYS_TRAILING_WEEK };
@@ -46,7 +44,7 @@ namespace OTP.Web.BrightcoveAPI
 
 	public enum BCVideoEconomics { FREE, AD_SUPPORTED };
 
-	public enum ImageTypeEnum { VIDEO_STILL, SYNDICATION_STILL, THUMBNAIL, BACKGROUND, LOGO, LOGO_OVERLAY };
+	public enum ImageTypeEnum { THUMBNAIL, VIDEO_STILL, SYNDICATION_STILL, BACKGROUND, LOGO, LOGO_OVERLAY };
 
 	public enum VideoTypeEnum { FLV_PREVIEW, FLV_FULL, FLV_BUMPER, DIGITAL_MASTER };
 

@@ -280,7 +280,7 @@ namespace OTP.Web.BrightcoveAPI.Media
 			}
 
 			//referenceId
-			if (video.referenceId != null) {
+			if (!string.IsNullOrEmpty(video.referenceId)) {
 				jsonVideo += ",\"referenceId\": \"" + video.referenceId + "\"";
 			}
 
@@ -290,7 +290,7 @@ namespace OTP.Web.BrightcoveAPI.Media
 			}
 
 			//economics
-			jsonVideo += ",\"economics\": \"" + video.economics.ToString() + "\"";
+			jsonVideo += ",\"economics\": " + video.economics.ToString();
 
 			jsonVideo += "}";
 
