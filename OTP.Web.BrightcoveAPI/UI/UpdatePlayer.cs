@@ -108,6 +108,71 @@ namespace OTP.Web.BrightcoveAPI.UI
 			}
 		}
 
+		[Bindable(true), Category("Appearance"), DefaultValue(-1), Localizable(true)]
+		public long VideoList {
+			get {
+				return (ViewState["VideoList"] == null) ? -1 : (long)ViewState["VideoList"];
+			}
+			set {
+				ViewState["VideoList"] = value;
+			}
+		}
+
+		private List<PlaylistTab> _PlaylistTabs = new List<PlaylistTab>();
+
+		protected string PlaylistTabString {
+			get {
+				StringBuilder sb = new StringBuilder();
+				foreach (PlaylistTab p in PlaylistTabs) {
+					if (sb.Length > 0) {
+						sb.Append(",");
+					}
+					sb.Append(p.Value.ToString());
+				}
+				return sb.ToString();
+			}
+		}
+
+		/// <summary>
+		/// A collection of Playlist IDs for Tabs
+		/// </summary>
+		[NotifyParentProperty(true)]
+		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		public List<PlaylistTab> PlaylistTabs {
+			get {
+				return _PlaylistTabs;
+			}
+		}
+
+		private List<PlaylistCombo> _PlaylistCombos = new List<PlaylistCombo>();
+
+		protected string PlaylistComboString {
+			get {
+				StringBuilder sb = new StringBuilder();
+				char[] comma = { ',' };
+				foreach (PlaylistCombo p in PlaylistCombos) {
+					if (sb.Length > 0) {
+						sb.Append(",");
+					}
+					sb.Append(p.Value.ToString());
+				}
+				return sb.ToString();
+			}
+		}
+
+		/// <summary>
+		/// A collection of Playlist IDs for the Combo Box
+		/// </summary>
+		[NotifyParentProperty(true)]
+		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		public List<PlaylistCombo> PlaylistCombos {
+			get {
+				return _PlaylistCombos;
+			}
+		}
+
 		#endregion Properties
 		
 		protected override void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer) {
@@ -194,7 +259,7 @@ namespace OTP.Web.BrightcoveAPI.UI
 				}
 
 				//append for ClientID
-				onClickCall.Append("', '" + vp.ClientID + "'");
+				onClickCall.Append("', '" + vp.ClientID + "', '" + PlaylistTabString + "', '" + PlaylistComboString + "', '" + VideoList.ToString() + "'");
 
 				writer.AddAttribute("onclick", "javascript:addPlayer(" + onClickCall.ToString() + ");return false;");
 

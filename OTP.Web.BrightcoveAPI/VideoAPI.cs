@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Web;
-using OTP;
+using OTP.Web.BrightcoveAPI.HTTP;
 using OTP.Web.BrightcoveAPI.Media;
-using OTP.Web.JSON;
+using OTP.Web.BrightcoveAPI.JSON;
 using System.Configuration;
 
 namespace OTP.Web.BrightcoveAPI
@@ -1660,7 +1660,7 @@ namespace OTP.Web.BrightcoveAPI
 		/// RPC Response Object
 		/// </returns>
 		private RPCResponse DeletePlaylist(long playlist_id, string reference_id, bool cascade) {
-
+			
 			// Generate post objects
 			Dictionary<string, object> postParams = new Dictionary<string, object>();
 
@@ -1673,13 +1673,13 @@ namespace OTP.Web.BrightcoveAPI
 			else if (reference_id != null) {
 				rpc.parameters = "\"reference_id\": " + reference_id.ToString();
 			}
-			rpc.parameters += ", \"token\": \"" + Account + "\"";
+			rpc.parameters += ", \"token\": \"" + Account.WriteToken.Value + "\"";
 			rpc.parameters += ", \"cascade\": " + cascade.ToString().ToLower();
 			postParams.Add("json", rpc.ToJSON());
-
+			
 			//Get the JSon reader returned from the APIRequest
 			RPCResponse rpcr = BCAPIRequest.ExecuteWrite(postParams, Account);
-
+			
 			return rpcr;
 		}
 

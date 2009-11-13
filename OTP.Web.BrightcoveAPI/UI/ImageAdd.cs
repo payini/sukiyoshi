@@ -4,6 +4,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using OTP.Web.BrightcoveAPI.Media;
+using System.Web;
 
 namespace OTP.Web.BrightcoveAPI.UI
 {	
@@ -66,19 +67,19 @@ namespace OTP.Web.BrightcoveAPI.UI
 		public ImageTypeEnum Type {
 			get {
 				EnsureChildControls();
-				if (type.Text.Equals(ImageTypeEnum.BACKGROUND)) {
+				if (type.Text.Equals(ImageTypeEnum.BACKGROUND.ToString())) {
 					return ImageTypeEnum.BACKGROUND;
 				}
-				else if (type.Text.Equals(ImageTypeEnum.LOGO)) {
+				else if (type.Text.Equals(ImageTypeEnum.LOGO.ToString())) {
 					return ImageTypeEnum.LOGO;
 				}
-				else if (type.Text.Equals(ImageTypeEnum.LOGO_OVERLAY)) {
+				else if (type.Text.Equals(ImageTypeEnum.LOGO_OVERLAY.ToString())) {
 					return ImageTypeEnum.LOGO_OVERLAY;
 				}
-				else if (type.Text.Equals(ImageTypeEnum.SYNDICATION_STILL)) {
+				else if (type.Text.Equals(ImageTypeEnum.SYNDICATION_STILL.ToString())) {
 					return ImageTypeEnum.SYNDICATION_STILL;
 				}
-				else if (type.Text.Equals(ImageTypeEnum.THUMBNAIL)) {
+				else if (type.Text.Equals(ImageTypeEnum.THUMBNAIL.ToString())) {
 					return ImageTypeEnum.THUMBNAIL;
 				}
 				else {

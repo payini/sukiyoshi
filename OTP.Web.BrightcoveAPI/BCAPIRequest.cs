@@ -9,7 +9,8 @@ using System.Runtime.Serialization.Json;
 using System.Collections.Specialized;
 using System.Web.UI.WebControls;
 using OTP.Web.BrightcoveAPI.Media;
-using OTP.Web.JSON;
+using OTP.Web.BrightcoveAPI.JSON;
+using OTP.Web.BrightcoveAPI.HTTP;
 
 namespace OTP.Web.BrightcoveAPI
 {

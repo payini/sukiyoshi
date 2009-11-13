@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Web;
 
 namespace OTP.Web.BrightcoveAPI.Media
 {	
@@ -95,7 +96,7 @@ namespace OTP.Web.BrightcoveAPI.Media
 				jsonImage += ", \"referenceId\": \"" + image.referenceId + "\"";
 			}
 			jsonImage += ", \"type\": " + image.type.ToString() + "}";
-
+			
 			return jsonImage;
 		}
 

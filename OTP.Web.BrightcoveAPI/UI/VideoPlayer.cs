@@ -6,10 +6,13 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Collections;
 
 namespace OTP.Web.BrightcoveAPI.UI
 {
 	[DefaultProperty("VideoID")]
+	[ParseChildren(true)]
+	[ControlBuilderAttribute(typeof(VideoPlayerControlBuilder))]
 	[ToolboxData("<{0}:VideoPlayer runat=server></{0}:VideoPlayer>")]
 	public class VideoPlayer : WebControl
 	{
@@ -96,7 +99,71 @@ namespace OTP.Web.BrightcoveAPI.UI
 				ViewState["WMode"] = value;
 			}
 		}
-				
+
+		[Bindable(true), Category("Appearance"), DefaultValue(-1), Localizable(true)]
+		public long VideoList {
+			get {
+				return (ViewState["VideoList"] == null) ? -1 : (long)ViewState["VideoList"];
+			}set {
+				ViewState["VideoList"] = value;
+			}
+		}
+
+		private List<PlaylistTab> _PlaylistTabs = new List<PlaylistTab>();
+
+		protected string PlaylistTabString {
+			get {
+				StringBuilder sb = new StringBuilder();
+				foreach (PlaylistTab p in PlaylistTabs) {
+					if (sb.Length > 0) {
+						sb.Append(",");
+					}
+					sb.Append(p.Value.ToString());
+				}
+				return sb.ToString();
+			}
+		}
+
+		/// <summary>
+		/// A collection of Playlist IDs for Tabs
+		/// </summary>
+		[NotifyParentProperty(true)]
+		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		public List<PlaylistTab> PlaylistTabs {
+			get {
+				return _PlaylistTabs;
+			}
+		}
+
+		private List<PlaylistCombo> _PlaylistCombos = new List<PlaylistCombo>();
+	
+		protected string PlaylistComboString {
+			get {
+				StringBuilder sb = new StringBuilder();
+				char[] comma = { ',' };
+				foreach (PlaylistCombo p in PlaylistCombos) {
+					if (sb.Length > 0) {
+						sb.Append(",");
+					}
+					sb.Append(p.Value.ToString());
+				}
+				return sb.ToString();
+			}
+		}
+		
+		/// <summary>
+		/// A collection of Playlist IDs for the Combo Box
+		/// </summary>
+		[NotifyParentProperty(true)]
+		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		public List<PlaylistCombo> PlaylistCombos {
+			get {
+				return _PlaylistCombos;
+			}
+		}
+
 		#endregion Properties
 
 		protected override void OnPreRender(EventArgs e) {
@@ -117,10 +184,10 @@ namespace OTP.Web.BrightcoveAPI.UI
 		/// </summary>
 		/// <param name="writer"></param>
 		public override void RenderBeginTag(HtmlTextWriter writer) {
-			
+
 			//Add writer attributes
-			writer.AddAttribute("id", this.ClientID);
-			
+			writer.AddAttribute("id", "VideoPlayer_" + this.ClientID);
+
 			//Write writer content
 			writer.RenderBeginTag(HtmlTextWriterTag.Div);
 		}
@@ -129,21 +196,75 @@ namespace OTP.Web.BrightcoveAPI.UI
 		/// Creates the JavaScript block and Flash div controls and adds them to the page
 		/// </summary>
 		protected override void CreateChildControls() {
+
 			//Add the flash content panel to the page
 			this.Controls.Clear();
-					
-			if(!VideoID.Equals(-1) && !PlayerID.Equals(-1)){
+
+			Panel vp = new Panel();
+			vp.ID = this.ClientID;
+			this.Controls.Add(vp);
+
+			if (!VideoID.Equals(-1) && !PlayerID.Equals(-1)) {
 
 				//Create the SWFObjectCustoms script block
 				Literal litScript = new Literal();
-				litScript.Text = "<script type=\"text/javascript\"> \n";
-				litScript.Text += "addPlayer(" + VideoID + ", " + PlayerID + ", '" + PlayerName + "', " + AutoStart.ToString().ToLower() + ", '" + BackColor + "', " + Width + ", " + Height + ", " + IsVid.ToString().ToLower() + ", '" + WMode + "', '" + this.ClientID + "'); \n";
+				litScript.Text = "<script type=\"text/javascript\">\n";
+				litScript.Text += "addPlayer(" + VideoID + ", " + PlayerID + ", '" + PlayerName + "', " + AutoStart.ToString().ToLower() + ", '" + BackColor + "', " + Width + ", " + Height + ", " + IsVid.ToString().ToLower() + ", '" + WMode + "', '" + vp.ClientID + "', '" + PlaylistTabString + "', '" + PlaylistComboString + "', '" + VideoList.ToString() + "'); \n";
 				litScript.Text += "</script>";
 
 				//Add the SWFObjectCustoms script block to the page
-				Page.ClientScript.RegisterStartupScript(this.GetType(), "addPlayer_" + this.ID.ToString(), litScript.Text);
+				//Page.ClientScript.RegisterStartupScript(this.GetType(), "addPlayer_" + this.ID.ToString(), litScript.Text);
+				Controls.Add(litScript);
+			}
+		}
+	}
+
+	public class VideoPlayerControlBuilder : ControlBuilder
+	{
+		public override Type GetChildControlType(String tagName, IDictionary attributes) {
+
+			if (String.Compare(tagName, "PlaylistTab", true) == 0) {
+				return typeof(PlaylistTab);
+			}
+			else if (String.Compare(tagName, "PlaylistCombo", true) == 0) {
+				return typeof(PlaylistCombo);
+			}
+
+			return null;
+		}
+	}
+	
+	public class PlaylistTab
+	{
+		private long _value;
+		public long Value {
+			get {
+				return _value;
+			}
+			set {
+				_value = value;
 			}
 		}
 
+		public PlaylistTab(long Val) {
+			_value = Val;
+		}
+	}
+
+	public class PlaylistCombo
+	{
+		private long _value;
+		public long Value {
+			get {
+				return _value;
+			}
+			set {
+				_value = value;
+			}
+		}
+
+		public PlaylistCombo(long Val) {
+			_value = Val;
+		}
 	}
 }
