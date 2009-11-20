@@ -17,18 +17,15 @@ namespace OTP.Web.BrightcoveAPI
 	public class BCAPIRequest
 	{
 		public static QueryResultPair ExecuteRead(Dictionary<String, String> reqParams, AccountConfigElement a) {
-								
+						
 			String reqUrl = BuildReadQuery(reqParams, a);
 
 			HttpWebRequest webRequest = WebRequest.Create(reqUrl) as HttpWebRequest;
 			HttpWebResponse response = webRequest.GetResponse() as HttpWebResponse;
 			TextReader textreader = new StreamReader(response.GetResponseStream());
 
-			//otp added this to handle the embedded anchors that were not json compliant1
-			//remove \" and replace with '
 			string jsonStr = textreader.ReadToEnd();
-			//jsonStr = jsonStr.Replace("\\\"", "'");
-
+			
 			QueryResultPair qrp = new QueryResultPair(reqUrl, jsonStr);
 
 			return qrp;
