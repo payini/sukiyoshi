@@ -43,7 +43,7 @@ namespace OTP.Web.BrightcoveAPI
 		#region Main Helper Methods
 
 		private static BCQueryResult MultipleQueryHandler(Dictionary<String, String> reqparams, BCObjectType itemType, AccountConfigElement account) {
-
+			
 			//Get the JSon reader returned from the APIRequest
 			BCQueryResult qr = new BCQueryResult();
 			qr.TotalCount = 0;
@@ -70,42 +70,32 @@ namespace OTP.Web.BrightcoveAPI
 				}
 
 				//get initial query
-				int pageNum = 0;
-				bool stillMore = true;
+				double maxPageNum = 0;
+
+				QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, account);
+				//convert the result for deserialization
+				qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
+				qr.QueryResults.Add(qrp);
+				qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
+
+				if (isCreationSort) {
+					maxPageNum = Math.Ceiling((double)(qr.TotalCount / 100));
+				}
+				else if(qr.TotalCount > 0) {
+					maxPageNum = Math.Ceiling((double)(qr.MaxToGet / 100));
+				}
 
 				//if there are more to get move to next page and keep getting them
-				while (stillMore) {
+				for (int pageNum = 1; pageNum < maxPageNum; pageNum++ ) {
 
 					//update page each iteration
 					reqparams["page_number"] = pageNum.ToString();
-					QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, account);
+					
+					QueryResultPair qrp2 = BCAPIRequest.ExecuteRead(reqparams, account);
 					//convert the result for deserialization
-					string jsonStr = qrp.JsonResult;
-					jsonStr = jsonStr.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
-					QueryResultPair qrp2 = new QueryResultPair(qrp.Query, jsonStr);
-					//merge results with other
-					//HttpContext.Current.Response.Write(qrp2.JsonResult);
-					BCQueryResult qr2 = JSON.Converter.Deserialize<BCQueryResult>(qrp2.JsonResult);
+					qrp2.JsonResult = qrp2.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 					qr.QueryResults.Add(qrp2);
-					qr.Merge(qr2);
-
-					//check to see if there are any more to get
-					if (itemType.Equals(BCObjectType.videos)) {
-						if (!isCreationSort) {
-							stillMore = (qr.Videos.Count < qr.MaxToGet && qr.Videos.Count < qr.TotalCount) ? true : false;
-						}
-						else {
-							stillMore = (qr.Videos.Count < qr.TotalCount) ? true : false;
-						}
-					}
-					else if (itemType.Equals(BCObjectType.playlists)) {
-						stillMore = (qr.Playlists.Count < qr.TotalCount) ? true : false;
-					}
-					else if (qr.Videos.Count >= qr.MaxToGet) {
-						stillMore = false;
-					}
-
-					pageNum++;
+					qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp2.JsonResult));				
 				}
 
 				//sorting on our end

@@ -15,10 +15,16 @@ namespace OTP.Web.BrightcoveAPI
 			get {
 				return HttpUtility.UrlDecode(_query);
 			}
+			set {
+				_query = value;
+			}
 		}
 		public string JsonResult {
 			get {
 				return _json;
+			}
+			set {
+				_json = value;
 			}
 		}
 		public QueryResultPair(string Query, string JsonResult) {
