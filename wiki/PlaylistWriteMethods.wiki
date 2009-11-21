@@ -3,11 +3,11 @@
 = Details =
 
 {{{
-public BCAPI bc;
+public VideoAPI bc;
 
 protected void Page_Load(object sender, EventArgs e) {
 	BrightcoveConfig config = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
-	bc = new BCAPI(config.Accounts[0].PublisherID);
+	bc = new VideoAPI(config.Accounts[0].PublisherID);
 }
 
 protected void CreatePlaylist(){
