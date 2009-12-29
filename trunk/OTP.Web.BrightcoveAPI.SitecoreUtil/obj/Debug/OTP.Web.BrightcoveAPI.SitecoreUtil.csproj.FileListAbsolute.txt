@@ -1,7 +1,0 @@
-D:\wwwroot\testsite\OTP.Web.BrightcoveAPI.SitecoreUtil\obj\Debug\ResolveAssemblyReference.cache
-D:\wwwroot\testsite\OTP.Web.BrightcoveAPI.SitecoreUtil\bin\Debug\OTP.Web.BrightcoveAPI.SitecoreUtil.dll
-D:\wwwroot\testsite\OTP.Web.BrightcoveAPI.SitecoreUtil\bin\Debug\OTP.Web.BrightcoveAPI.SitecoreUtil.pdb
-D:\wwwroot\testsite\OTP.Web.BrightcoveAPI.SitecoreUtil\bin\Debug\OTP.Web.BrightcoveAPI.dll
-D:\wwwroot\testsite\OTP.Web.BrightcoveAPI.SitecoreUtil\bin\Debug\OTP.Web.BrightcoveAPI.pdb
-D:\wwwroot\testsite\OTP.Web.BrightcoveAPI.SitecoreUtil\obj\Debug\OTP.Web.BrightcoveAPI.SitecoreUtil.dll
-D:\wwwroot\testsite\OTP.Web.BrightcoveAPI.SitecoreUtil\obj\Debug\OTP.Web.BrightcoveAPI.SitecoreUtil.pdb
