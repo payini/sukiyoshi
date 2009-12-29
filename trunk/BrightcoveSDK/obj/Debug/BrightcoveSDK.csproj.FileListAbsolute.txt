@@ -1,0 +1,5 @@
+G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
+G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\bin\Debug\BrightcoveSDK.dll
+G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\bin\Debug\BrightcoveSDK.pdb
+G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
+G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
