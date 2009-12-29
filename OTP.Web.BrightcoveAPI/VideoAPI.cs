@@ -53,13 +53,6 @@ namespace OTP.Web.BrightcoveAPI
 				//set some global request paramameters
 				reqparams.Add("page_number", "0");
 
-				// workaround for search by creation date
-				bool isCreationSort = false;
-				if (reqparams.ContainsKey("sort_by") && itemType.Equals(BCObjectType.videos) && reqparams["sort_by"].Equals("CREATION_DATE")) {
-					isCreationSort = true;
-					reqparams["sort_by"] = "MODIFIED_DATE";
-				}
-
 				//set if not set or 
 				if (!reqparams.ContainsKey("page_size")) {
 					qr.MaxToGet = -1;
@@ -76,12 +69,9 @@ namespace OTP.Web.BrightcoveAPI
 				//convert the result for deserialization
 				qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 				qr.QueryResults.Add(qrp);
-				qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
+                qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
 
-				if (isCreationSort) {
-					maxPageNum = Math.Ceiling((double)(qr.TotalCount / 100));
-				}
-				else if(qr.TotalCount > 0) {
+				if(qr.TotalCount > 0) {
 					maxPageNum = Math.Ceiling((double)(qr.MaxToGet / 100));
 				}
 
@@ -113,11 +103,11 @@ namespace OTP.Web.BrightcoveAPI
 					else if (reqparams["sort_by"].Equals("PLAYS_TRAILING_WEEK")) {
 						qr.Videos.Sort(BCVideo.PlaysTrailingComparison);
 					}
-					//CREATION_DATE, 
-					//MODIFIED_DATE,
-					//because brightcove methods break on sort by creation date 
-					//we've turned anything using creation date to using modified date and assume it means creation date
-					//this is temporary until that is fixed
+                    //MODIFIED_DATE,
+                    else if (reqparams["sort_by"].Equals("MODIFIED_DATE")) {
+						qr.Videos.Sort(BCVideo.ModifiedDateComparison);
+					}
+                    //CREATION_DATE, 
 					else {
 						qr.Videos.Sort(BCVideo.CreationDateComparison);
 					}
@@ -740,6 +730,80 @@ namespace OTP.Web.BrightcoveAPI
 		}
 
 		#endregion Find Video By Reference ID
+
+        #region Find Modified Videos
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date) {
+            return FindModifiedVideos(from_date, -1, BCSortOrderType.ASC);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, BCSortOrderType sortOrder) {
+            return FindModifiedVideos(from_date, -1, BCSortByType.CREATION_DATE, sortOrder);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, BCSortByType sortBy) {
+            return FindModifiedVideos(from_date, -1, sortBy, BCSortOrderType.ASC);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany) {
+            return FindModifiedVideos(from_date, howMany, BCSortOrderType.ASC);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortOrderType sortOrder) {
+            return FindModifiedVideos(from_date, howMany, BCSortByType.CREATION_DATE, sortOrder);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy) {
+            return FindModifiedVideos(from_date, howMany, sortBy, BCSortOrderType.ASC);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+            return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, null);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<string> video_fields) {
+            return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, video_fields, null);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<string> video_fields, List<string> custom_fields) {
+            return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, null);
+        }
+
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<string> video_fields, List<string> custom_fields, List<string> filter) {
+            return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, filter, MediaDeliveryTypeEnum.DEFAULT);
+        }
+
+        /// <summary>
+        /// This will find all modified videos
+        /// </summary>
+        /// <param name="from_date">The date, specified in minutes since January 1st, 1970 00:00:00 GMT, of the oldest Video which you would like returned.</param>
+        /// <param name="howMany">Number of items returned per page. A page is a subset of all of the items that satisfy the request. The maximum page size is 25; if you do not set this argument, or if you set it to an integer > 25, your results will come back as if you had set page_size=25.</param>
+        /// <param name="sortBy">The field by which to sort the results. A SortByType: One of PUBLISH_DATE, CREATION_DATE, MODIFIED_DATE, PLAYS_TOTAL, PLAYS_TRAILING_WEEK.</param>
+        /// <param name="sortOrder">How to order the results: ascending (ASC) or descending (DESC).</param>
+        /// <param name="video_fields">A comma-separated list of the fields you wish to have populated in the videos contained in the returned object. If you omit this parameter, the method returns the following fields of the video: id, name, shortDescription, longDescription, creationDate, publisheddate, lastModifiedDate, linkURL, linkText, tags, videoStillURL, thumbnailURL, referenceId, length, economics, playsTotal, playsTrailingWeek. If you use a token with URL access, this method also returns FLVURL, renditions, FLVFullLength, videoFullLength.</param>
+        /// <param name="custom_fields">A comma-separated list of the custom fields you wish to have populated in the videos contained in the returned object. If you omit this parameter, no custom fields are returned, unless you include the value 'customFields' in the video_fields parameter.</param>
+        /// <param name="filter">A comma-separated list of filters, specifying which categories of videos you would like returned. Valid filter values are PLAYABLE, UNSCHEDULED, INACTIVE, and DELETED.</param>
+        /// <param name="media_delivery">If universal delivery service is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. Meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. This is a MediaDeliveryTypeEnum with a value of http or default.</param>
+        /// <returns>Returns a BCQueryResult Item</returns>
+        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<string> video_fields, List<string> custom_fields, List<string> filter, MediaDeliveryTypeEnum media_delivery) {
+           
+            Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+            //Build the REST parameter list
+            reqparams.Add("command", "find_modified_videos");
+            if (from_date != null) reqparams.Add("from_date", from_date.ToUnixTime());
+            if (video_fields != null) reqparams.Add("video_fields", Implode(video_fields));
+            if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+            if (filter != null) reqparams.Add("filter", Implode(filter));
+            reqparams.Add("sort_order", sortOrder.ToString());
+            reqparams.Add("sort_by", sortBy.ToString());
+            reqparams.Add("media_delivery", media_delivery.ToString());
+            if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+
+            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+        }
+
+        #endregion Find Modified Videos
 
 		#endregion Video Read
 
