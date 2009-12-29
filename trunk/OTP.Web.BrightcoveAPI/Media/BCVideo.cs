@@ -94,11 +94,41 @@ namespace OTP.Web.BrightcoveAPI.Media
 		[DataMember]
 		public string linkText { get; set; }
 
+        private BCCollection<string> _tags;
+
 		/// <summary>
 		/// A list of Strings representing the tags assigned to this Video.
 		/// </summary> 
-		[DataMember]
-		public BCCollection<string> tags;
+        [DataMember]
+        public BCCollection<string> tags {
+            get {
+                if (_tags == null) {
+                    _tags = new BCCollection<string>();
+                }
+                return _tags;
+            }
+            set {
+                _tags = value;
+            }
+        }
+
+        private BCCollection<BCCuePoint> _cuePoints;
+
+        /// <summary>
+        /// A list of cuePoints representing the cue points assigned to this Video.
+        /// </summary> 
+        [DataMember]
+        public BCCollection<BCCuePoint> cuePoints {
+            get {
+                if(_cuePoints == null){
+                    _cuePoints = new BCCollection<BCCuePoint>();
+                }
+                return _cuePoints;
+            }
+            set {
+                _cuePoints = value;
+            }
+        }
 
 		/// <summary>
 		/// The URL to the video still image associated with this Video. Video stills are 480x360 pixels.
@@ -172,6 +202,16 @@ namespace OTP.Web.BrightcoveAPI.Media
 		[DataMember(Name = "playsTrailingWeek")]
 		private string playsWeek { get; set; }
 
+        public static List<string> VideoFields {
+            get {
+                List<string> fields = new List<string>();
+                foreach (string s in Enum.GetNames(typeof(OTP.Web.BrightcoveAPI.VideoFields))) {
+                    fields.Add(s);
+                }
+                return fields;
+            }
+        }
+
 		/// <summary>
 		/// How many times this Video has been played within the past seven days, exclusive of today.
 		/// </summary> 
@@ -188,8 +228,116 @@ namespace OTP.Web.BrightcoveAPI.Media
 			}
 		}
 
+        [DataMember(Name = "itemState")]
+        private string _itemState {get; set;}
+
+        public ItemStateEnum itemState {
+            get {
+				if (_itemState == null) {
+					return ItemStateEnum.ACTIVE;
+				}
+				else if (_itemState.Equals(ItemStateEnum.ACTIVE.ToString())) {
+					return ItemStateEnum.ACTIVE;
+				}
+				else if (_itemState.Equals(ItemStateEnum.DELETED.ToString())) {
+					return ItemStateEnum.DELETED;
+				}
+                else if (_itemState.Equals(ItemStateEnum.INACTIVE.ToString())) {
+					return ItemStateEnum.INACTIVE;
+				}
+				else {
+					return ItemStateEnum.ACTIVE;
+				}
+			}
+			set {
+				ecs = value.ToString();
+			}
+        }
+
+        [DataMember(Name = "version")]
+        private string _version {get; set;}
+
+        public long version {
+    	    get {
+				if (!String.IsNullOrEmpty(_version)) {
+					return long.Parse(_version);
+				} else {
+					return 0;
+				}
+			}
+			set {
+				_version = value.ToString();
+			}
+        }
+
+        [DataMember]
+        public string submissionInfo {get; set;}
+
+    	[DataMember]
+        public string customFields {get; set;}
+
+        [DataMember]
+        public string releaseDate {get; set;}
+    	
+        [DataMember]
+        public string geoFiltered {get; set;}
+    	
+        [DataMember]
+        public string geoRestricted {get; set;}
+    	
+        [DataMember]
+        public string geoFilterExclude {get; set;}
+    	
+        [DataMember]
+        public string excludeListedCountries {get; set;}
+    	
+        private BCCollection<string> _geoFilteredCountries;
+
+        [DataMember]
+        public BCCollection<string> geoFilteredCountries {
+            get {
+                if (_geoFilteredCountries == null) {
+                    _geoFilteredCountries = new BCCollection<string>();
+                }
+                return _geoFilteredCountries;
+            }
+            set {
+                _geoFilteredCountries = value;
+            }
+        }
+
+        private BCCollection<string> _allowedCountries;
+
+        [DataMember]
+        public BCCollection<string> allowedCountries {
+            get {
+                if (_allowedCountries == null) {
+                    _allowedCountries = new BCCollection<string>();
+                }
+                return _allowedCountries;
+            }
+            set {
+                _allowedCountries = value;
+            }
+        }
+        
+        [DataMember(Name = "accountId")]
+        private string _accountId {get; set;}
+
+        public long accountId {
+    	    get {
+				if (!String.IsNullOrEmpty(_accountId)) {
+					return long.Parse(_accountId);
+				} else {
+					return 0;
+				}
+			}
+			set {
+				_accountId = value.ToString();
+			}
+        }
+
 		public BCVideo() {
-			tags = new BCCollection<string>();
 		}
 
 		#region IComparable Comparators
@@ -247,54 +395,60 @@ namespace OTP.Web.BrightcoveAPI.Media
 		public static string ToJSON(this BCVideo video) {
 			return ToJSON(video, JSONType.Update);
 		}
-		private static string ToJSON(this BCVideo video, JSONType type) {
+		
+        private static string ToJSON(this BCVideo video, JSONType type) {
 
 			//--Build Video in JSON -------------------------------------//
 
-			string jsonVideo = "{";
+            StringBuilder jsonVideo = new StringBuilder();
+            jsonVideo.Append("{");
 
 			if(type.Equals(JSONType.Update)){
 				//id
-				jsonVideo += "\"id\": " + video.id.ToString() + ",";
+				jsonVideo.Append("\"id\": " + video.id.ToString() + ",");
 			}
 
 			//name
 			if (!string.IsNullOrEmpty(video.name)) {
-				jsonVideo += "\"name\": \"" + video.name + "\"";
+				jsonVideo.Append("\"name\": \"" + video.name + "\"");
 			}
 
 			//shortDescription
 			if (!string.IsNullOrEmpty(video.shortDescription)) {
-				jsonVideo += ",\"shortDescription\": \"" + video.shortDescription + "\"";
+				jsonVideo.Append(",\"shortDescription\": \"" + video.shortDescription + "\"");
 			}
 
 			//Tags should be a list of strings
-			if (video.tags != null && video.tags.Count > 0) {
-				jsonVideo += ",\"tags\": [";
+			if (video.tags.Count > 0) {
+				jsonVideo.Append(",\"tags\": [");
 				string append = "";
 				foreach (string tag in video.tags) {
-					jsonVideo += append + "\"" + tag + "\"";
+					jsonVideo.Append(append + "\"" + tag + "\"");
 					append = ",";
 				}
-				jsonVideo += "]";
+				jsonVideo.Append("]");
 			}
 
 			//referenceId
 			if (!string.IsNullOrEmpty(video.referenceId)) {
-				jsonVideo += ",\"referenceId\": \"" + video.referenceId + "\"";
+				jsonVideo.Append(",\"referenceId\": \"" + video.referenceId + "\"");
 			}
 
 			//longDescription
 			if (!string.IsNullOrEmpty(video.longDescription)) {
-				jsonVideo += ",\"longDescription\": \"" + video.longDescription + "\"";
+				jsonVideo.Append(",\"longDescription\": \"" + video.longDescription + "\"");
 			}
 
+            if (video.cuePoints.Count > 0) {
+                jsonVideo.Append(",\"cuePoints\": " + video.cuePoints.ToJSON());
+            }
+
 			//economics
-			jsonVideo += ",\"economics\": " + video.economics.ToString();
+			jsonVideo.Append(",\"economics\": " + video.economics.ToString());
 
-			jsonVideo += "}";
+			jsonVideo.Append("}");
 
-			return jsonVideo;
+			return jsonVideo.ToString();
 		}
 
 		#endregion

@@ -131,77 +131,75 @@ namespace OTP.Web.BrightcoveAPI.Media
 
 			//--Build Playlist in JSON -------------------------------------//
 
-			string jsonPlaylist = "";
+			StringBuilder jsonPlaylist = new StringBuilder();
 			
 			//id
 			if(t.Equals(JSONType.Update)){
-				jsonPlaylist += "\"id\": " + playlist.id.ToString();
+				jsonPlaylist.Append("\"id\": " + playlist.id.ToString());
 			}
 
 			//name
 			if (!string.IsNullOrEmpty(playlist.name)) {
 				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist += ",";
+					jsonPlaylist.Append(",");
 				}
-				jsonPlaylist += "\"name\": \"" + playlist.name + "\"";
+				jsonPlaylist.Append("\"name\": \"" + playlist.name + "\"");
 			}
 
 			//referenceId
 			if (!string.IsNullOrEmpty(playlist.referenceId)) {
 				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist += ",";
+					jsonPlaylist.Append(",");
 				}
-				jsonPlaylist += "\"referenceId\": \"" + playlist.referenceId + "\"";
+				jsonPlaylist.Append("\"referenceId\": \"" + playlist.referenceId + "\"");
 			}
 
 			//playlist type
 			if (jsonPlaylist.Length > 0) {
-				jsonPlaylist += ",";
+				jsonPlaylist.Append(",");
 			}
-			jsonPlaylist += "\"playlistType\": \"" + playlist.playlistType.ToString() + "\"";
+			jsonPlaylist.Append("\"playlistType\": \"" + playlist.playlistType.ToString() + "\"");
 
 			if(t.Equals(JSONType.Create)){
 								
 				//Video Ids should be a list of strings
 				if (playlist.videoIds != null && playlist.videoIds.Count > 0) {
 					if (jsonPlaylist.Length > 0) {
-						jsonPlaylist += ",";
+						jsonPlaylist.Append(",");
 					}
-					jsonPlaylist += "\"videoIds\": [";
+					jsonPlaylist.Append("\"videoIds\": [");
 					string append = "";
 					foreach (long id in playlist.videoIds) {
-						jsonPlaylist += append + "" + id.ToString() + "";
+						jsonPlaylist.Append(append + "" + id.ToString() + "");
 						append = ",";
 					}
-					jsonPlaylist += "]";
+					jsonPlaylist.Append("]");
 				}
 			}
 
 			//filter tags should be a list of strings
 			if (playlist.filterTags != null && playlist.filterTags.Count > 0) {
 				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist += ",";
+					jsonPlaylist.Append(",");
 				} 
-				jsonPlaylist += "\"filterTags\": [";
+				jsonPlaylist.Append("\"filterTags\": [");
 				string append = "";
 				foreach (string tag in playlist.filterTags) {
-					jsonPlaylist += append + "\"" + tag + "\"";
+					jsonPlaylist.Append(append + "\"" + tag + "\"");
 					append = ",";
 				}
-				jsonPlaylist += "]";
+				jsonPlaylist.Append("]");
 			}
 			
 			//shortDescription
 			if (!string.IsNullOrEmpty(playlist.shortDescription)) {
 				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist += ",";
+					jsonPlaylist.Append(",");
 				} 
-				jsonPlaylist += "\"shortDescription\": \"" + playlist.shortDescription + "\"";
+				jsonPlaylist.Append("\"shortDescription\": \"" + playlist.shortDescription + "\"");
 			}
 						
-			jsonPlaylist = "{" + jsonPlaylist + "}";
-
-			return jsonPlaylist;
+			return "{" + jsonPlaylist.ToString() + "}";
 		}
 
 		#endregion

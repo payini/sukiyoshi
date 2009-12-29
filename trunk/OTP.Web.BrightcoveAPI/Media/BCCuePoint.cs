@@ -14,17 +14,18 @@ namespace OTP.Web.BrightcoveAPI.Media
 	[DataContract]
 	public class BCCuePoint : BCObject, IComparable<BCCuePoint>
 	{
+        
+        //[DataMember(Name = "id")]
+
+        //[DataMember(Name = "videoId"]
+
+        //[DataMember(Name = "typeEnum"]
+
 		/// <summary>
 		/// Required. A name for the cue point, so that you can refer to it.
 		/// </summary> 
 		[DataMember]
 		public string name { get; set; }
-
-		/// <summary>
-		/// A comma-separated list of the ids of one or more videos that this cue point applies to.
-		/// </summary> 
-		[DataMember]
-		public long videoId { get; set; }
 
 		/// <summary>
 		/// Required. The time of the cue point, measured in milliseconds from the beginning of the video.
@@ -38,7 +39,6 @@ namespace OTP.Web.BrightcoveAPI.Media
 		/// <summary>
 		/// If true, the video stops playback at the cue point. This setting is valid only for AD type cue points.
 		/// </summary> 
-		[DataMember]
 		public bool forceStop { 
 			get {
 				try {
@@ -62,7 +62,6 @@ namespace OTP.Web.BrightcoveAPI.Media
 		/// point indicates a chapter or scene break in the video. A CODE cue point causes an event 
 		/// that you can listen for and respond to.
 		/// </summary> 
-		[DataMember]
 		public CuePointType type {
 			get {
 				if (cueType.Equals((int)CuePointType.AD)) {
@@ -87,7 +86,7 @@ namespace OTP.Web.BrightcoveAPI.Media
 		/// A string that can be passed along with a CODE cue point.
 		/// </summary> 
 		[DataMember]
-		public long metadata { get; set; }
+		public string metadata { get; set; }
 
 		#region IComparable Comparators
 
@@ -97,4 +96,58 @@ namespace OTP.Web.BrightcoveAPI.Media
 
 		#endregion
 	}
+
+    public static class BCCuePointExtensions {
+
+        #region Extension Methods
+
+        public static string ToJSON(this List<BCCuePoint> cuePoints) {
+            
+            StringBuilder jsonCP = new StringBuilder();
+            
+            foreach(BCCuePoint cp in cuePoints){
+                if (jsonCP.Length > 0) {
+                    jsonCP.Append(",");
+                }
+                jsonCP.Append(cp.ToJSON());
+            }
+
+            return "[" + jsonCP.ToString() + "]";
+        }
+
+        public static string ToJSON(this BCCuePoint cuePoint) {
+
+            StringBuilder jsonCP = new StringBuilder();
+            jsonCP.Append("{");
+
+            if (!string.IsNullOrEmpty(cuePoint.name)) {
+                //name
+                jsonCP.Append("\"name\": \"" + cuePoint.name + "\",");
+            }
+
+            //time
+            if (!string.IsNullOrEmpty(cuePoint.time.ToString())) {
+                jsonCP.Append("\"time\": " + cuePoint.time);
+            }
+
+            //forceStop
+            jsonCP.Append(",\"forceStop\": \"" + cuePoint.forceStop.ToString().ToLower() + "\"");
+            
+            //type
+            if (!string.IsNullOrEmpty(cuePoint.type.ToString())) {
+                jsonCP.Append(",\"type\": " + (int)Enum.Parse(typeof(CuePointType), cuePoint.type.ToString()));
+            }
+
+            //metadata
+            if (!string.IsNullOrEmpty(cuePoint.metadata)) {
+                jsonCP.Append(",\"metadata\": \"" + cuePoint.metadata + "\"");
+            }
+
+            jsonCP.Append("}");
+
+            return jsonCP.ToString();
+        }
+
+        #endregion
+    }
 }

@@ -15,13 +15,20 @@ namespace OTP.Web.BrightcoveAPI.Media
 			return new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(secs);
 		}
 
-		public static string DateToUnix(DateTime value) {
-			//create Timespan by subtracting the value provided from
-			//the Unix Epoch
-			TimeSpan span = (value - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime());
+        public static string DateToUnix(DateTime value) {
+            //create Timespan by subtracting the value provided from
+            //the Unix Epoch
+            TimeSpan span = (value - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime());
 
-			//return the total seconds (which is a UNIX timestamp)
-			return span.TotalSeconds.ToString();
-		}
+            //return the total seconds (which is a UNIX timestamp)
+            return span.TotalSeconds.ToString();
+        }
 	}
+
+    public static class BCObjectExtensions {
+        
+        public static string ToUnixTime(this DateTime value) {
+            return BCObject.DateToUnix(value);
+        }
+    }
 }
