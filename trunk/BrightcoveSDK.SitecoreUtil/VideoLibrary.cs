@@ -6,9 +6,9 @@ using Sitecore.Data.Items;
 using Sitecore.Data;
 using System.Web;
 using Sitecore.Data.Fields;
-using BrightcoveAPI.SitecoreUtil.Extensions;
+using BrightcoveSDK.SitecoreUtil.Extensions;
 
-namespace BrightcoveAPI.SitecoreUtil
+namespace BrightcoveSDK.SitecoreUtil
 {
 	public class VideoLibrary
 	{
