@@ -8,7 +8,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
 
-namespace BrightcoveAPI.UI
+namespace BrightcoveSDK.UI
 {
 	[DefaultProperty("VideoID")]
 	[ParseChildren(true)]
@@ -175,7 +175,7 @@ namespace BrightcoveAPI.UI
 			Page.ClientScript.RegisterClientScriptInclude("BCAPIModules", "http://admin.brightcove.com/js/APIModules_all.js");
 						
 			//Add the Add/Remove player js from the page
-			Page.ClientScript.RegisterClientScriptInclude("AddRemovePlayer", Page.ClientScript.GetWebResourceUrl(this.GetType(), "BrightcoveAPI.UI.Resources.AddRemovePlayer.js"));
+			Page.ClientScript.RegisterClientScriptInclude("AddRemovePlayer", Page.ClientScript.GetWebResourceUrl(this.GetType(), "BrightcoveSDK.UI.Resources.AddRemovePlayer.js"));
 			base.OnPreRender(e);
         }
 

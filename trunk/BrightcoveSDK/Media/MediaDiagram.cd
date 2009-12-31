@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="BrightcoveAPI.Media.BCVideo">
+  <Class Name="BrightcoveSDK.Media.BCVideo">
     <Position X="7.25" Y="1.75" Width="1.5" />
-    <InheritanceLine Type="BrightcoveAPI.Media.BCObject" FixedFromPoint="true">
+    <InheritanceLine Type="BrightcoveSDK.Media.BCObject" FixedFromPoint="true">
       <Path>
         <Point X="2" Y="1.375" />
         <Point X="8" Y="1.375" />
@@ -15,9 +15,9 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BrightcoveAPI.Media.BCRendition">
+  <Class Name="BrightcoveSDK.Media.BCRendition">
     <Position X="11.25" Y="1.75" Width="1.5" />
-    <InheritanceLine Type="BrightcoveAPI.Media.BCObject" FixedFromPoint="true">
+    <InheritanceLine Type="BrightcoveSDK.Media.BCObject" FixedFromPoint="true">
       <Path>
         <Point X="2" Y="1.375" />
         <Point X="12" Y="1.375" />
@@ -30,9 +30,9 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BrightcoveAPI.Media.BCPlaylist">
+  <Class Name="BrightcoveSDK.Media.BCPlaylist">
     <Position X="3.25" Y="1.75" Width="1.5" />
-    <InheritanceLine Type="BrightcoveAPI.Media.BCObject" FixedFromPoint="true">
+    <InheritanceLine Type="BrightcoveSDK.Media.BCObject" FixedFromPoint="true">
       <Path>
         <Point X="2" Y="1.375" />
         <Point X="4" Y="1.375" />
@@ -45,16 +45,16 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BrightcoveAPI.Media.BCObject">
+  <Class Name="BrightcoveSDK.Media.BCObject">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Media\BCObject.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.Media.BCImage">
+  <Class Name="BrightcoveSDK.Media.BCImage">
     <Position X="5.25" Y="1.75" Width="1.5" />
-    <InheritanceLine Type="BrightcoveAPI.Media.BCObject" FixedFromPoint="true">
+    <InheritanceLine Type="BrightcoveSDK.Media.BCObject" FixedFromPoint="true">
       <Path>
         <Point X="2" Y="1.375" />
         <Point X="6" Y="1.375" />
@@ -67,9 +67,9 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BrightcoveAPI.Media.BCCuePoint">
+  <Class Name="BrightcoveSDK.Media.BCCuePoint">
     <Position X="9.25" Y="1.75" Width="1.5" />
-    <InheritanceLine Type="BrightcoveAPI.Media.BCObject" FixedFromPoint="true">
+    <InheritanceLine Type="BrightcoveSDK.Media.BCObject" FixedFromPoint="true">
       <Path>
         <Point X="2" Y="1.375" />
         <Point X="10" Y="1.375" />
@@ -82,7 +82,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="BrightcoveAPI.BCVideoComparer">
+  <Class Name="BrightcoveSDK.BCVideoComparer">
     <Position X="0.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>

@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace BrightcoveAPI.UI
+namespace BrightcoveSDK.UI
 {
 	[DefaultProperty("Text")]
 	[ToolboxData("<{0}:UpdatePlayer runat=server></{0}:UpdatePlayer>")]
@@ -182,7 +182,7 @@ namespace BrightcoveAPI.UI
 			StringBuilder onClickCall = new StringBuilder();
 
 			//make sure it's the right object
-			if (c != null && c.GetType().ToString().Equals("BrightcoveAPI.UI.VideoPlayer")) {
+			if (c != null && c.GetType().ToString().Equals("BrightcoveSDK.UI.VideoPlayer")) {
 				VideoPlayer vp = (VideoPlayer)c;
 			
 				//check video id
@@ -272,7 +272,7 @@ namespace BrightcoveAPI.UI
 				if(c == null){
 					error.Append("\n The ControlToManage was null.");
 				}
-				else if (!c.GetType().ToString().Equals("BrightcoveAPI.UI.VideoPlayer")) {
+				else if (!c.GetType().ToString().Equals("BrightcoveSDK.UI.VideoPlayer")) {
 					error.Append("\n The ControlToManage type was " + c.GetType().ToString() + ".");
 				}
 				throw new ArgumentException(error.ToString());

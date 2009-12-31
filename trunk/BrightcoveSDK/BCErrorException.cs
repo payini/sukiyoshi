@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 
 
-namespace BrightcoveAPI
+namespace BrightcoveSDK
 {
 	[Serializable]
 	public class BCErrorException : Exception

@@ -3,10 +3,10 @@ using System.ComponentModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using BrightcoveAPI.Media;
+using BrightcoveSDK.Media;
 using System.Web;
 
-namespace BrightcoveAPI.UI
+namespace BrightcoveSDK.UI
 {	
 	[DefaultProperty("Text")]
 	[ToolboxData("<{0}:ImageAdd runat=server></{0}:ImageAdd>")]

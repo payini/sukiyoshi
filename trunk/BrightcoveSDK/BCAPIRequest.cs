@@ -8,11 +8,11 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Collections.Specialized;
 using System.Web.UI.WebControls;
-using BrightcoveAPI.Media;
-using BrightcoveAPI.JSON;
-using BrightcoveAPI.HTTP;
+using BrightcoveSDK.Media;
+using BrightcoveSDK.JSON;
+using BrightcoveSDK.HTTP;
 
-namespace BrightcoveAPI
+namespace BrightcoveSDK
 {
 	public class BCAPIRequest
 	{
