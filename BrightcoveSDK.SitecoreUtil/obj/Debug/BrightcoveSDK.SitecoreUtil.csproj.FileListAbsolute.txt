@@ -1,7 +1,6 @@
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\obj\Debug\ResolveAssemblyReference.cache
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.pdb
-G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\Sitecore.Kernel.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\ITHit.WebDAV.Server.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\Lucene.Net.dll
@@ -14,7 +13,6 @@ G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\Sitecore.N
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\Newtonsoft.Json.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\RadSpell.Net2.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\Interop.Shell32.dll
-G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.pdb
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\bin\Debug\Sitecore.Kernel.xml
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb

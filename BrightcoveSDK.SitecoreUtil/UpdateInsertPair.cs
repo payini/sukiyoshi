@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BrightcoveAPI.Media;
+using BrightcoveSDK.Media;
 using Sitecore.Data.Items;
 
-namespace BrightcoveAPI.SitecoreUtil
+namespace BrightcoveSDK.SitecoreUtil
 {
 	public class UpdateInsertPair<T>
 	{

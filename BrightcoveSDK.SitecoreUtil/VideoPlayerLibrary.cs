@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sitecore.Data.Items;
-using BrightcoveAPI.SitecoreUtil.Extensions;
+using BrightcoveSDK.SitecoreUtil.Extensions;
 
-namespace BrightcoveAPI.SitecoreUtil
+namespace BrightcoveSDK.SitecoreUtil
 {
 	public class VideoPlayerLibrary
 	{

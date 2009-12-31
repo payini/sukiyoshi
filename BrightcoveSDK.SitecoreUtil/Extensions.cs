@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BrightcoveAPI.Media;
+using BrightcoveSDK.Media;
 using Sitecore.Data.Items;
 using System.Collections;
 using System.Web;
 using System.Text.RegularExpressions;
 
-namespace BrightcoveAPI.SitecoreUtil.Extensions
+namespace BrightcoveSDK.SitecoreUtil.Extensions
 {
 	public enum UpdateType { NEW, UPDATE, BOTH };
 

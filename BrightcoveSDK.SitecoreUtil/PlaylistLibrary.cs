@@ -5,9 +5,9 @@ using System.Text;
 using Sitecore.Data.Items;
 using Sitecore.Data;
 using System.Web;
-using BrightcoveAPI.SitecoreUtil.Extensions;
+using BrightcoveSDK.SitecoreUtil.Extensions;
 
-namespace BrightcoveAPI.SitecoreUtil
+namespace BrightcoveSDK.SitecoreUtil
 {
 	public class PlaylistLibrary {
 
