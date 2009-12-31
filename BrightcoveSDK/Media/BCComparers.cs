@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BrightcoveAPI.Media;
+using BrightcoveSDK.Media;
 
-namespace BrightcoveAPI
+namespace BrightcoveSDK
 {
 	public class BCVideoComparer : IEqualityComparer<BCVideo>
 	{

@@ -5,7 +5,7 @@ using System.Text;
 using System.Web;
 using System.Runtime.Serialization;
 
-namespace BrightcoveAPI.Media
+namespace BrightcoveSDK.Media
 {
 	/// <summary>
 	/// The Video object is an aggregation of metadata and asset information associated with a video
@@ -205,7 +205,7 @@ namespace BrightcoveAPI.Media
         public static List<string> VideoFields {
             get {
                 List<string> fields = new List<string>();
-                foreach (string s in Enum.GetNames(typeof(BrightcoveAPI.VideoFields))) {
+                foreach (string s in Enum.GetNames(typeof(BrightcoveSDK.VideoFields))) {
                     fields.Add(s);
                 }
                 return fields;

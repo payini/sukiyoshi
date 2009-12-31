@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Collections.Generic;
 
-namespace BrightcoveAPI.HTTP
+namespace BrightcoveSDK.HTTP
 {
 	public class PostRequests
 	{

@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace BrightcoveAPI.UI
+namespace BrightcoveSDK.UI
 {
 	[DefaultProperty("Text")]
 	[ToolboxData("<{0}:RemovePlayer runat=server></{0}:RemovePlayer>")]

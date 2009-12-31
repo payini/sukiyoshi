@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
-using BrightcoveAPI.Media;
+using BrightcoveSDK.Media;
 
-namespace BrightcoveAPI
+namespace BrightcoveSDK
 {
 	[DataContract]
 	public class BCQueryResult

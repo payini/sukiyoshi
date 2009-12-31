@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Web;
 
-namespace BrightcoveAPI.Media
+namespace BrightcoveSDK.Media
 {	
 	/// <summary>
 	/// This object represents metadata about an image file in your account. 

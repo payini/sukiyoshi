@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace BrightcoveAPI.Media
+namespace BrightcoveSDK.Media
 {
 	/// <summary>
 	/// The CuePoint object is a marker set at a precise time point in the 

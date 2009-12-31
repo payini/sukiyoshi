@@ -1,69 +1,69 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="BrightcoveAPI.BCAPI">
+  <Class Name="BrightcoveSDK.BCAPI">
     <Position X="5" Y="0.5" Width="3" />
     <TypeIdentifier>
       <HashCode>ICERAAAACkACgUAgAAACAAFAAAAOAAAEAAAAECACAGQ=</HashCode>
       <FileName>BCAPI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.BCAPIRequest">
+  <Class Name="BrightcoveSDK.BCAPIRequest">
     <Position X="8.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAgAAQAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
       <FileName>BCAPIRequest.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.BCCollection&lt;T&gt;">
+  <Class Name="BrightcoveSDK.BCCollection&lt;T&gt;">
     <Position X="8.25" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BCCollection.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.BCErrorException">
+  <Class Name="BrightcoveSDK.BCErrorException">
     <Position X="11.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAIAAAAAA=</HashCode>
       <FileName>BCErrorException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.BCQueryResult">
+  <Class Name="BrightcoveSDK.BCQueryResult">
     <Position X="10" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABCQAAAAAAAABAAAAAAAAAAIAAAAAQAAAAAAEAAAAAg=</HashCode>
       <FileName>BCQueryResult.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.QueryResultPair">
+  <Class Name="BrightcoveSDK.QueryResultPair">
     <Position X="10" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAACAAAAAAAAAgAAAABAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
       <FileName>QueryResultPair.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.BrightcoveConfig">
+  <Class Name="BrightcoveSDK.BrightcoveConfig">
     <Position X="0.5" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAQAAAAAAABAAAAAAAAACAAAAAAAAAAAA=</HashCode>
       <FileName>BrightcoveConfig.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.AccountCollection">
+  <Class Name="BrightcoveSDK.AccountCollection">
     <Position X="0.5" Y="2.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AEICAAAAAAAAIAAACAAAhAQAAAABAAgACAAAAEBAABA=</HashCode>
       <FileName>BrightcoveConfig.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.AccountConfigElement">
+  <Class Name="BrightcoveSDK.AccountConfigElement">
     <Position X="2.75" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>ACAABBAAAAAAAAARAAQAAAQAAAAAAAAAAQABAQAAAAA=</HashCode>
       <FileName>BrightcoveConfig.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BrightcoveAPI.Token">
+  <Class Name="BrightcoveSDK.Token">
     <Position X="2.75" Y="4" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>

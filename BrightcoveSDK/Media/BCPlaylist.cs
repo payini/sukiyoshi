@@ -5,7 +5,7 @@ using System.Text;
 using System.Web;
 using System.Runtime.Serialization;
 
-namespace BrightcoveAPI.Media
+namespace BrightcoveSDK.Media
 {
 	/// <summary>
 	/// The Playlist object is an aggregation of metadata and asset information associated with a Playlist
