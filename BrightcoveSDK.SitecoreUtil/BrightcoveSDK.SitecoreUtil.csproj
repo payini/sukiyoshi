@@ -61,6 +61,7 @@
     <ProjectReference Include="..\BrightcoveSDK\BrightcoveSDK.csproj">
       <Project>{66A5B904-883A-422F-A6E5-CAC6352D06F5}</Project>
       <Name>BrightcoveSDK</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
