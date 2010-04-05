@@ -175,8 +175,9 @@ namespace BrightcoveSDK.UI
 			Page.ClientScript.RegisterClientScriptInclude("BCAPIModules", "http://admin.brightcove.com/js/APIModules_all.js");
 						
 			//Add the Add/Remove player js from the page
+			// When pre-rendering, add in external JavaScript file
 			Page.ClientScript.RegisterClientScriptInclude("AddRemovePlayer", Page.ClientScript.GetWebResourceUrl(this.GetType(), "BrightcoveSDK.UI.Resources.AddRemovePlayer.js"));
-			base.OnPreRender(e);
+			base.OnPreRender(e); 
         }
 
 		/// <summary>
