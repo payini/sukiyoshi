@@ -244,9 +244,11 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 			val = val.Replace("[", "");
 			val = val.Replace("}", "");
 			val = val.Replace("{", "");
+			val = val.Replace("?", "");
 			val = val.Replace("'", string.Empty);
 			val = val.Replace(".", string.Empty);
 			val = val.Replace("–", "_");
+					 
 
 			//Cleanup double underscores
 			val = val.Replace("__", "_");
