@@ -3,3 +3,8 @@ G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\bin\Debug\BrightcoveSDK.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\bin\Debug\BrightcoveSDK.pdb
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
 G:\websites\wwwroot\testsite_sc6\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
+C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.dll
+C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.pdb
+C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
+C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
+C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
