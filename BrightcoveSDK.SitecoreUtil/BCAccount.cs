@@ -40,9 +40,9 @@ namespace BrightcoveSDK.SitecoreUtil
 			}
 		}
 
-		public VideoPlayerLibrary PlayerLib {
+		public PlayerLibrary PlayerLib {
 			get {
-				return new VideoPlayerLibrary(this.ChildByTemplate("Video Player Library"));
+				return new PlayerLibrary(this.ChildByTemplate("Video Player Library"));
 			}
 		}
 	}

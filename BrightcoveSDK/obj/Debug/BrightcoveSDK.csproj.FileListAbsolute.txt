@@ -8,3 +8,8 @@ C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK
 C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
 C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
 C:\Inetpub\wwwroot\genzymeDev_sc\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
+C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.dll
+C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.pdb
+C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
+C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
+C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb

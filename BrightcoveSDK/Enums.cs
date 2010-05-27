@@ -29,6 +29,8 @@ namespace BrightcoveSDK
 
 	public enum PlaylistFields {	ID, REFERENCEID, NAME, SHORTDESCRIPTION, VIDEOIDS, VIDEOS, THUMBNAILURL, FILTERTAGS, PLAYLISTTYPE, ACCOUNTID }
 
+	public enum PlayerPlaylistType { None, ComboBox, Tabbed, VideoList }
+
 	public enum VideoFields { 
 										ID, NAME, SHORTDESCRIPTION, LONGDESCRIPTION, CREATIONDATE, PUBLISHEDDATE, 
 										LASTMODIFIEDDATE, STARTDATE, ENDDATE, LINKURL, LINKTEXT, TAGS, VIDEOSTILLURL, 
@@ -51,6 +53,8 @@ namespace BrightcoveSDK
 	public enum ItemCollection { total_count, items, page_number, page_size };
 
     public enum MediaDeliveryTypeEnum { HTTP, DEFAULT }
+
+	public enum WMode { Window, Transparent, Opaque }
 
 	#endregion Public Enums
 }

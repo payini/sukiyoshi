@@ -36,10 +36,10 @@ namespace BrightcoveSDK.UI
 			}
 		}
 
-		[Bindable(true), Category("Appearance"), DefaultValue("#000000"), Localizable(true)]
+		[Bindable(true), Category("Appearance"), DefaultValue("#ffffff"), Localizable(true)]
 		public string BackColor {
 			get {
-				return (ViewState["BackColor"] == null) ? "#000000" : (String)ViewState["BackColor"];
+				return (ViewState["BackColor"] == null) ? "#ffffff" : (String)ViewState["BackColor"];
 			}set {
 				ViewState["BackColor"] = value;
 			}
@@ -94,7 +94,7 @@ namespace BrightcoveSDK.UI
 		[Bindable(true), Category("Appearance"), DefaultValue("transparent"), Localizable(true)]
 		public string WMode {
 			get {
-				return (ViewState["WMode"] == null) ? String.Empty : (String)ViewState["WMode"];
+				return (ViewState["WMode"] == null) ? "Window" : (String)ViewState["WMode"];
 			}set {
 				ViewState["WMode"] = value;
 			}
@@ -106,6 +106,19 @@ namespace BrightcoveSDK.UI
 				return (ViewState["VideoList"] == null) ? -1 : (long)ViewState["VideoList"];
 			}set {
 				ViewState["VideoList"] = value;
+			}
+		}
+
+		/// <summary>
+		/// The Resources files include two javascript from brightcove and one embedded javascript file that are used to create the video player on page load.
+		/// </summary>
+		[Bindable(true), Category("Appearance"), DefaultValue(true), Localizable(true)]
+		public bool IncludeJSResources {
+			get {
+				return (ViewState["IncludeJSResources"] == null) ? true : (bool)ViewState["IncludeJSResources"];
+			}
+			set {
+				ViewState["IncludeJSResources"] = value;
 			}
 		}
 
@@ -167,16 +180,19 @@ namespace BrightcoveSDK.UI
 		#endregion Properties
 
 		protected override void OnPreRender(EventArgs e) {
-            
-			//Add Brightcove experiences javascript
-			Page.ClientScript.RegisterClientScriptInclude("BCExperiences", "http://admin.brightcove.com/js/BrightcoveExperiences.js");
-			
-			//Add Brightcove API Modules javascript
-			Page.ClientScript.RegisterClientScriptInclude("BCAPIModules", "http://admin.brightcove.com/js/APIModules_all.js");
-						
-			//Add the Add/Remove player js from the page
-			// When pre-rendering, add in external JavaScript file
-			Page.ClientScript.RegisterClientScriptInclude("AddRemovePlayer", Page.ClientScript.GetWebResourceUrl(this.GetType(), "BrightcoveSDK.UI.Resources.AddRemovePlayer.js"));
+
+			//only if you're not going to add them yourself.
+			if (IncludeJSResources) {
+				//Add Brightcove experiences javascript
+				Page.ClientScript.RegisterClientScriptInclude("BCExperiences", "http://admin.brightcove.com/js/BrightcoveExperiences.js");
+
+				//Add Brightcove API Modules javascript
+				Page.ClientScript.RegisterClientScriptInclude("BCAPIModules", "http://admin.brightcove.com/js/APIModules_all.js");
+
+				//Add the Add/Remove player js from the page
+				// When pre-rendering, add in external JavaScript file
+				Page.ClientScript.RegisterClientScriptInclude("AddRemovePlayer", Page.ClientScript.GetWebResourceUrl(this.GetType(), "BrightcoveSDK.UI.Resources.AddRemovePlayer.js"));
+			}
 			base.OnPreRender(e); 
         }
 
@@ -205,7 +221,7 @@ namespace BrightcoveSDK.UI
 			vp.ID = this.ClientID;
 			this.Controls.Add(vp);
 
-			if (!VideoID.Equals(-1) && !PlayerID.Equals(-1)) {
+			if (!VideoID.Equals(-1) || !PlayerID.Equals(-1)) {
 
 				//Create the SWFObjectCustoms script block
 				Literal litScript = new Literal();
