@@ -94,6 +94,9 @@ namespace BrightcoveSDK.Media
 		[DataMember]
 		public string linkText { get; set; }
 
+		[DataMember(Name = "FLVURL")]
+		public string flvURL { get; set; }
+
         private BCCollection<string> _tags;
 
 		/// <summary>

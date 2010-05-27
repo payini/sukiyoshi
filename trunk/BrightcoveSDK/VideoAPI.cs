@@ -70,11 +70,16 @@ namespace BrightcoveSDK
 				qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 				qr.QueryResults.Add(qrp);
                 qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
-
-				if(qr.TotalCount > 0) {
-					maxPageNum = Math.Ceiling((double)(qr.MaxToGet / 100));
+						
+				//if no max to get was specified then just get them all
+				if (qr.MaxToGet.Equals(-1)) {
+					qr.MaxToGet = qr.TotalCount;
 				}
-
+				//determine how many pages to loop through
+				if (qr.TotalCount > 0) {
+					maxPageNum = Math.Ceiling(((double)qr.MaxToGet / (double)100));
+				}
+				
 				//if there are more to get move to next page and keep getting them
 				for (int pageNum = 1; pageNum < maxPageNum; pageNum++ ) {
 
@@ -118,7 +123,7 @@ namespace BrightcoveSDK
 					}
 					
 					//trim if specified
-					if (qr.Videos.Count > qr.MaxToGet && !qr.MaxToGet.Equals(-1) && qr.MaxToGet < qr.TotalCount) {
+					if (qr.Videos.Count > qr.MaxToGet && qr.MaxToGet < qr.TotalCount) {
 						List<BCVideo> vidTemp = qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet));
 
 						qr.Videos.Clear();

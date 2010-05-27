@@ -32,13 +32,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.3.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\html\Website\bin\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Kernel, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Website\bin\Sitecore.Kernel.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\html\Website\bin\Sitecore.Kernel.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -46,12 +51,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BCAccount.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Controls\EmbedVideoForm.cs" />
+    <Compile Include="Controls\InsertVideoForm.cs" />
+    <Compile Include="Extensions\PlayerExtensions.cs" />
+    <Compile Include="Extensions\PlaylistExtensions.cs" />
+    <Compile Include="Extensions\SitecoreDataExtensions.cs" />
+    <Compile Include="Extensions\SystemTypeExtensions.cs" />
+    <Compile Include="Extensions\VideoExtensions.cs" />
+    <Compile Include="Fields\BrightcoveVideoField.cs" />
+    <Compile Include="Handlers\BrightcoveVideoHandler.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pipelines\GetRTEFieldValue.cs" />
+    <Compile Include="PlayerLibrary.cs" />
     <Compile Include="PlaylistLibrary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\VideoPlayerWebControl.cs" />
     <Compile Include="UpdateInsertPair.cs" />
     <Compile Include="VideoLibrary.cs" />
-    <Compile Include="VideoPlayerLibrary.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BrightcoveSDK\BrightcoveSDK.csproj">

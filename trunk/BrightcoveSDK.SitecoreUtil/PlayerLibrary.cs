@@ -3,40 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sitecore.Data.Items;
+using Sitecore.Data;
+using System.Web;
+using Sitecore.Data.Fields;
+using BrightcoveSDK;
 using BrightcoveSDK.SitecoreUtil.Extensions;
 
 namespace BrightcoveSDK.SitecoreUtil
 {
-	public class VideoPlayerLibrary
+	public class PlayerLibrary
 	{
 		public Item playerLibraryItem;
 
-		public VideoPlayerLibrary(Item i) {
+		public PlayerLibrary(Item i) {
 			playerLibraryItem = i;
 		}
 
-		public List<SCVideoPlayer> Players {
+		public List<Player> Players {
 			get {
 				List<string> temps = new List<string>();
 				temps.Add("Brightcove Video Player");
 				temps.Add("Video Player Folder");
 				List<Item> p = this.playerLibraryItem.ChildrenByTemplatesRecursive(temps, "Video Player Folder");
-				List<SCVideoPlayer> players = new List<SCVideoPlayer>();
+				List<Player> players = new List<Player>();
 				foreach (Item i in p) {
-				    players.Add(new SCVideoPlayer(i));
+					players.Add(new Player(i));
 				}
 				return players;
 			}
 		}
 	}
 
-	public enum PlayerPlaylistType { None, ComboBox, Tabbed, VideoList }
-
-	public class SCVideoPlayer
+	public class Player
 	{
 		public Item playerItem;
 
-		public SCVideoPlayer(Item i) {
+		public Player(Item i) {
 			playerItem = i;
 		}
 
