@@ -1,3 +1,8 @@
+==SETUP CONFIG FILE==
+
+==ASPX PAGE==
+
+{{{
 <%@ Page Language="C#" AutoEventWireup="true" CodeFile="VideoWriteMethods.aspx.cs" Inherits="testsite.BC.VideoWriteMethods" %>
 <%@ Register TagPrefix="bc" Namespace="BrightcoveAPI.UI" Assembly="BrightcoveSDK" %>
 
@@ -17,3 +22,4 @@
     </form>
 </body>
 </html>
+}}}
