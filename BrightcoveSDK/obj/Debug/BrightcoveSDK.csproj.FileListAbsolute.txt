@@ -13,3 +13,6 @@ C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\bin\Debug\Brigh
 C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
 C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
 C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
+E:\websites\wwwroot\Code Library\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
+E:\websites\wwwroot\Code Library\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
+E:\websites\wwwroot\Code Library\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb

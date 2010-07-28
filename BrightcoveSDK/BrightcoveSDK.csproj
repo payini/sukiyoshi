@@ -50,7 +50,6 @@
     <Compile Include="BCQueryResult.cs" />
     <Compile Include="BrightcoveConfig.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Extensions\SystemTypeExtensions.cs" />
     <Compile Include="HTTP\PostRequests.cs" />
     <Compile Include="JSON\Converter.cs" />
     <Compile Include="JSON\RPCError.cs" />
@@ -61,7 +60,6 @@
     <Compile Include="Media\BCCuePoint.cs" />
     <Compile Include="Media\BCImage.cs" />
     <Compile Include="Media\BCObject.cs" />
-    <Compile Include="Media\BCPlayer.cs" />
     <Compile Include="Media\BCPlaylist.cs" />
     <Compile Include="Media\BCRendition.cs" />
     <Compile Include="Media\BCVideo.cs" />
@@ -82,7 +80,7 @@
     <None Include="UI\UIDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\Resources\AddRemovePlayer.js" />
+    <Content Include="UI\Resources\AddRemovePlayer.js" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -90,6 +88,7 @@
   <ItemGroup>
     <Folder Include="bin\Debug\" />
     <Folder Include="bin\Release\" />
+    <Folder Include="Extensions\" />
     <Folder Include="obj\Debug\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
