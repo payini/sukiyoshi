@@ -14,7 +14,7 @@ To be able to support multiple accounts per website I've added support for a cus
 <configuration>
   <configSections>
     ...
-    <section name="brightcove" type="OTP.Web.BrightcoveAPI.BrightcoveConfig, OTP.Web.BrightcoveAPI"></section>
+    <section name="brightcove" type="BrightcoveAPI.BrightcoveConfig, BrightcoveSDK"></section>
   </configSections>
   ...
   <brightcove>
