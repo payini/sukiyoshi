@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Web;
-using BrightcoveAPI.HTTP;
-using BrightcoveAPI.Media;
-using BrightcoveAPI.JSON;
+using BrightcoveSDK.HTTP;
+using BrightcoveSDK.Media;
+using BrightcoveSDK.JSON;
 using System.Configuration;
 
-namespace BrightcoveAPI
+namespace BrightcoveSDK
 {
 	public class VideoAPI
 	{
@@ -59,9 +59,6 @@ namespace BrightcoveAPI
 				}
 				else {
 					qr.MaxToGet = Convert.ToInt32(reqparams["page_size"]);
-                    if (qr.MaxToGet > 100) {
-                        reqparams["page_size"] = "100";
-                    }
 				}
 
 				//get initial query
