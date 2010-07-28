@@ -3,6 +3,8 @@
 = Details =
 
 {{{
+using BrightcoveAPI.Media;
+
 public VideoAPI bc;
 
 protected void Page_Load(object sender, EventArgs e) {
