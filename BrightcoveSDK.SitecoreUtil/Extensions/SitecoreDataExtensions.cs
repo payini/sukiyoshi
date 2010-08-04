@@ -163,13 +163,14 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 
 			List<Item> list = new List<Item>();
 			//get the first level of items
-			List<Item> thisLevel = (from child in Parent.GetChildren().ToArray() where Templatenames.Contains(child.TemplateName) select child).ToList();
-
-			//foreach item found look for children of it's type
-			foreach (Item i in thisLevel) {
+            Item[] children = Parent.GetChildren().ToArray();
+            List<Item> thisLevel = (from child in children where Templatenames.Contains(child.TemplateName) select child).ToList();
+            
+            //foreach item found look for children of it's type
+			foreach (Item i in children) {
 				//if this item's templatename is not in the ignore list then add it
 				if (!IgnoreTemplates.Contains(i.TemplateName)) {
-					list.Add(i);
+                    list.Add(i);
 				}
 				//either way continue to search below it for values
 				list.AddRange(i.ChildrenByTemplatesRecursive(Templatenames, IgnoreTemplates));

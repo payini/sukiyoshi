@@ -30,8 +30,26 @@ namespace BrightcoveSDK.SitecoreUtil
 				}
 				return videos;
 			}
-		}
-	}
+        }
+
+        #region Static Methods
+        
+        public static Video GetVideo(long VideoID) {
+            return GetVideo(VideoID, Sitecore.Context.Database);
+        }
+        public static Video GetVideo(long VideoID, Database DB) {
+            Item i = DB.GetItem(Constants.BrightcoveLibID);
+            if (i != null) {
+                Item j = i.ChildrenByTemplateRecursive(Constants.VideoTemplate).Where(video => video["ID"] == VideoID.ToString()).ToList().FirstOrDefault();
+                if (j != null) {
+                    return new Video(j);
+                }
+            }
+            return null;
+        }
+
+        #endregion Static Methods 
+    }
 
 	public class Video
 	{

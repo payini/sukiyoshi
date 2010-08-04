@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BrightcoveSDK.Extensions;
+using BrightcoveSDK.SitecoreUtil;
+using Sitecore.Data;
+using Sitecore.Data.Items;
 
 namespace BrightcoveSDK.SitecoreUtil.Extensions
 {
@@ -13,7 +16,9 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 			return "BrightcoveVideo_" + r.Next(1001).ToString();
 		}
 
-		//based on just player
+        #region GetEmbedCode
+		
+        //based on just player
 		public static string GetEmbedCode(this Player player) {
 			return GetEmbedCode(player, "#ffffff");
 		}
@@ -130,6 +135,8 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 				embed.AppendLine("<!-- End of Brightcove Player -->");
 			}
 			return embed.ToString();
-		}		
-	}
+        }
+
+        #endregion GetEmbedCode
+    }
 }

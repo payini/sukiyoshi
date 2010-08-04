@@ -29,8 +29,26 @@ namespace BrightcoveSDK.SitecoreUtil
 				}
 				return playlists;
 			}
-		}
-	}
+        }
+
+        #region Static Methods
+
+        public static Playlist GetPlaylist(long PlaylistID) {
+            return GetPlaylist(PlaylistID, Sitecore.Context.Database);
+        }
+        public static Playlist GetPlaylist(long PlaylistID, Database DB) {
+            Item i = DB.GetItem(Constants.BrightcoveLibID);
+            if(i != null){
+                Item j = i.ChildrenByTemplateRecursive(Constants.PlaylistTemplate).Where(playlist => playlist["ID"] == PlaylistID.ToString()).ToList().FirstOrDefault();
+                if (j != null) {
+                    return new Playlist(j);
+                }
+            }
+            return null;
+        }
+        
+        #endregion
+    }
 
 	public class Playlist {
 
