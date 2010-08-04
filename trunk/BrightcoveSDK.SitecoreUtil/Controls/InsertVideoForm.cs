@@ -25,6 +25,7 @@ using Sitecore.Configuration;
 using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Links;
+using BrightcoveSDK.SitecoreUtil.Entity;
 
 namespace BrightcoveSDK.SitecoreUtil.Controls
 {
@@ -41,7 +42,8 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 		protected Checkbox chkAutoStart;
 		protected Edit txtBGColor;
 		protected Combobox WMode;
-		
+        protected Database masterDB;
+
 		//TreePicker = DropTree
 		//Combobox = DropList
 		//Listview = folder explorer
@@ -54,6 +56,9 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 		protected override void OnLoad(EventArgs e) {
 			Assert.ArgumentNotNull(e, "e");
 			base.OnLoad(e);
+
+            masterDB = Sitecore.Client.ContentDatabase;
+
 			if (!Context.ClientPage.IsEvent) {
 				this.Mode = WebUtil.GetQueryString("mo");
 				
@@ -62,38 +67,40 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 				PlaylistDataContext.GetFromQueryString();
 				
 				//populate video from querystring
-				string vidID = WebUtil.GetQueryString("video");
-				if (vidID.Length.Equals(32)) {
-					try {
-						VideoDataContext.Folder = ShortID.Parse(vidID).ToID().ToString();
-					}catch{}
-				}
+                long vidID = -1;
+                if (long.TryParse(WebUtil.GetQueryString("video"), out vidID)) {
+                    Video v = VideoLibrary.GetVideo(vidID, masterDB);
+                    if (v != null) {
+                        VideoDataContext.Folder = v.videoItem.ID.ToString();
+                    }
+                }
 				
 				//populate player from querystring
-				string playID = WebUtil.GetQueryString("player");
-				if (playID.Length.Equals(32)) {
-					Item b = Sitecore.Client.ContentDatabase.Items[ShortID.Parse(playID).ToID()];
-					txtBGColor.Value += b.DisplayName;
-					try {
-						PlayerDataContext.Folder = ShortID.Parse(playID).ToID().ToString();
-					} catch { }
-				}
+                long playID = -1;
+                if (long.TryParse(WebUtil.GetQueryString("player"), out playID)) {
+                    Player p = PlayerLibrary.GetPlayer(playID, masterDB);
+                    if (p != null) {
+                        PlayerDataContext.Folder = p.playerItem.ID.ToString();
+                    }
+                }
 								
 				//populate playlists from querystring
 				string[] listIDs = WebUtil.GetQueryString("playlists").Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
 				foreach (string listID in listIDs) {
-					if (listID.Length.Equals(32)) {
-						try {
-							//set the folder so it's opened
-							PlaylistDataContext.Folder = ShortID.Parse(listID).ToID().ToString();
-							//set selected items
-							PlaylistTreeview.SelectedIDs.Add(listID);	
-						} catch { }
-					}
+                    long pID = -1;
+                    if (long.TryParse(listID, out pID)) {
+                        //set the folder so it's opened
+                        Playlist pl = PlaylistLibrary.GetPlaylist(pID, masterDB);
+                        if (pl != null) {
+                            PlaylistDataContext.Folder = pl.playlistItem.ID.ToString();
+                            //set selected items
+                            PlaylistTreeview.SelectedIDs.Add(listID);
+                        }
+                    }
 				}
 
 				//setup the drop list of wmode
-				Item wmodeRoot = Sitecore.Client.ContentDatabase.Items[PlayerDataContext.Root + "/Settings/WMode"];
+				Item wmodeRoot = masterDB.Items[PlayerDataContext.Root + "/Settings/WMode"];
 				string wmode = WebUtil.GetQueryString("wmode");
 				if (wmodeRoot != null) {
 					foreach (Item wmodeItem in wmodeRoot.Children) {
@@ -130,33 +137,35 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 			Assert.ArgumentNotNull(args, "args");
 
 			//get the selected player
-			Item player = Client.ContentDatabase.Items[PlayerTreeview.Value];
-			if (player == null || !player.TemplateName.Equals("Brightcove Video Player")) {
+			Item player = masterDB.Items[PlayerTreeview.Value];
+			if (player == null || !player.TemplateName.Equals(Constants.PlayerTemplate)) {
 				SheerResponse.Alert("Select a player.", new string[0]);
 				return;
 			}
+            Player vpl = new Player(player);
 
 			//get the selected video
-			Item video = Client.ContentDatabase.Items[VideoTreeview.Value];
+			Item video = masterDB.Items[VideoTreeview.Value];
 			string videoid = "";
-			if (video != null && video.TemplateName.Equals("Brightcove Video")) {
-				videoid = video.ID.ToShortID().ToString();
+			if (video != null && video.TemplateName.Equals(Constants.VideoTemplate)) {
+                Video vid = new Video(video);
+                videoid = vid.VideoID.ToString(); 
 			}
 			
 			//get the selected playlists
 			Item[] playlists = this.PlaylistTreeview.GetSelectedItems();
-			Player vpl = new Player(player);
-
+			
 			//set the playlists
 			StringBuilder playlistStr = new StringBuilder();
 			int plistCount = 0;
 			foreach (Item p in playlists) {
-				if (p.TemplateName.Equals("Brightcove Playlist")) {
-					if (playlistStr.Length > 0) {
-						playlistStr.Append(",");
-					}
-					playlistStr.Append(p.ID.ToShortID().ToString());
-					plistCount++;
+				if (p.TemplateName.Equals(Constants.PlaylistTemplate)) {
+                    Playlist pl = new Playlist(p);
+                    if (playlistStr.Length > 0) {
+                        playlistStr.Append(",");
+                    }
+                    playlistStr.Append(pl.PlaylistID.ToString());
+                    plistCount++;
 				}
 			}
 
@@ -176,15 +185,15 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 
 			//use settings to determine what kind of modal window to use like thickbox or prettyphoto
 			//id = {3EE8D1E1-1421-4546-8127-4D576FB8DA5F}
-			Item settings = Client.ContentDatabase.Items["/sitecore/system/Modules/Brightcove Settings/Modal Link Settings"];
-			StringBuilder sbAttr = new StringBuilder();
+            ModalLinkSettings settings = ModalLinkSettings.GetModalLinkSettings(HttpContext.Current.Request.Url.Host.ToLower(), masterDB);
+            StringBuilder sbAttr = new StringBuilder();
 			StringBuilder sbQstring = new StringBuilder();
 			if (settings != null) {
-				foreach(Item child in settings.GetChildren()){
-					if(child.TemplateName.Equals("Link Attribute")){
+				foreach(Item child in settings.thisItem.GetChildren()){
+					if(child.TemplateName.Equals(Constants.LinkAttributeTemplate)){
 						sbAttr.Append(" " + child["Key"] + "=\"" + child["Value"] + "\"");
 					}
-					else if(child.TemplateName.Equals("Link Querystring")){
+					else if(child.TemplateName.Equals(Constants.LinkQuerystringTemplate)){
 						sbQstring.Append("&" + child["Key"] + "=" + child["Value"]);
 					}
 				}
@@ -202,13 +211,11 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 			}
 			
 			//build link then send it back
-			int height = int.Parse(player.Fields["Height"].Value) + 20;
-			int width = int.Parse(player.Fields["Width"].Value) + 20;
 			StringBuilder mediaUrl = new StringBuilder();
 			mediaUrl.Append("<a href=\"/BrightcoveVideo.ashx?video=" + videoid + "&player=" + player.ID.ToShortID());
 			mediaUrl.Append("&playlists=" + playlistStr.ToString() + "&autoStart=" + chkAutoStart.Checked.ToString().ToLower() + "&bgcolor=" + txtBGColor.Value + "&wmode=" + WMode.SelectedItem.Header);
 			mediaUrl.Append(sbQstring.ToString());
-			mediaUrl.Append("&height=" + height + "&width=" + width + "\"" + sbAttr.ToString() + ">" + selectedText + "</a>");
+            mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + ">" + selectedText + "</a>");
 						
 			if (this.Mode == "webedit") {
 				SheerResponse.SetDialogValue(StringUtil.EscapeJavascriptString(mediaUrl.ToString()));

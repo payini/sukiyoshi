@@ -31,8 +31,26 @@ namespace BrightcoveSDK.SitecoreUtil
 				}
 				return players;
 			}
-		}
-	}
+        }
+
+        #region Static Methods
+
+        public static Player GetPlayer(long PlayerID) {
+            return GetPlayer(PlayerID, Sitecore.Context.Database);
+        }
+        public static Player GetPlayer(long PlayerID, Database DB) {
+            Item i = DB.GetItem(Constants.BrightcoveLibID);
+            if (i != null) {
+                Item j = i.ChildrenByTemplateRecursive(Constants.PlayerTemplate).Where(player => player["Player ID"] == PlayerID.ToString()).ToList().FirstOrDefault();
+                if (j != null) {
+                    return new Player(j);
+                }
+            }
+            return null;
+        }
+
+        #endregion Static Methods
+    }
 
 	public class Player
 	{

@@ -50,6 +50,7 @@
     <Compile Include="BCQueryResult.cs" />
     <Compile Include="BrightcoveConfig.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Extensions\SystemTypeExtensions.cs" />
     <Compile Include="HTTP\PostRequests.cs" />
     <Compile Include="JSON\Converter.cs" />
     <Compile Include="JSON\RPCError.cs" />
@@ -88,7 +89,6 @@
   <ItemGroup>
     <Folder Include="bin\Debug\" />
     <Folder Include="bin\Release\" />
-    <Folder Include="Extensions\" />
     <Folder Include="obj\Debug\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
