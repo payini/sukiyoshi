@@ -54,7 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BCAccount.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="Constants.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Controls\EmbedVideoForm.cs" />
     <Compile Include="Controls\InsertVideoForm.cs" />
     <Compile Include="Entity\ModalLinkSettings.cs" />
