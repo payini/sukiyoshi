@@ -81,7 +81,7 @@
     <None Include="UI\UIDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="UI\Resources\AddRemovePlayer.js" />
+    <EmbeddedResource Include="UI\Resources\AddRemovePlayer.js" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

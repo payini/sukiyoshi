@@ -37,7 +37,8 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 			if (context != null) {
 				//get video from querystring
 				string bcVideoID = context.Request.QueryString.Get("video");
-				
+                bcVideoID = (bcVideoID == "") ? "0" : bcVideoID; 
+
 				//get player from querystring
 				long playerid = -1;
                 if (long.TryParse(context.Request.QueryString.Get("player"), out playerid)) {
@@ -82,7 +83,7 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
                             context.Response.Write("<script type=\"text/javascript\" src=\"http://admin.brightcove.com/js/BrightcoveExperiences.js\"></script>");
                             context.Response.Write("<script type=\"text/javascript\" src=\"http://admin.brightcove.com/js/APIModules_all.js\"></script>");
                             context.Response.Write("<script type=\"text/javascript\" src=\"" + Page.ClientScript.GetWebResourceUrl(BrightcoveSDK.ActionType.READ.GetType(), "BrightcoveSDK.UI.Resources.AddRemovePlayer.js") + "\"></script>");
-                            context.Response.Write("</head><body onload=\"addPlayer(" + bcVideoID + ", " + p.PlayerID + ", '" + p.Name + "', false, 'None', " + (p.Width + 20).ToString() + ", " + (p.Height + 20).ToString() + ", true, 'transparent', 'bcvideo', '" + listTab + "', '" + listCombo + "', '" + listSingle + "');\">");
+                            context.Response.Write("</head><body onload=\"addPlayer(" + bcVideoID + ", " + p.PlayerID + ", '" + p.Name + "', false, 'None', " + p.Width.ToString() + ", " + p.Height.ToString() + ", true, 'transparent', 'bcvideo', '" + listTab + "', '" + listCombo + "', '" + listSingle + "');\">");
                             context.Response.Write("<div id=\"bcvideo\"></div>");
                             context.Response.Write("</body></html>");
                         } catch {

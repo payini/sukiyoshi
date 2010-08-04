@@ -212,7 +212,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 			
 			//build link then send it back
 			StringBuilder mediaUrl = new StringBuilder();
-			mediaUrl.Append("<a href=\"/BrightcoveVideo.ashx?video=" + videoid + "&player=" + player.ID.ToShortID());
+			mediaUrl.Append("<a href=\"/BrightcoveVideo.ashx?video=" + videoid + "&player=" + vpl.PlayerID);
 			mediaUrl.Append("&playlists=" + playlistStr.ToString() + "&autoStart=" + chkAutoStart.Checked.ToString().ToLower() + "&bgcolor=" + txtBGColor.Value + "&wmode=" + WMode.SelectedItem.Header);
 			mediaUrl.Append(sbQstring.ToString());
             mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + ">" + selectedText + "</a>");
