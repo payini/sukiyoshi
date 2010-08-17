@@ -149,31 +149,17 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 		/// <returns>
 		/// Returns a list of items that match the templatenames provided
 		/// </returns>
-		public static List<Item> ChildrenByTemplatesRecursive(this Item Parent, List<string> Templatenames) {
-			return ChildrenByTemplatesRecursive(Parent, Templatenames, new List<string>());
-		}
-
-		public static List<Item> ChildrenByTemplatesRecursive(this Item Parent, List<string> Templatenames, string ignoreTemplatename) {
-			List<string> ignore = new List<string>();
-			ignore.Add(ignoreTemplatename);
-			return ChildrenByTemplatesRecursive(Parent, Templatenames, ignore);
-		}
-
-		public static List<Item> ChildrenByTemplatesRecursive(this Item Parent, List<string> Templatenames, List<string> IgnoreTemplates) {
+        public static List<Item> ChildrenByTemplatesRecursive(this Item Parent, List<string> Templatenames) {
 
 			List<Item> list = new List<Item>();
 			//get the first level of items
             Item[] children = Parent.GetChildren().ToArray();
-            List<Item> thisLevel = (from child in children where Templatenames.Contains(child.TemplateName) select child).ToList();
+            list.AddRange((from child in children where Templatenames.Contains(child.TemplateName) select child).ToList());
             
             //foreach item found look for children of it's type
 			foreach (Item i in children) {
-				//if this item's templatename is not in the ignore list then add it
-				if (!IgnoreTemplates.Contains(i.TemplateName)) {
-                    list.Add(i);
-				}
 				//either way continue to search below it for values
-				list.AddRange(i.ChildrenByTemplatesRecursive(Templatenames, IgnoreTemplates));
+				list.AddRange(i.ChildrenByTemplatesRecursive(Templatenames));
 			}
 
 			return list;
