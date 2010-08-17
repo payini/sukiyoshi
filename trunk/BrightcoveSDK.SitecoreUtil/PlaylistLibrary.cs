@@ -19,10 +19,7 @@ namespace BrightcoveSDK.SitecoreUtil
 
 		public List<Playlist> Playlists {
 			get {
-				List<string> temps = new List<string>();
-				temps.Add("Brightcove Playlist");
-				temps.Add("Playlist Folder");
-				List<Item> p = this.playlistLibraryItem.ChildrenByTemplatesRecursive(temps, "Playlist Folder");
+                List<Item> p = this.playlistLibraryItem.ChildrenByTemplateRecursive("Brightcove Playlist");
 				List<Playlist> playlists = new List<Playlist>();
 				foreach (Item i in p) {
 					playlists.Add(new Playlist(i));

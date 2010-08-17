@@ -21,10 +21,7 @@ namespace BrightcoveSDK.SitecoreUtil
 
 		public List<Player> Players {
 			get {
-				List<string> temps = new List<string>();
-				temps.Add("Brightcove Video Player");
-				temps.Add("Video Player Folder");
-				List<Item> p = this.playerLibraryItem.ChildrenByTemplatesRecursive(temps, "Video Player Folder");
+                List<Item> p = this.playerLibraryItem.ChildrenByTemplateRecursive("Brightcove Video Player");
 				List<Player> players = new List<Player>();
 				foreach (Item i in p) {
 					players.Add(new Player(i));
