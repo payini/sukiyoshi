@@ -49,6 +49,7 @@
     <Compile Include="BCErrorException.cs" />
     <Compile Include="BCQueryResult.cs" />
     <Compile Include="BrightcoveConfig.cs" />
+    <Compile Include="CustomFields.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\SystemTypeExtensions.cs" />
     <Compile Include="HTTP\PostRequests.cs" />
