@@ -276,12 +276,21 @@ namespace BrightcoveSDK.Media
         [DataMember]
         public string submissionInfo {get; set;}
 
+        public CustomFields _customFields;
+        
         [DataMember]
         public CustomFields customFields {
-            get;
-            set;
+            get {
+                if (_customFields == null) {
+                    _customFields = new CustomFields();
+                }
+                return _customFields;
+            }
+            set {
+                _customFields = value;
+            }
         }
-
+        
         [DataMember]
         public string releaseDate {get; set;}
     	

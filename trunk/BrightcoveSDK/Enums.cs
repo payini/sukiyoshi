@@ -7,6 +7,8 @@ namespace BrightcoveSDK
 {
 	#region Public Enums
 
+    public enum Alignment { TOP_LEFT, BOTTOM_LEFT, TOP_RIGHT, BOTTOM_RIGHT }
+
 	public enum AccountType { Video, Audio }
 
 	public enum JSONType { Create, Update }
