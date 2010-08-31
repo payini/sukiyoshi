@@ -52,7 +52,9 @@ namespace BrightcoveSDK
 			try {
 
 				//set some global request paramameters
-				reqparams.Add("page_number", "0");
+                if (!reqparams.ContainsKey("page_number")) {
+                    reqparams.Add("page_number", "0");
+                }
 
 				//set if not set or 
 				if (!reqparams.ContainsKey("page_size")) {
@@ -896,8 +898,8 @@ namespace BrightcoveSDK
 			return FindVideosByTags(and_tags, or_tags, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
 
-		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany) {
-			return FindVideosByTags(and_tags, or_tags, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
+        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize) {
+            return FindVideosByTags(and_tags, or_tags, pageSize, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
 
 		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, BCSortByType sortBy) {
@@ -912,16 +914,20 @@ namespace BrightcoveSDK
 			return FindVideosByTags(and_tags, or_tags, -1, sortBy, sortOrder);
 		}
 
-		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
-			return FindVideosByTags(and_tags, or_tags, howMany, sortBy, sortOrder, null);
+        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder) {
+            return FindVideosByTags(and_tags, or_tags, pageSize, sortBy, sortOrder, null);
 		}
 
-		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
-			return FindVideosByTags(and_tags, or_tags, howMany, sortBy, sortOrder, video_fields, null);
+        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+            return FindVideosByTags(and_tags, or_tags, pageSize, sortBy, sortOrder, video_fields, null);
 		}
 
-        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
-            return FindVideosByTags(and_tags, or_tags, howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
+            return FindVideosByTags(and_tags, or_tags, pageSize, 0, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+        }
+
+        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
+            return FindVideosByTags(and_tags, or_tags, pageSize, pageNumber, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
 
 		/// <summary>
@@ -933,10 +939,13 @@ namespace BrightcoveSDK
 		/// <param name="or_tags">
 		/// Limit the results to those that contain at least one of these tags.
 		/// </param>
-		/// <param name="howMany">
-		/// Number of videos returned (-1 will return all) defaults to -1
-		/// </param>
-		/// <param name="sortBy">
+        /// <param name="pageSize">
+        /// Number of videos returned (-1 will return all) defaults to -1 max is 100
+        /// </param>
+        /// <param name="pageNumber">
+        /// The number of page to return. Default is 0 (First page)
+        /// </param>
+        /// <param name="sortBy">
 		/// The field by which to sort (defaults to CREATION_DATE)
 		/// </param>
 		/// <param name="sortOrder">
@@ -951,7 +960,7 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 			
@@ -964,7 +973,8 @@ namespace BrightcoveSDK
 			reqparams.Add("sort_order", sortOrder.ToString());
 			reqparams.Add("sort_by", sortBy.ToString());
             reqparams.Add("media_delivery", media_delivery.ToString());
-            if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+            if (pageSize >= 0) reqparams.Add("page_size", pageSize.ToString());
+            if (pageNumber >= 0) reqparams.Add("page_number", pageNumber.ToString());
 
 			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
 		}
