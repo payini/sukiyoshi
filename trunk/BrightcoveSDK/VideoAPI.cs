@@ -73,12 +73,20 @@ namespace BrightcoveSDK
 				qr.QueryResults.Add(qrp);
                 qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
 
-				if(qr.TotalCount > 0) {
-					maxPageNum = Math.Ceiling((double)(qr.MaxToGet / 100));
-				}
+                //make sure you get the correct page num
+                if (qr.TotalCount > 0) {
+                    //if you want all use the total count to calculate the number of pages
+                    if (qr.MaxToGet.Equals(-1)) {
+                        maxPageNum = Math.Ceiling((double)(qr.TotalCount / 100));
+                    }
+                    //or just use the max you want to calculate the number of pages
+				    else {
+					    maxPageNum = Math.Ceiling((double)(qr.MaxToGet / 100));
+				    }
+                }
 
 				//if there are more to get move to next page and keep getting them
-				for (int pageNum = 1; pageNum < maxPageNum; pageNum++ ) {
+				for (int pageNum = 1; pageNum <= maxPageNum; pageNum++ ) {
 
 					//update page each iteration
 					reqparams["page_number"] = pageNum.ToString();
