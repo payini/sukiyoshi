@@ -79,7 +79,6 @@ namespace BrightcoveSDK.SitecoreUtil.UI
 				    //if nothing then just get embed for player with nothing
 				    if(sbOut.Length.Equals(0)){
 					    sbOut.Append(p.GetEmbedCode(bgcolor, autostart, wmode));
-                        sbOut.Append(p.PlaylistType.ToString());
 				    }
 			    }
 				else {
