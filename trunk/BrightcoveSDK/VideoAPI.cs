@@ -1829,6 +1829,44 @@ namespace BrightcoveSDK
 
 		#endregion Add Image
 
+		#region Remove Logo Overlay
+
+		private RPCResponse<BCVideo> RemoveLogoOverlay(string video_reference_id) {
+			return RemoveLogoOverlay(-1, video_reference_id);
+		}
+		public RPCResponse<BCVideo> RemoveLogoOverlay(long videoId) {
+			return RemoveLogoOverlay(videoId, null);
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="videoId"></param>
+		/// <param name="reference_id"></param>
+		/// <returns></returns>
+		private RPCResponse<BCVideo> RemoveLogoOverlay(long video_id, string video_reference_id) {
+		
+			// Generate post objects
+			Dictionary<string, object> postParams = new Dictionary<string, object>();
+
+			//add video to the post params
+			RPCRequest rpc = new RPCRequest();
+			rpc.method = "remove_logo_overlay";
+			if(video_id > -1){
+				rpc.parameters += ",\"video_id\": \"" + video_id.ToString() + "\"";
+			}
+			else if (video_reference_id != null) {
+				rpc.parameters += ",\"video_reference_id\": \"" + video_reference_id + "\"";
+			}
+			rpc.parameters += ", \"token\": \"" + Account.WriteToken.Value + "\"";
+			postParams.Add("json", rpc.ToJSON());
+
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCVideo> rpcr = BCAPIRequest.ExecuteWrite<BCVideo>(postParams, Account);
+					
+			return rpcr;
+		}
+		#endregion Remove Logo Overlay
+
 		#endregion Video Write
 
 		#region Playlist Write

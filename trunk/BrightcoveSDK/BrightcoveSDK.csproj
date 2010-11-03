@@ -62,6 +62,7 @@
     <Compile Include="Media\BCCuePoint.cs" />
     <Compile Include="Media\BCImage.cs" />
     <Compile Include="Media\BCObject.cs" />
+    <Compile Include="Media\BCPlayer.cs" />
     <Compile Include="Media\BCPlaylist.cs" />
     <Compile Include="Media\BCRendition.cs" />
     <Compile Include="Media\BCVideo.cs" />
