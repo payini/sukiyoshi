@@ -7,11 +7,22 @@ using System.Runtime.Serialization;
 
 namespace BrightcoveSDK.Media
 {
+	public class BCPlaylist : BCPlaylist<object>, IComparable<BCPlaylist>
+	{
+		
+		#region IComparable Comparators
+
+		public int CompareTo(BCPlaylist other) {
+			return name.CompareTo(other.name);
+		}
+
+		#endregion
+	}
 	/// <summary>
 	/// The Playlist object is an aggregation of metadata and asset information associated with a Playlist
 	/// </summary>
 	[DataContract]
-	public class BCPlaylist : BCObject, IComparable<BCPlaylist>
+	public class BCPlaylist<CustomFieldType> : BCObject, IComparable<BCPlaylist<CustomFieldType>>
 	{
 
 		/// <summary>
@@ -48,7 +59,7 @@ namespace BrightcoveSDK.Media
 		/// A list of Strings representing the videos assigned to this Playlist.
 		/// </summary> 
 		[DataMember]
-		public BCCollection<BCVideo> videos;
+		public BCCollection<BCVideo<CustomFieldType>> videos;
 
 		/// <summary>
 		/// A url for the thumbnail of this Playlist.
@@ -100,14 +111,14 @@ namespace BrightcoveSDK.Media
 		public long accountId { get; set; }
 
 		public BCPlaylist() {
-			videos = new BCCollection<BCVideo>();
+			videos = new BCCollection<BCVideo<CustomFieldType>>();
 			filterTags = new BCCollection<string>();
 			videoIds = new BCCollection<long>();
 		}
 
 		#region IComparable Comparators
 
-		public int CompareTo(BCPlaylist other) {
+		public int CompareTo(BCPlaylist<CustomFieldType> other) {
 			return name.CompareTo(other.name);
 		}
 
@@ -119,15 +130,15 @@ namespace BrightcoveSDK.Media
 
 		#region Extension Methods
 
-		public static string ToUpdateJSON(this BCPlaylist playlist) {
-			return ToJSON(playlist, JSONType.Update);
+		public static string ToUpdateJSON<CustomFieldType>(this BCPlaylist<CustomFieldType> playlist) {
+			return ToJSON<CustomFieldType>(playlist, JSONType.Update);
 		}
 
-		public static string ToCreateJSON(this BCPlaylist playlist) {
-			return ToJSON(playlist, JSONType.Create);
+		public static string ToCreateJSON<CustomFieldType>(this BCPlaylist<CustomFieldType> playlist) {
+			return ToJSON<CustomFieldType>(playlist, JSONType.Create);
 		}
 
-		private static string ToJSON(this BCPlaylist playlist, JSONType t) {
+		private static string ToJSON<CustomFieldType>(this BCPlaylist<CustomFieldType> playlist, JSONType t) {
 
 			//--Build Playlist in JSON -------------------------------------//
 

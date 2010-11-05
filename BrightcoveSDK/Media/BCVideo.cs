@@ -7,11 +7,55 @@ using System.Runtime.Serialization;
 
 namespace BrightcoveSDK.Media
 {
+	public class BCVideo : BCVideo<object>, IComparable<BCVideo>
+	{
+		[DataMember]
+		public override object customFields { get; set; }
+        
+		#region IComparable Comparators
+
+		public int CompareTo(BCVideo other) {
+			return name.CompareTo(other.name);
+		}
+
+		//CREATION_DATE
+		new public static Comparison<BCVideo> CreationDateComparison =
+			delegate(BCVideo v1, BCVideo v2) {
+				return v1.creationDate.CompareTo(v2.creationDate);
+			};
+
+		//PLAYS_TOTAL
+		new public static Comparison<BCVideo> TotalPlaysComparison =
+			delegate(BCVideo v1, BCVideo v2) {
+				return v1.playsTotal.CompareTo(v2.playsTotal);
+			};
+
+		//PUBLISH_DATE
+		new public static Comparison<BCVideo> PublishDateComparison =
+			delegate(BCVideo v1, BCVideo v2) {
+				return v1.publishedDate.CompareTo(v2.publishedDate);
+			};
+
+		//MODIFIED_DATE
+		new public static Comparison<BCVideo> ModifiedDateComparison =
+			delegate(BCVideo v1, BCVideo v2) {
+				return v1.lastModifiedDate.CompareTo(v2.lastModifiedDate);
+			};
+
+		//PLAYS_TRAILING_WEEK
+		new public static Comparison<BCVideo> PlaysTrailingComparison =
+			delegate(BCVideo v1, BCVideo v2) {
+				return v1.playsTrailingWeek.CompareTo(v2.playsTrailingWeek);
+			};
+
+		#endregion
+	}
+
 	/// <summary>
 	/// The Video object is an aggregation of metadata and asset information associated with a video
 	/// </summary>
 	[DataContract]
-	public class BCVideo : BCObject, IComparable<BCVideo>
+	public class BCVideo<CustomFieldType> : BCObject, IComparable<BCVideo<CustomFieldType>>
 	{
 		/// <summary>
 		/// A number that uniquely identifies this Video, assigned by Brightcove when the Video is created.
@@ -276,20 +320,8 @@ namespace BrightcoveSDK.Media
         [DataMember]
         public string submissionInfo {get; set;}
 
-        public CustomFields _customFields;
-        
-        [DataMember]
-        public CustomFields customFields {
-            get {
-                if (_customFields == null) {
-                    _customFields = new CustomFields();
-                }
-                return _customFields;
-            }
-            set {
-                _customFields = value;
-            }
-        }
+		[DataMember]
+		public virtual CustomFieldType customFields { get; set; }
         
         [DataMember]
         public string releaseDate {get; set;}
@@ -357,41 +389,41 @@ namespace BrightcoveSDK.Media
 
 		#region IComparable Comparators
 
-		public int CompareTo(BCVideo other) {
+		public int CompareTo(BCVideo<CustomFieldType> other) {
 			return name.CompareTo(other.name);
 		}
 
 		//CREATION_DATE
-		public static Comparison<BCVideo> CreationDateComparison =
-			delegate(BCVideo v1, BCVideo v2)
+		public static Comparison<BCVideo<CustomFieldType>> CreationDateComparison =
+			delegate(BCVideo<CustomFieldType> v1, BCVideo<CustomFieldType> v2)
 			{
 				return v1.creationDate.CompareTo(v2.creationDate);
 			};
 
 		//PLAYS_TOTAL
-		public static Comparison<BCVideo> TotalPlaysComparison =
-			delegate(BCVideo v1, BCVideo v2)
+		public static Comparison<BCVideo<CustomFieldType>> TotalPlaysComparison =
+			delegate(BCVideo<CustomFieldType> v1, BCVideo<CustomFieldType> v2)
 			{
 				return v1.playsTotal.CompareTo(v2.playsTotal);
 			};
 
 		//PUBLISH_DATE
-		public static Comparison<BCVideo> PublishDateComparison =
-			delegate(BCVideo v1, BCVideo v2)
+		public static Comparison<BCVideo<CustomFieldType>> PublishDateComparison =
+			delegate(BCVideo<CustomFieldType> v1, BCVideo<CustomFieldType> v2)
 			{
 				return v1.publishedDate.CompareTo(v2.publishedDate);
 			};
 
 		//MODIFIED_DATE
-		public static Comparison<BCVideo> ModifiedDateComparison =
-			delegate(BCVideo v1, BCVideo v2)
+		public static Comparison<BCVideo<CustomFieldType>> ModifiedDateComparison =
+			delegate(BCVideo<CustomFieldType> v1, BCVideo<CustomFieldType> v2)
 			{
 				return v1.lastModifiedDate.CompareTo(v2.lastModifiedDate);
 			};
 
 		//PLAYS_TRAILING_WEEK
-		public static Comparison<BCVideo> PlaysTrailingComparison =
-			delegate(BCVideo v1, BCVideo v2)
+		public static Comparison<BCVideo<CustomFieldType>> PlaysTrailingComparison =
+			delegate(BCVideo<CustomFieldType> v1, BCVideo<CustomFieldType> v2)
 			{
 				return v1.playsTrailingWeek.CompareTo(v2.playsTrailingWeek);
 			};
@@ -403,15 +435,15 @@ namespace BrightcoveSDK.Media
 		
 		#region Extension Methods
 
-		public static string ToCreateJSON(this BCVideo video) {
-			return ToJSON(video, JSONType.Create);
+		public static string ToCreateJSON<CustomFieldType>(this BCVideo<CustomFieldType> video) {
+			return ToJSON<CustomFieldType>(video, JSONType.Create);
 		}
 
-		public static string ToJSON(this BCVideo video) {
-			return ToJSON(video, JSONType.Update);
+		public static string ToJSON<CustomFieldType>(this BCVideo<CustomFieldType> video) {
+			return ToJSON<CustomFieldType>(video, JSONType.Update);
 		}
-		
-        private static string ToJSON(this BCVideo video, JSONType type) {
+
+		private static string ToJSON<CustomFieldType>(this BCVideo<CustomFieldType> video, JSONType type) {
 
 			//--Build Video in JSON -------------------------------------//
 

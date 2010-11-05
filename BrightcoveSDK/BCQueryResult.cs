@@ -7,11 +7,26 @@ using BrightcoveSDK.Media;
 
 namespace BrightcoveSDK
 {
+	public class BCQueryResult : BCQueryResult<object>
+	{
+		public void Merge(BCQueryResult qr) {
+
+			if (qr.Videos != null) Videos.AddRange(qr.Videos);
+			if (qr.Playlists != null) Playlists.AddRange(qr.Playlists);
+			PageNumber = qr.PageNumber;
+			TotalCount = qr.TotalCount;
+			PageSize = qr.PageSize;
+		}
+		
+		[DataMember(Name = "videos")]
+		new public BCCollection<BCVideo> Videos;
+	}
+
 	[DataContract]
-	public class BCQueryResult
+	public class BCQueryResult<CustomFieldType>
 	{
 		[DataMember(Name = "videos")]
-		public BCCollection<BCVideo> Videos;
+		public BCCollection<BCVideo<CustomFieldType>> Videos;
 		[DataMember(Name = "playlists")]
 		public BCCollection<BCPlaylist> Playlists;
 		[DataMember(Name = "page_number")]
@@ -26,13 +41,13 @@ namespace BrightcoveSDK
 
 		public BCQueryResult() {
 			Playlists = new BCCollection<BCPlaylist>();
-			Videos = new BCCollection<BCVideo>();
+			Videos = new BCCollection<BCVideo<CustomFieldType>>();
 			PageNumber = 0;
 			PageSize = 0;
 			TotalCount = 0;
 		}
 
-		public void Merge(BCQueryResult qr) {
+		public virtual void Merge(BCQueryResult<CustomFieldType> qr) {
 
 			//if (qr.QueryResults != null && qr.QueryResults.Count > 0)
 			//        QueryResults.Add(qr.QueryResults[qr.QueryResults.Count -1]);
