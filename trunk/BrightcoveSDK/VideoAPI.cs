@@ -44,9 +44,13 @@ namespace BrightcoveSDK
 		#region Main Helper Methods
 
 		private static BCQueryResult MultipleQueryHandler(Dictionary<String, String> reqparams, BCObjectType itemType, AccountConfigElement account) {
+			return (BCQueryResult)MultipleQueryHandler<object>(reqparams, itemType, account);
+		}
+
+		private static BCQueryResult<CustomFieldType> MultipleQueryHandler<CustomFieldType>(Dictionary<String, String> reqparams, BCObjectType itemType, AccountConfigElement account) {
 			
 			//Get the JSon reader returned from the APIRequest
-			BCQueryResult qr = new BCQueryResult();
+			BCQueryResult<CustomFieldType> qr = new BCQueryResult<CustomFieldType>();
 			qr.TotalCount = 0;
 
 			try {
@@ -71,7 +75,7 @@ namespace BrightcoveSDK
 				//convert the result for deserialization
 				qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 				qr.QueryResults.Add(qrp);
-                qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
+                qr.Merge(JSON.Converter.Deserialize<BCQueryResult<CustomFieldType>>(qrp.JsonResult));
 
                 //make sure you get the correct page num
                 if (qr.TotalCount > 0) {
@@ -95,7 +99,7 @@ namespace BrightcoveSDK
 					//convert the result for deserialization
 					qrp2.JsonResult = qrp2.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 					qr.QueryResults.Add(qrp2);
-					qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp2.JsonResult));				
+					qr.Merge(JSON.Converter.Deserialize<BCQueryResult<CustomFieldType>>(qrp2.JsonResult));				
 				}
 
 				//sorting on our end
@@ -103,23 +107,23 @@ namespace BrightcoveSDK
 				if (itemType.Equals(BCObjectType.videos) && reqparams.ContainsKey("sort_by")) {
 					//PUBLISH_DATE, 
 					if (reqparams["sort_by"].Equals("PUBLISH_DATE")) {
-						qr.Videos.Sort(BCVideo.PublishDateComparison);
+						qr.Videos.Sort(BCVideo<CustomFieldType>.PublishDateComparison);
 					}
 					//PLAYS_TOTAL, 
 					else if (reqparams["sort_by"].Equals("PLAYS_TOTAL")) {
-						qr.Videos.Sort(BCVideo.TotalPlaysComparison);
+						qr.Videos.Sort(BCVideo<CustomFieldType>.TotalPlaysComparison);
 					}
 					//PLAYS_TRAILING_WEEK
 					else if (reqparams["sort_by"].Equals("PLAYS_TRAILING_WEEK")) {
-						qr.Videos.Sort(BCVideo.PlaysTrailingComparison);
+						qr.Videos.Sort(BCVideo<CustomFieldType>.PlaysTrailingComparison);
 					}
                     //MODIFIED_DATE,
                     else if (reqparams["sort_by"].Equals("MODIFIED_DATE")) {
-						qr.Videos.Sort(BCVideo.ModifiedDateComparison);
+						qr.Videos.Sort(BCVideo<CustomFieldType>.ModifiedDateComparison);
 					}
                     //CREATION_DATE, 
 					else {
-						qr.Videos.Sort(BCVideo.CreationDateComparison);
+						qr.Videos.Sort(BCVideo<CustomFieldType>.CreationDateComparison);
 					}
 
 					//if they want asc
@@ -129,7 +133,7 @@ namespace BrightcoveSDK
 					
 					//trim if specified
 					if (qr.Videos.Count > qr.MaxToGet && !qr.MaxToGet.Equals(-1) && qr.MaxToGet < qr.TotalCount) {
-						List<BCVideo> vidTemp = qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet));
+						List<BCVideo<CustomFieldType>> vidTemp = qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet));
 
 						qr.Videos.Clear();
 						qr.Videos.AddRange(vidTemp);
@@ -227,6 +231,11 @@ namespace BrightcoveSDK
         }
         */
 
+		public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = SearchVideosReqParams(howMany, required_matches, at_least_one_match, must_not_match, sortOrder, exact, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
         /// <summary>
         /// 
         /// </summary>
@@ -258,23 +267,27 @@ namespace BrightcoveSDK
         /// If universal delivery service  is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. Meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. This is a MediaDeliveryTypeEnum with a value of http or default.
         /// </param>
         /// <returns></returns>
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> SearchVideos<CustomFieldType>(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = SearchVideosReqParams(howMany, required_matches, at_least_one_match, must_not_match, sortOrder, exact, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
+		}
 
+		private Dictionary<String, String> SearchVideosReqParams(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "search_videos");
-            if (required_matches != null) reqparams.Add("all", required_matches.DicToString());
-            if (at_least_one_match != null) reqparams.Add("any", at_least_one_match.DicToString());
-            if (must_not_match != null) reqparams.Add("none", must_not_match.DicToString());
-            reqparams.Add("exact", exact.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (required_matches != null) reqparams.Add("all", required_matches.DicToString());
+			if (at_least_one_match != null) reqparams.Add("any", at_least_one_match.DicToString());
+			if (must_not_match != null) reqparams.Add("none", must_not_match.DicToString());
+			reqparams.Add("exact", exact.ToString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
 			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
-
-			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+			return reqparams;
 		}
 
         #endregion Search Videos
@@ -284,35 +297,64 @@ namespace BrightcoveSDK
 		public BCQueryResult FindAllVideos() {
 			return FindAllVideos(-1);
 		}
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>() {
+			return FindAllVideos<CustomFieldType>(-1);
+		}
 		
 		public BCQueryResult FindAllVideos(int howMany) {
 			return FindAllVideos(howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
+		}
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(int howMany) {
+			return FindAllVideos<CustomFieldType>(howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
 
 		public BCQueryResult FindAllVideos(BCSortOrderType sortOrder) {
 			return FindAllVideos(-1, BCSortByType.CREATION_DATE, sortOrder);
 		}
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(BCSortOrderType sortOrder) {
+			return FindAllVideos<CustomFieldType>(-1, BCSortByType.CREATION_DATE, sortOrder);
+		}
 
 		public BCQueryResult FindAllVideos(BCSortByType sortBy) {
 			return FindAllVideos(-1, sortBy, BCSortOrderType.ASC);
+		}
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(BCSortByType sortBy) {
+			return FindAllVideos<CustomFieldType>(-1, sortBy, BCSortOrderType.ASC);
 		}
 
 		public BCQueryResult FindAllVideos(BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindAllVideos(-1, sortBy, sortOrder);
 		}
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindAllVideos<CustomFieldType>(-1, sortBy, sortOrder);
+		}
 
 		public BCQueryResult FindAllVideos(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindAllVideos(howMany, sortBy, sortOrder, null);
+		}
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindAllVideos<CustomFieldType>(howMany, sortBy, sortOrder, null);
 		}
 
 		public BCQueryResult FindAllVideos(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
 			return FindAllVideos(howMany, sortBy, sortOrder, video_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+			return FindAllVideos<CustomFieldType>(howMany, sortBy, sortOrder, video_fields, null);
+		}
 
         public BCQueryResult FindAllVideos(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
             return FindAllVideos(howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindAllVideos<CustomFieldType>(howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindAllVideos(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindAllVideosReqParams(howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
 		/// <summary>
 		/// This will return a generic search for videos
 		/// </summary>
@@ -334,8 +376,13 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindAllVideos(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindAllVideos<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindAllVideosReqParams(howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
+		}
 
+		private Dictionary<String, String> FindAllVideosReqParams(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
@@ -344,10 +391,9 @@ namespace BrightcoveSDK
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
 			reqparams.Add("sort_by", sortBy.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
-
-			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+			return reqparams;
 		}
 
 		#endregion Find All Videos
@@ -357,15 +403,32 @@ namespace BrightcoveSDK
         public BCVideo FindVideoById(long videoId) {
             return FindVideoById(videoId, null);
         }
+		public BCVideo<CustomFieldType> FindVideoById<CustomFieldType>(long videoId) {
+			return FindVideoById<CustomFieldType>(videoId, null);
+		}
 
         public BCVideo FindVideoById(long videoId, List<VideoFields> video_fields) {
             return FindVideoById(videoId, video_fields, null);
         }
+		public BCVideo<CustomFieldType> FindVideoById<CustomFieldType>(long videoId, List<VideoFields> video_fields) {
+			return FindVideoById<CustomFieldType>(videoId, video_fields, null);
+		}
 
         public BCVideo FindVideoById(long videoId, List<VideoFields> video_fields, List<String> custom_fields) {
             return FindVideoById(videoId, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCVideo<CustomFieldType> FindVideoById<CustomFieldType>(long videoId, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideoById<CustomFieldType>(videoId, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCVideo FindVideoById(long videoId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideoByIdReqParam(videoId, video_fields, custom_fields, media_delivery);
+            //Get the JSon reader returned from the APIRequest
+            QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, Account);
+
+            return JSON.Converter.Deserialize<BCVideo>(qrp.JsonResult);
+        }
         /// <summary>
         /// Finds a single video with the specified id.
         /// </summary>
@@ -381,22 +444,26 @@ namespace BrightcoveSDK
         /// <returns>
         /// Returns a BCVideo item
         /// </returns>
-        public BCVideo FindVideoById(long videoId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
-
-            Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
-            //Build the REST parameter list
-            reqparams.Add("command", "find_video_by_id");
-            reqparams.Add("video_id", videoId.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
-            if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
+		public BCVideo<CustomFieldType> FindVideoById<CustomFieldType>(long videoId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+            Dictionary<String, String> reqparams = FindVideoByIdReqParam(videoId, video_fields, custom_fields, media_delivery);
             //Get the JSon reader returned from the APIRequest
             QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, Account);
 
-            return JSON.Converter.Deserialize<BCVideo>(qrp.JsonResult);
+			return JSON.Converter.Deserialize<BCVideo<CustomFieldType>>(qrp.JsonResult);
         }
+
+		private Dictionary<String, String> FindVideoByIdReqParam(long videoId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_video_by_id");
+			reqparams.Add("video_id", videoId.ToString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+			return reqparams;
+		}
 
         #endregion Find Video By ID
         
@@ -405,19 +472,36 @@ namespace BrightcoveSDK
         public BCQueryResult FindRelatedVideos(long videoId) {
             return FindRelatedVideos(videoId, -1);
         }
+		public BCQueryResult<CustomFieldType> FindRelatedVideos<CustomFieldType>(long videoId) {
+			return FindRelatedVideos<CustomFieldType>(videoId, -1);
+		}
 
         public BCQueryResult FindRelatedVideos(long videoId, int howMany) {
             return FindRelatedVideos(videoId, howMany, null);
         }
+		public BCQueryResult<CustomFieldType> FindRelatedVideos<CustomFieldType>(long videoId, int howMany) {
+			return FindRelatedVideos<CustomFieldType>(videoId, howMany, null);
+		}
 
         public BCQueryResult FindRelatedVideos(long videoId, int howMany, List<VideoFields> video_fields) {
             return FindRelatedVideos(videoId, howMany, video_fields, null);
         }
+		public BCQueryResult<CustomFieldType> FindRelatedVideos<CustomFieldType>(long videoId, int howMany, List<VideoFields> video_fields) {
+			return FindRelatedVideos<CustomFieldType>(videoId, howMany, video_fields, null);
+		}
 
         public BCQueryResult FindRelatedVideos(long videoId, int howMany, List<VideoFields> video_fields, List<string> custom_fields) {
             return FindRelatedVideos(videoId, howMany, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindRelatedVideos<CustomFieldType>(long videoId, int howMany, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindRelatedVideos<CustomFieldType>(videoId, howMany, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindRelatedVideos(long videoId, int howMany, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+            Dictionary<String, String> reqparams = FindRelatedVideosReqParams(videoId, howMany, video_fields, custom_fields, media_delivery);
+            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+        }
         /// <summary>
         /// Finds videos related to the given video. Combines the name and short description of the given 
         /// video and searches for any partial matches in the name, description, and tags of all videos in 
@@ -440,20 +524,24 @@ namespace BrightcoveSDK
         /// <returns>
         /// Returns a BCQueryResult item
         /// </returns>
-        public BCQueryResult FindRelatedVideos(long videoId, int howMany, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
-
-            Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
-            //Build the REST parameter list
-            reqparams.Add("command", "find_related_videos");
-            reqparams.Add("video_id", videoId.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
-            if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-            if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
-
-            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		public BCQueryResult<CustomFieldType> FindRelatedVideos<CustomFieldType>(long videoId, int howMany, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+            Dictionary<String, String> reqparams = FindRelatedVideosReqParams(videoId, howMany, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
         }
+
+		private Dictionary<String, String> FindRelatedVideosReqParams(long videoId, int howMany, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_related_videos");
+			reqparams.Add("video_id", videoId.ToString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+			return reqparams;
+		}
 
         #endregion Find Related Videos
 
@@ -462,15 +550,29 @@ namespace BrightcoveSDK
         public BCQueryResult FindVideosByIds(List<long> videoIds) {
             return FindVideosByIds(videoIds, null);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByIds<CustomFieldType>(List<long> videoIds) {
+			return FindVideosByIds<CustomFieldType>(videoIds, null);
+		}
 
         public BCQueryResult FindVideosByIds(List<long> videoIds, List<VideoFields> video_fields) {
             return FindVideosByIds(videoIds, video_fields, null);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByIds<CustomFieldType>(List<long> videoIds, List<VideoFields> video_fields) {
+			return FindVideosByIds<CustomFieldType>(videoIds, video_fields, null);
+		}
 
         public BCQueryResult FindVideosByIds(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields) {
             return FindVideosByIds(videoIds, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByIds<CustomFieldType>(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideosByIds<CustomFieldType>(videoIds, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindVideosByIds(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = FindVideosByIdsReqParams(videoIds, video_fields, custom_fields, media_delivery);
+            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+        }
         /// <summary>
         /// Find multiple videos, given their ids.
         /// </summary>
@@ -486,20 +588,24 @@ namespace BrightcoveSDK
         /// <returns>
         /// Returns a BCQueryResult item
         /// </returns>
-        public BCQueryResult FindVideosByIds(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindVideosByIds<CustomFieldType>(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 
-            Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
-            //Build the REST parameter list
-            reqparams.Add("command", "find_videos_by_ids");
-            reqparams.Add("video_ids", Implode(videoIds));
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
-            if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-            reqparams.Add("page_size", "-1");
-
-            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+			Dictionary<String, String> reqparams = FindVideosByIdsReqParams(videoIds, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
         }
+
+		private Dictionary<String, String> FindVideosByIdsReqParams(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_videos_by_ids");
+			reqparams.Add("video_ids", Implode(videoIds));
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+			reqparams.Add("page_size", "-1");
+			return reqparams;
+		}
 
         #endregion Find Videos By IDs
 
@@ -508,15 +614,31 @@ namespace BrightcoveSDK
         public BCVideo FindVideoByReferenceId(String referenceId) {
             return FindVideoByReferenceId(referenceId, null);
         }
+		public BCVideo<CustomFieldType> FindVideoByReferenceId<CustomFieldType>(String referenceId) {
+			return FindVideoByReferenceId<CustomFieldType>(referenceId, null);
+		}
 
         public BCVideo FindVideoByReferenceId(String referenceId, List<VideoFields> video_fields) {
             return FindVideoByReferenceId(referenceId, video_fields, null);
         }
+		public BCVideo<CustomFieldType> FindVideoByReferenceId<CustomFieldType>(String referenceId, List<VideoFields> video_fields) {
+			return FindVideoByReferenceId<CustomFieldType>(referenceId, video_fields, null);
+		}
 
         public BCVideo FindVideoByReferenceId(String referenceId, List<VideoFields> video_fields, List<String> custom_fields) {
             return FindVideoByReferenceId(referenceId, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCVideo<CustomFieldType> FindVideoByReferenceId<CustomFieldType>(String referenceId, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideoByReferenceId<CustomFieldType>(referenceId, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCVideo FindVideoByReferenceId(String referenceId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideoByReferenceIdReqParams(referenceId, video_fields, custom_fields, media_delivery);
+            //Get the JSon reader returned from the APIRequest
+            string jsonStr = BCAPIRequest.ExecuteRead(reqparams, Account).JsonResult;
+            return JSON.Converter.Deserialize<BCVideo>(jsonStr);
+        }
         /// <summary>
         /// Find a video based on its publisher-assigned reference id.
         /// </summary>
@@ -532,21 +654,25 @@ namespace BrightcoveSDK
         /// <returns>
         /// Returns a BCVideo item
         /// </returns>
-        public BCVideo FindVideoByReferenceId(String referenceId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
-
-            Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
-            //Build the REST parameter list
-            reqparams.Add("command", "find_video_by_reference_id");
-            reqparams.Add("reference_id", referenceId);
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
-            if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
+		public BCVideo<CustomFieldType> FindVideoByReferenceId<CustomFieldType>(String referenceId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+				
+            Dictionary<String, String> reqparams = FindVideoByReferenceIdReqParams(referenceId, video_fields, custom_fields, media_delivery);
             //Get the JSon reader returned from the APIRequest
             string jsonStr = BCAPIRequest.ExecuteRead(reqparams, Account).JsonResult;
-            return JSON.Converter.Deserialize<BCVideo>(jsonStr);
+			return JSON.Converter.Deserialize<BCVideo<CustomFieldType>>(jsonStr);
         }
+
+		private Dictionary<String, String> FindVideoByReferenceIdReqParams(String referenceId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_video_by_reference_id");
+			reqparams.Add("reference_id", referenceId);
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+			return reqparams;
+		}
 
         #endregion Find Video By Reference ID
 
@@ -555,15 +681,29 @@ namespace BrightcoveSDK
         public BCQueryResult FindVideosByReferenceIds(List<String> referenceIds) {
             return FindVideosByReferenceIds(referenceIds, null);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByReferenceIds<CustomFieldType>(List<String> referenceIds) {
+			return FindVideosByReferenceIds<CustomFieldType>(referenceIds, null);
+		}
 
         public BCQueryResult FindVideosByReferenceIds(List<String> referenceIds, List<VideoFields> video_fields) {
             return FindVideosByReferenceIds(referenceIds, video_fields, null);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByReferenceIds<CustomFieldType>(List<String> referenceIds, List<VideoFields> video_fields) {
+			return FindVideosByReferenceIds<CustomFieldType>(referenceIds, video_fields, null);
+		}
 
         public BCQueryResult FindVideosByReferenceIds(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields) {
             return FindVideosByReferenceIds(referenceIds, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByReferenceIds<CustomFieldType>(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideosByReferenceIds<CustomFieldType>(referenceIds, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindVideosByReferenceIds(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+            Dictionary<String, String> reqparams = FindVideosByReferenceIdsReqParams(referenceIds, video_fields, custom_fields, media_delivery);
+            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+        }
         /// <summary>
         /// Find multiple videos based on their publisher-assigned reference ids.
         /// </summary>
@@ -579,19 +719,23 @@ namespace BrightcoveSDK
         /// <returns>
         /// Returns a BCQueryResult item
         /// </returns>
-        public BCQueryResult FindVideosByReferenceIds(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
-
-            Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
-            //Build the REST parameter list
-            reqparams.Add("command", "find_videos_by_reference_ids");
-            reqparams.Add("reference_ids", Implode(referenceIds));
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
-            if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
-            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		public BCQueryResult<CustomFieldType> FindVideosByReferenceIds<CustomFieldType>(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+            Dictionary<String, String> reqparams = FindVideosByReferenceIdsReqParams(referenceIds, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
         }
+
+		private Dictionary<String, String> FindVideosByReferenceIdsReqParams(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_videos_by_reference_ids");
+			reqparams.Add("reference_ids", Implode(referenceIds));
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+			return reqparams;
+		}
 
         #endregion Find Videos By Reference IDs
 
@@ -600,35 +744,64 @@ namespace BrightcoveSDK
 		public BCQueryResult FindVideosByUserId(long userId) {
 			return FindVideosByUserId(userId, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId) {
+			return FindVideosByUserId<CustomFieldType>(userId, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
+		}
 
 		public BCQueryResult FindVideosByUserId(long userId, int howMany) {
 			return FindVideosByUserId(userId, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, int howMany) {
+			return FindVideosByUserId<CustomFieldType>(userId, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
 
 		public BCQueryResult FindVideosByUserId(long userId, BCSortOrderType sortOrder) {
 			return FindVideosByUserId(userId, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, BCSortOrderType sortOrder) {
+			return FindVideosByUserId<CustomFieldType>(userId, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
+		}
 
 		public BCQueryResult FindVideosByUserId(long userId, BCSortByType sortBy) {
 			return FindVideosByUserId(userId, -1, sortBy, BCSortOrderType.ASC, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, BCSortByType sortBy) {
+			return FindVideosByUserId<CustomFieldType>(userId, -1, sortBy, BCSortOrderType.ASC, null, null);
 		}
 
 		public BCQueryResult FindVideosByUserId(long userId, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByUserId(userId, -1, sortBy, sortOrder, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByUserId<CustomFieldType>(userId, -1, sortBy, sortOrder, null, null);
+		}
 
 		public BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByUserId(userId, howMany, sortBy, sortOrder, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByUserId<CustomFieldType>(userId, howMany, sortBy, sortOrder, null, null);
 		}
 
 		public BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
 			return FindVideosByUserId(userId, howMany, sortBy, sortOrder, video_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+			return FindVideosByUserId<CustomFieldType>(userId, howMany, sortBy, sortOrder, video_fields, null);
+		}
 
         public BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
             return FindVideosByUserId(userId, howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindVideosByUserId<CustomFieldType>(userId, howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideosByUserIdReqParams(userId, howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
 		/// <summary>
 		/// Retrieves the videos uploaded by the specified user id.
 		/// </summary>
@@ -653,21 +826,25 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindVideosByUserId(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindVideosByUserId<CustomFieldType>(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideosByUserIdReqParams(userId, howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
+		}
 
+		private Dictionary<String, String> FindVideosByUserIdReqParams(long userId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_videos_by_user_id");
 			reqparams.Add("user_id", userId.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
 			reqparams.Add("sort_by", sortBy.ToString());
 			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
-
-			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+			return reqparams;
 		}
 
 		#endregion Find Videos By User ID
@@ -677,35 +854,64 @@ namespace BrightcoveSDK
 		public BCQueryResult FindVideosByCampaignId(long campaignId) {
 			return FindVideosByCampaignId(campaignId, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
+		}
 
 		public BCQueryResult FindVideosByCampaignId(long campaignId, int howMany) {
 			return FindVideosByCampaignId(campaignId, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, int howMany) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
 
 		public BCQueryResult FindVideosByCampaignId(long campaignId, BCSortOrderType sortOrder) {
 			return FindVideosByCampaignId(campaignId, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, BCSortOrderType sortOrder) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
+		}
 
 		public BCQueryResult FindVideosByCampaignId(long campaignId, BCSortByType sortBy) {
 			return FindVideosByCampaignId(campaignId, -1, sortBy, BCSortOrderType.ASC, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, BCSortByType sortBy) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, -1, sortBy, BCSortOrderType.ASC, null, null);
 		}
 
 		public BCQueryResult FindVideosByCampaignId(long campaignId, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByCampaignId(campaignId, -1, sortBy, sortOrder, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, -1, sortBy, sortOrder, null, null);
+		}
 
 		public BCQueryResult FindVideosByCampaignId(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByCampaignId(campaignId, howMany, sortBy, sortOrder, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, howMany, sortBy, sortOrder, null, null);
 		}
 
 		public BCQueryResult FindVideosByCampaignId(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
 			return FindVideosByCampaignId(campaignId, howMany, sortBy, sortOrder, video_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, howMany, sortBy, sortOrder, video_fields, null);
+		}
 
         public BCQueryResult FindVideosByCampaignId(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
             return FindVideosByCampaignId(campaignId, howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindVideosByCampaignId<CustomFieldType>(campaignId, howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindVideosByCampaignId(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideosByCampaignIdReqParams(campaignId, howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
 		/// <summary>
 		/// Gets all the videos associated with the given campaign id
 		/// </summary>
@@ -730,21 +936,25 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindVideosByCampaignId(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindVideosByCampaignId<CustomFieldType>(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideosByCampaignIdReqParams(campaignId, howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
+		}
 
+		private Dictionary<String, String> FindVideosByCampaignIdReqParams(long campaignId, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_videos_by_campaign_id");
 			reqparams.Add("campaign_id", campaignId.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
 			reqparams.Add("sort_by", sortBy.ToString());
 			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
-
-			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+			return reqparams;
 		}
 
 		#endregion Find Videos By Campaign ID
@@ -754,43 +964,78 @@ namespace BrightcoveSDK
         public BCQueryResult FindModifiedVideos(DateTime from_date) {
             return FindModifiedVideos(from_date, -1, BCSortOrderType.ASC);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date) {
+			return FindModifiedVideos<CustomFieldType>(from_date, -1, BCSortOrderType.ASC);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, BCSortOrderType sortOrder) {
             return FindModifiedVideos(from_date, -1, BCSortByType.CREATION_DATE, sortOrder);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, BCSortOrderType sortOrder) {
+			return FindModifiedVideos<CustomFieldType>(from_date, -1, BCSortByType.CREATION_DATE, sortOrder);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, BCSortByType sortBy) {
             return FindModifiedVideos(from_date, -1, sortBy, BCSortOrderType.ASC);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, BCSortByType sortBy) {
+			return FindModifiedVideos<CustomFieldType>(from_date, -1, sortBy, BCSortOrderType.ASC);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany) {
             return FindModifiedVideos(from_date, howMany, BCSortOrderType.ASC);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany) {
+			return FindModifiedVideos<CustomFieldType>(from_date, howMany, BCSortOrderType.ASC);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortOrderType sortOrder) {
             return FindModifiedVideos(from_date, howMany, BCSortByType.CREATION_DATE, sortOrder);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany, BCSortOrderType sortOrder) {
+			return FindModifiedVideos<CustomFieldType>(from_date, howMany, BCSortByType.CREATION_DATE, sortOrder);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy) {
             return FindModifiedVideos(from_date, howMany, sortBy, BCSortOrderType.ASC);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany, BCSortByType sortBy) {
+			return FindModifiedVideos<CustomFieldType>(from_date, howMany, sortBy, BCSortOrderType.ASC);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
             return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, null);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindModifiedVideos<CustomFieldType>(from_date, howMany, sortBy, sortOrder, null);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
             return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, video_fields, null);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+			return FindModifiedVideos<CustomFieldType>(from_date, howMany, sortBy, sortOrder, video_fields, null);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
             return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, null);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindModifiedVideos<CustomFieldType>(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, null);
+		}
 
         public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, List<string> filter) {
             return FindModifiedVideos(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, filter, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, List<string> filter) {
+			return FindModifiedVideos<CustomFieldType>(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, filter, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, List<string> filter, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindModifiedVideosReqParams(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, filter, media_delivery);
+            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+        }
         /// <summary>
         /// This will find all modified videos
         /// </summary>
@@ -803,23 +1048,27 @@ namespace BrightcoveSDK
         /// <param name="filter">A comma-separated list of filters, specifying which categories of videos you would like returned. Valid filter values are PLAYABLE, UNSCHEDULED, INACTIVE, and DELETED.</param>
         /// <param name="media_delivery">If universal delivery service is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. Meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. This is a MediaDeliveryTypeEnum with a value of http or default.</param>
         /// <returns>Returns a BCQueryResult Item</returns>
-        public BCQueryResult FindModifiedVideos(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, List<string> filter, MediaDeliveryTypeEnum media_delivery) {
-
-            Dictionary<String, String> reqparams = new Dictionary<string, string>();
-
-            //Build the REST parameter list
-            reqparams.Add("command", "find_modified_videos");
-            if (from_date != null) reqparams.Add("from_date", from_date.ToUnixTime());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
-            if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-            if (filter != null) reqparams.Add("filter", Implode(filter));
-            reqparams.Add("sort_order", sortOrder.ToString());
-            reqparams.Add("sort_by", sortBy.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
-
-            return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		public BCQueryResult<CustomFieldType> FindModifiedVideos<CustomFieldType>(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, List<string> filter, MediaDeliveryTypeEnum media_delivery) {
+			
+            Dictionary<String, String> reqparams = FindModifiedVideosReqParams(from_date, howMany, sortBy, sortOrder, video_fields, custom_fields, filter, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
         }
+
+		private Dictionary<String, String> FindModifiedVideosReqParams(DateTime from_date, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, List<string> filter, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_modified_videos");
+			if (from_date != null) reqparams.Add("from_date", from_date.ToUnixTime());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+			if (filter != null) reqparams.Add("filter", Implode(filter));
+			reqparams.Add("sort_order", sortOrder.ToString());
+			reqparams.Add("sort_by", sortBy.ToString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+			return reqparams;
+		}
 
         #endregion Find Modified Videos
 
@@ -828,35 +1077,64 @@ namespace BrightcoveSDK
 		public BCQueryResult FindVideosByText(string text) {
 			return FindVideosByText(text, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text) {
+			return FindVideosByText<CustomFieldType>(text, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
+		}
 
 		public BCQueryResult FindVideosByText(string text, int howMany) {
 			return FindVideosByText(text, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, int howMany) {
+			return FindVideosByText<CustomFieldType>(text, howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null, null);
 		}
 
 		public BCQueryResult FindVideosByText(string text, BCSortOrderType sortOrder) {
 			return FindVideosByText(text, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, BCSortOrderType sortOrder) {
+			return FindVideosByText<CustomFieldType>(text, -1, BCSortByType.CREATION_DATE, sortOrder, null, null);
+		}
 
 		public BCQueryResult FindVideosByText(string text, BCSortByType sortBy) {
 			return FindVideosByText(text, -1, sortBy, BCSortOrderType.ASC, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, BCSortByType sortBy) {
+			return FindVideosByText<CustomFieldType>(text, -1, sortBy, BCSortOrderType.ASC, null, null);
 		}
 
 		public BCQueryResult FindVideosByText(string text, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByText(text, -1, sortBy, sortOrder, null, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByText<CustomFieldType>(text, -1, sortBy, sortOrder, null, null);
+		}
 
 		public BCQueryResult FindVideosByText(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByText(text, howMany, sortBy, sortOrder, null, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByText<CustomFieldType>(text, howMany, sortBy, sortOrder, null, null);
 		}
 
 		public BCQueryResult FindVideosByText(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
 			return FindVideosByText(text, howMany, sortBy, sortOrder, video_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+			return FindVideosByText<CustomFieldType>(text, howMany, sortBy, sortOrder, video_fields, null);
+		}
 
         public BCQueryResult FindVideosByText(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
             return FindVideosByText(text, howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindVideosByText<CustomFieldType>(text, howMany, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindVideosByText(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideosByTextReqParams(text, howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
 		/// <summary>
 		/// Searches through all the videos in this account, and returns a collection of videos whose name, short description, or long description contain a match for the specified text. 
 		/// </summary>
@@ -881,21 +1159,25 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindVideosByText(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindVideosByText<CustomFieldType>(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindVideosByTextReqParams(text, howMany, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
+		}
 
+		private Dictionary<String, String> FindVideosByTextReqParams(string text, int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_videos_by_text");
 			reqparams.Add("text", text);
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
 			reqparams.Add("sort_by", sortBy.ToString());
 			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
-
-			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+			return reqparams;
 		}
 
 		#endregion Find Videos By Text
@@ -905,39 +1187,70 @@ namespace BrightcoveSDK
 		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags) {
 			return FindVideosByTags(and_tags, or_tags, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, -1, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
+		}
 
         public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize) {
             return FindVideosByTags(and_tags, or_tags, pageSize, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, int pageSize) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, pageSize, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
 
 		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, BCSortByType sortBy) {
 			return FindVideosByTags(and_tags, or_tags, -1, sortBy, BCSortOrderType.ASC);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, BCSortByType sortBy) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, -1, sortBy, BCSortOrderType.ASC);
+		}
 
 		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, BCSortOrderType sortOrder) {
 			return FindVideosByTags(and_tags, or_tags, -1, BCSortByType.CREATION_DATE, sortOrder);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, BCSortOrderType sortOrder) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, -1, BCSortByType.CREATION_DATE, sortOrder);
 		}
 
 		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindVideosByTags(and_tags, or_tags, -1, sortBy, sortOrder);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, -1, sortBy, sortOrder);
+		}
 
         public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder) {
             return FindVideosByTags(and_tags, or_tags, pageSize, sortBy, sortOrder, null);
+		}
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, pageSize, sortBy, sortOrder, null);
 		}
 
         public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
             return FindVideosByTags(and_tags, or_tags, pageSize, sortBy, sortOrder, video_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, pageSize, sortBy, sortOrder, video_fields, null);
+		}
 
         public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
             return FindVideosByTags(and_tags, or_tags, pageSize, 0, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, int pageSize, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, pageSize, 0, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
         public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
             return FindVideosByTags(and_tags, or_tags, pageSize, pageNumber, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideosByTags<CustomFieldType>(and_tags, or_tags, pageSize, pageNumber, sortBy, sortOrder, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = FindVideosByTagsReqParams(and_tags, or_tags, pageSize, pageNumber, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
 		/// <summary>
 		/// Performs a search on all the tags of the videos in this account, and returns a collection of videos that contain the specified tags. Note that tags are not case-sensitive. 
 		/// </summary>
@@ -968,10 +1281,15 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-        public BCQueryResult FindVideosByTags(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
-
-			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+		public BCQueryResult<CustomFieldType> FindVideosByTags<CustomFieldType>(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 			
+			Dictionary<String, String> reqparams = FindVideosByTagsReqParams(and_tags, or_tags, pageSize, pageNumber, sortBy, sortOrder, video_fields, custom_fields, media_delivery);
+			return MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.videos, Account);
+		}
+
+		private Dictionary<String, String> FindVideosByTagsReqParams(List<String> and_tags, List<String> or_tags, int pageSize, int pageNumber, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
 			//Build the REST parameter list
 			reqparams.Add("command", "find_videos_by_tags");
 			if (and_tags != null) reqparams.Add("and_tags", Implode(and_tags));
@@ -980,11 +1298,10 @@ namespace BrightcoveSDK
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
 			reqparams.Add("sort_order", sortOrder.ToString());
 			reqparams.Add("sort_by", sortBy.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (pageSize >= 0) reqparams.Add("page_size", pageSize.ToString());
-            if (pageNumber >= 0) reqparams.Add("page_number", pageNumber.ToString());
-
-			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (pageSize >= 0) reqparams.Add("page_size", pageSize.ToString());
+			if (pageNumber >= 0) reqparams.Add("page_number", pageNumber.ToString());
+			return reqparams;
 		}
 
 		#endregion Find Videos By Tags
@@ -998,35 +1315,66 @@ namespace BrightcoveSDK
 		public BCQueryResult FindAllPlaylists() {
 			return FindAllPlaylists(-1);
 		}
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>() {
+			return FindAllPlaylists<CustomFieldType>(-1);
+		}
 		
 		public BCQueryResult FindAllPlaylists(int howMany) {
 			return FindAllPlaylists(howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
+		}
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany) {
+			return FindAllPlaylists<CustomFieldType>(howMany, BCSortByType.CREATION_DATE, BCSortOrderType.ASC, null);
 		}
 
 		public BCQueryResult FindAllPlaylists(int howMany, BCSortOrderType sortOrder) {
 			return FindAllPlaylists(howMany, BCSortByType.CREATION_DATE, sortOrder, null);
 		}
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany, BCSortOrderType sortOrder) {
+			return FindAllPlaylists<CustomFieldType>(howMany, BCSortByType.CREATION_DATE, sortOrder, null);
+		}
 
 		public BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy) {
 			return FindAllPlaylists(howMany, sortBy, BCSortOrderType.ASC, null);
+		}
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany, BCSortByType sortBy) {
+			return FindAllPlaylists<CustomFieldType>(howMany, sortBy, BCSortOrderType.ASC, null);
 		}
 
 		public BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
 			return FindAllPlaylists(howMany, sortBy, sortOrder, null);
 		}
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder) {
+			return FindAllPlaylists<CustomFieldType>(howMany, sortBy, sortOrder, null);
+		}
 
 		public BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
 			return FindAllPlaylists(howMany, sortBy, sortOrder, video_fields, null);
+		}
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
+			return FindAllPlaylists<CustomFieldType>(howMany, sortBy, sortOrder, video_fields, null);
 		}
 
 		public BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
 			return FindAllPlaylists(howMany, sortBy, sortOrder, video_fields, custom_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindAllPlaylists<CustomFieldType>(howMany, sortBy, sortOrder, video_fields, custom_fields, null);
+		}
 
         public BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, List<string> playlist_fields) {
             return FindAllPlaylists(howMany, sortBy, sortOrder, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, List<string> playlist_fields) {
+			return FindAllPlaylists<CustomFieldType>(howMany, sortBy, sortOrder, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, List<string> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindAllPlaylistsReqParams(howMany, sortBy, sortOrder, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
+
+			return qr;
+		}
 		/// <summary>
 		/// Find all playlists in this account.
 		/// </summary>
@@ -1051,23 +1399,27 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindAllPlaylists(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, List<string> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindAllPlaylists<CustomFieldType>(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, List<string> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindAllPlaylistsReqParams(howMany, sortBy, sortOrder, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult<CustomFieldType> qr = MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.playlists, Account);
 
+			return qr;
+		}
+
+		private Dictionary<String, String> FindAllPlaylistsReqParams(int howMany, BCSortByType sortBy, BCSortOrderType sortOrder, List<VideoFields> video_fields, List<String> custom_fields, List<string> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_all_playlists");
 			reqparams.Add("sort_order", sortOrder.ToString());
 			reqparams.Add("sort_by", sortBy.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
 			if (playlist_fields != null) reqparams.Add("playlist_fields", Implode(playlist_fields));
 			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
-			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
-
-			return qr;
+			return reqparams;
 		}
 
 		#endregion Find All Playlists
@@ -1077,19 +1429,39 @@ namespace BrightcoveSDK
 		public BCPlaylist FindPlaylistById(long playlist_id) {
 			return FindPlaylistById(playlist_id, null);
 		}
+		public BCPlaylist<CustomFieldType> FindPlaylistById<CustomFieldType>(long playlist_id) {
+			return FindPlaylistById<CustomFieldType>(playlist_id, null);
+		}
 
 		public BCPlaylist FindPlaylistById(long playlist_id, List<VideoFields> video_fields) {
 			return FindPlaylistById(playlist_id, video_fields, null);
+		}
+		public BCPlaylist<CustomFieldType> FindPlaylistById<CustomFieldType>(long playlist_id, List<VideoFields> video_fields) {
+			return FindPlaylistById<CustomFieldType>(playlist_id, video_fields, null);
 		}
 
 		public BCPlaylist FindPlaylistById(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields) {
 			return FindPlaylistById(playlist_id, video_fields, custom_fields, null);
 		}
+		public BCPlaylist<CustomFieldType> FindPlaylistById<CustomFieldType>(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindPlaylistById<CustomFieldType>(playlist_id, video_fields, custom_fields, null);
+		}
 
         public BCPlaylist FindPlaylistById(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
             return FindPlaylistById(playlist_id, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCPlaylist<CustomFieldType> FindPlaylistById<CustomFieldType>(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
+			return FindPlaylistById<CustomFieldType>(playlist_id, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCPlaylist FindPlaylistById(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindPlaylistByIdReqParams(playlist_id, video_fields, custom_fields, playlist_fields, media_delivery);
+			//Get the JSon reader returned from the APIRequest
+			QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, Account);
+
+			return JSON.Converter.Deserialize<BCPlaylist>(qrp.JsonResult);
+		}
 		/// <summary>
 		/// Finds a particular playlist based on its id.
 		/// </summary>
@@ -1108,22 +1480,26 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCPlaylist item
 		/// </returns>
-		public BCPlaylist FindPlaylistById(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCPlaylist<CustomFieldType> FindPlaylistById<CustomFieldType>(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindPlaylistByIdReqParams(playlist_id, video_fields, custom_fields, playlist_fields, media_delivery);
+			//Get the JSon reader returned from the APIRequest
+			QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, Account);
 
+			return JSON.Converter.Deserialize<BCPlaylist<CustomFieldType>>(qrp.JsonResult);
+		}
+
+		private Dictionary<String, String> FindPlaylistByIdReqParams(long playlist_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlist_by_id");
 			reqparams.Add("playlist_id", playlist_id.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
 			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
-			//Get the JSon reader returned from the APIRequest
-			QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, Account);
-
-			return JSON.Converter.Deserialize<BCPlaylist>(qrp.JsonResult);
+			return reqparams;
 		}
 
 		#endregion Find Playlist By Id
@@ -1133,19 +1509,39 @@ namespace BrightcoveSDK
 		public BCQueryResult FindPlaylistsByIds(List<long> playlist_ids) {
 			return FindPlaylistsByIds(playlist_ids, null);
 		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsByIds<CustomFieldType>(List<long> playlist_ids) {
+			return FindPlaylistsByIds<CustomFieldType>(playlist_ids, null);
+		}
 
 		public BCQueryResult FindPlaylistsByIds(List<long> playlist_ids, List<VideoFields> video_fields) {
 			return FindPlaylistsByIds(playlist_ids, video_fields, null);
+		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsByIds<CustomFieldType>(List<long> playlist_ids, List<VideoFields> video_fields) {
+			return FindPlaylistsByIds<CustomFieldType>(playlist_ids, video_fields, null);
 		}
 
 		public BCQueryResult FindPlaylistsByIds(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields) {
 			return FindPlaylistsByIds(playlist_ids, video_fields, custom_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsByIds<CustomFieldType>(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindPlaylistsByIds<CustomFieldType>(playlist_ids, video_fields, custom_fields, null);
+		}
 
         public BCQueryResult FindPlaylistsByIds(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
             return FindPlaylistsByIds(playlist_ids, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindPlaylistsByIds<CustomFieldType>(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
+			return FindPlaylistsByIds<CustomFieldType>(playlist_ids, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindPlaylistsByIds(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = FindPlaylistsByIdsReqParams(playlist_ids, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
+
+			return qr;
+
+		}
 		/// <summary>
 		/// Retrieve a set of playlists based on their ids.
 		/// </summary>
@@ -1164,22 +1560,26 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindPlaylistsByIds(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindPlaylistsByIds<CustomFieldType>(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 
+			Dictionary<String, String> reqparams = FindPlaylistsByIdsReqParams(playlist_ids, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult<CustomFieldType> qr = MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.playlists, Account);
+
+			return qr;
+
+		}
+
+		public Dictionary<String, String> FindPlaylistsByIdsReqParams(List<long> playlist_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlists_by_ids");
 			reqparams.Add("playlist_ids", Implode(playlist_ids));
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
 			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
-			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
-
-			return qr;
-
+			return reqparams;
 		}
 
 		#endregion Find Playlists By Ids
@@ -1189,19 +1589,39 @@ namespace BrightcoveSDK
 		public BCPlaylist FindPlaylistByReferenceId(string reference_id) {
 			return FindPlaylistByReferenceId(reference_id, null);
 		}
+		public BCPlaylist<CustomFieldType> FindPlaylistByReferenceId<CustomFieldType>(string reference_id) {
+			return FindPlaylistByReferenceId<CustomFieldType>(reference_id, null);
+		}
 
 		public BCPlaylist FindPlaylistByReferenceId(string reference_id, List<VideoFields> video_fields) {
 			return FindPlaylistByReferenceId(reference_id, video_fields, null);
+		}
+		public BCPlaylist<CustomFieldType> FindPlaylistByReferenceId<CustomFieldType>(string reference_id, List<VideoFields> video_fields) {
+			return FindPlaylistByReferenceId<CustomFieldType>(reference_id, video_fields, null);
 		}
 
 		public BCPlaylist FindPlaylistByReferenceId(string reference_id, List<VideoFields> video_fields, List<string> custom_fields) {
 			return FindPlaylistByReferenceId(reference_id, video_fields, custom_fields, null);
 		}
+		public BCPlaylist<CustomFieldType> FindPlaylistByReferenceId<CustomFieldType>(string reference_id, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindPlaylistByReferenceId<CustomFieldType>(reference_id, video_fields, custom_fields, null);
+		}
 
         public BCPlaylist FindPlaylistByReferenceId(string reference_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
             return FindPlaylistByReferenceId(reference_id, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCPlaylist<CustomFieldType> FindPlaylistByReferenceId<CustomFieldType>(string reference_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
+			return FindPlaylistByReferenceId<CustomFieldType>(reference_id, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCPlaylist FindPlaylistByReferenceId(string reference_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindPlaylistByReferenceIdReqParams(reference_id, video_fields, custom_fields, playlist_fields, media_delivery);
+
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.ExecuteRead(reqparams, Account).JsonResult;
+			return JSON.Converter.Deserialize<BCPlaylist>(jsonStr);
+		}
 		/// <summary>
 		/// Retrieve a playlist based on its publisher-assigned reference id.
 		/// </summary>
@@ -1220,21 +1640,26 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCPlaylist item
 		/// </returns>
-		public BCPlaylist FindPlaylistByReferenceId(string reference_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCPlaylist<CustomFieldType> FindPlaylistByReferenceId<CustomFieldType>(string reference_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+			
+			Dictionary<String, String> reqparams = FindPlaylistByReferenceIdReqParams(reference_id, video_fields, custom_fields, playlist_fields, media_delivery);
 
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.ExecuteRead(reqparams, Account).JsonResult;
+			return JSON.Converter.Deserialize<BCPlaylist<CustomFieldType>>(jsonStr);
+		}
+
+		private Dictionary<String, String> FindPlaylistByReferenceIdReqParams(string reference_id, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlist_by_reference_id");
 			reqparams.Add("reference_id", reference_id);
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
 			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
-			//Get the JSon reader returned from the APIRequest
-			string jsonStr = BCAPIRequest.ExecuteRead(reqparams, Account).JsonResult;
-			return JSON.Converter.Deserialize<BCPlaylist>(jsonStr);
+			return reqparams;
 		}
 
 		#endregion Find Playlist By Reference Id
@@ -1244,19 +1669,38 @@ namespace BrightcoveSDK
 		public BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids) {
 			return FindPlaylistsByReferenceIds(reference_ids, null);
 		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsByReferenceIds<CustomFieldType>(List<string> reference_ids) {
+			return FindPlaylistsByReferenceIds<CustomFieldType>(reference_ids, null);
+		}
 
 		public BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<VideoFields> video_fields) {
 			return FindPlaylistsByReferenceIds(reference_ids, video_fields, null);
+		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsByReferenceIds<CustomFieldType>(List<string> reference_ids, List<VideoFields> video_fields) {
+			return FindPlaylistsByReferenceIds<CustomFieldType>(reference_ids, video_fields, null);
 		}
 
 		public BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields) {
 			return FindPlaylistsByReferenceIds(reference_ids, video_fields, custom_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsByReferenceIds<CustomFieldType>(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindPlaylistsByReferenceIds<CustomFieldType>(reference_ids, video_fields, custom_fields, null);
+		}
 
         public BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
             return FindPlaylistsByReferenceIds(reference_ids, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindPlaylistsByReferenceIds<CustomFieldType>(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
+			return FindPlaylistsByReferenceIds<CustomFieldType>(reference_ids, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = FindPlaylistsByReferenceIdsReqParams(reference_ids, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
+
+			return qr;
+		}
 		/// <summary>
 		/// Retrieve multiple playlists based on their publisher-assigned reference ids.
 		/// </summary>
@@ -1275,21 +1719,25 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindPlaylistsByReferenceIds(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindPlaylistsByReferenceIds<CustomFieldType>(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 
+			Dictionary<String, String> reqparams = FindPlaylistsByReferenceIdsReqParams(reference_ids, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult<CustomFieldType> qr = MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.playlists, Account);
+
+			return qr;
+		}
+
+		private Dictionary<String, String> FindPlaylistsByReferenceIdsReqParams(List<string> reference_ids, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlists_by_reference_ids");
 			reqparams.Add("reference_ids", Implode(reference_ids));
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
 			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-			
-			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
-
-			return qr;
+			return reqparams;
 		}
 
 		#endregion Find Playlists By Ids
@@ -1299,23 +1747,45 @@ namespace BrightcoveSDK
 		public BCQueryResult FindPlaylistsForPlayerId(long player_id) {
 			return FindPlaylistsForPlayerId(player_id, -1);
 		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsForPlayerId<CustomFieldType>(long player_id) {
+			return FindPlaylistsForPlayerId<CustomFieldType>(player_id, -1);
+		}
 
 		public BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany) {
 			return FindPlaylistsForPlayerId(player_id, howMany, null);
+		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsForPlayerId<CustomFieldType>(long player_id, int howMany) {
+			return FindPlaylistsForPlayerId<CustomFieldType>(player_id, howMany, null);
 		}
 
 		public BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<VideoFields> video_fields) {
 			return FindPlaylistsForPlayerId(player_id, howMany, video_fields, null);
 		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsForPlayerId<CustomFieldType>(long player_id, int howMany, List<VideoFields> video_fields) {
+			return FindPlaylistsForPlayerId<CustomFieldType>(player_id, howMany, video_fields, null);
+		}
 
 		public BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields) {
 			return FindPlaylistsForPlayerId(player_id, howMany, video_fields, custom_fields, null);
+		}
+		public BCQueryResult<CustomFieldType> FindPlaylistsForPlayerId<CustomFieldType>(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields) {
+			return FindPlaylistsForPlayerId<CustomFieldType>(player_id, howMany, video_fields, custom_fields, null);
 		}
 
         public BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
             return FindPlaylistsForPlayerId(player_id, howMany, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
         }
+		public BCQueryResult<CustomFieldType> FindPlaylistsForPlayerId<CustomFieldType>(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields) {
+			return FindPlaylistsForPlayerId<CustomFieldType>(player_id, howMany, video_fields, custom_fields, playlist_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
+		public BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = FindPlaylistsForPlayerIdReqParams(player_id, howMany, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
+
+			return qr;
+		}
 		/// <summary>
 		/// Given the id of a player, returns all the playlists assigned to that player.
 		/// </summary>
@@ -1337,22 +1807,27 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// Returns a BCQueryResult item
 		/// </returns>
-		public BCQueryResult FindPlaylistsForPlayerId(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult<CustomFieldType> FindPlaylistsForPlayerId<CustomFieldType>(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
 
+			Dictionary<String, String> reqparams = FindPlaylistsForPlayerIdReqParams(player_id, howMany, video_fields, custom_fields, playlist_fields, media_delivery);
+			BCQueryResult<CustomFieldType> qr = MultipleQueryHandler<CustomFieldType>(reqparams, BCObjectType.playlists, Account);
+
+			return qr;
+		}
+
+		private Dictionary<String, String> FindPlaylistsForPlayerIdReqParams(long player_id, int howMany, List<VideoFields> video_fields, List<string> custom_fields, List<PlaylistFields> playlist_fields, MediaDeliveryTypeEnum media_delivery) {
+			
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
 			//Build the REST parameter list
 			reqparams.Add("command", "find_playlists_for_player_id");
 			reqparams.Add("player_id", player_id.ToString());
-            reqparams.Add("media_delivery", media_delivery.ToString());
-            if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
 			if (playlist_fields != null) reqparams.Add("playlist_fields", playlist_fields.ToFieldString());
 			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-
-			BCQueryResult qr = MultipleQueryHandler(reqparams, BCObjectType.playlists, Account);
-
-			return qr;
+			return reqparams;
 		}
 
 		#endregion Find Playlists For Player Id
@@ -1491,6 +1966,13 @@ namespace BrightcoveSDK
 
 		#region Update Video
 
+		public RPCResponse<BCVideo> UpdateVideo(BCVideo video) {
+
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCVideo> rpcr = BCAPIRequest.ExecuteWrite<BCVideo>(UpdateVideoPostParams(video), Account);
+
+			return rpcr;
+		}
 		/// <summary>
 		/// Updates the video you specify
 		/// </summary>
@@ -1498,21 +1980,24 @@ namespace BrightcoveSDK
 		/// The metadata for the video you'd like to update. This takes the form of a JSON object of name/value pairs, each of which corresponds to a settable property of the Video object. 
 		/// </param>
 		/// <returns></returns>
-		public RPCResponse<BCVideo> UpdateVideo(BCVideo video) {
+		public RPCResponse<BCVideo<CustomFieldType>> UpdateVideo<CustomFieldType>(BCVideo<CustomFieldType> video) {
 
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCVideo<CustomFieldType>> rpcr = BCAPIRequest.ExecuteWrite<BCVideo<CustomFieldType>>(UpdateVideoPostParams<CustomFieldType>(video), Account);
+			
+			return rpcr;
+		}
+
+		private Dictionary<string, object> UpdateVideoPostParams<CustomFieldType>(BCVideo<CustomFieldType> video){
 			// Generate post objects
 			Dictionary<string, object> postParams = new Dictionary<string, object>();
-						
+
 			//add video to the post params
 			RPCRequest rpc = new RPCRequest();
 			rpc.method = "update_video";
 			rpc.parameters = "\"video\": " + video.ToJSON() + " ,\"token\": \"" + Account.WriteToken.Value + "\"";
 			postParams.Add("json", rpc.ToJSON());
-						
-			//Get the JSon reader returned from the APIRequest
-			RPCResponse<BCVideo> rpcr = BCAPIRequest.ExecuteWrite<BCVideo>(postParams, Account);
-			
-			return rpcr;
+			return postParams;
 		}
 
 		#endregion Update Video
@@ -1595,7 +2080,7 @@ namespace BrightcoveSDK
 
 		#region Get Upload Status
 
-		public RPCResponse<UploadStatusEnum>	 GetUploadStatus(string reference_id) {
+		public RPCResponse<UploadStatusEnum> GetUploadStatus(string reference_id) {
 			return GetUploadStatus(-1, reference_id);
 		}
 
@@ -1834,37 +2319,51 @@ namespace BrightcoveSDK
 		private RPCResponse<BCVideo> RemoveLogoOverlay(string video_reference_id) {
 			return RemoveLogoOverlay(-1, video_reference_id);
 		}
+		private RPCResponse<BCVideo<CustomFieldType>> RemoveLogoOverlay<CustomFieldType>(string video_reference_id) {
+			return RemoveLogoOverlay<CustomFieldType>(-1, video_reference_id);
+		}
 		public RPCResponse<BCVideo> RemoveLogoOverlay(long videoId) {
 			return RemoveLogoOverlay(videoId, null);
 		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="videoId"></param>
-		/// <param name="reference_id"></param>
-		/// <returns></returns>
+		public RPCResponse<BCVideo<CustomFieldType>> RemoveLogoOverlay<CustomFieldType>(long videoId) {
+			return RemoveLogoOverlay<CustomFieldType>(videoId, null);
+		}
+
 		private RPCResponse<BCVideo> RemoveLogoOverlay(long video_id, string video_reference_id) {
-		
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCVideo> rpcr = BCAPIRequest.ExecuteWrite<BCVideo>(RemoveLogoOverlayPostParams(video_id, video_reference_id), Account);
+			return rpcr;
+		}
+		/// <summary>
+		/// This will remove the logo overlay on the video that you've specified
+		/// </summary>
+		/// <param name="videoId">The ID of the video you want updated</param>
+		/// <param name="reference_id">The Reference ID of the video you want updated</param>
+		/// <returns></returns>
+		private RPCResponse<BCVideo<CustomFieldType>> RemoveLogoOverlay<CustomFieldType>(long video_id, string video_reference_id) {
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCVideo<CustomFieldType>> rpcr = BCAPIRequest.ExecuteWrite<BCVideo<CustomFieldType>>(RemoveLogoOverlayPostParams(video_id, video_reference_id), Account);
+			return rpcr;
+		}
+
+		private Dictionary<string, object> RemoveLogoOverlayPostParams(long video_id, string video_reference_id) {
+			
 			// Generate post objects
 			Dictionary<string, object> postParams = new Dictionary<string, object>();
 
 			//add video to the post params
 			RPCRequest rpc = new RPCRequest();
 			rpc.method = "remove_logo_overlay";
-			if(video_id > -1){
+			if (video_id > -1) {
 				rpc.parameters += ",\"video_id\": \"" + video_id.ToString() + "\"";
-			}
-			else if (video_reference_id != null) {
+			} else if (video_reference_id != null) {
 				rpc.parameters += ",\"video_reference_id\": \"" + video_reference_id + "\"";
 			}
 			rpc.parameters += ", \"token\": \"" + Account.WriteToken.Value + "\"";
 			postParams.Add("json", rpc.ToJSON());
-
-			//Get the JSon reader returned from the APIRequest
-			RPCResponse<BCVideo> rpcr = BCAPIRequest.ExecuteWrite<BCVideo>(postParams, Account);
-					
-			return rpcr;
+			return postParams;
 		}
+
 		#endregion Remove Logo Overlay
 
 		#endregion Video Write
@@ -1873,6 +2372,13 @@ namespace BrightcoveSDK
 
 		#region Create Playlist
 
+		public RPCResponse<long> CreatePlaylist(BCPlaylist playlist) {
+
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<long> rpcr = BCAPIRequest.ExecuteWrite<long>(CreatePlaylistPostParams(playlist), Account);
+
+			return rpcr;
+		}
 		/// <summary>
 		/// Creates a playlist. This method must be called using an HTTP POST request and JSON parameters.
 		/// </summary>
@@ -1884,8 +2390,16 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// The ID of the Playlist you created.
 		/// </returns>
-		public RPCResponse<long> CreatePlaylist(BCPlaylist playlist) {
+		public RPCResponse<long> CreatePlaylist<CustomFieldType>(BCPlaylist<CustomFieldType> playlist) {
 
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<long> rpcr = BCAPIRequest.ExecuteWrite<long>(CreatePlaylistPostParams<CustomFieldType>(playlist), Account);
+
+			return rpcr;
+		}
+
+		private Dictionary<string, object> CreatePlaylistPostParams<CustomFieldType>(BCPlaylist<CustomFieldType> playlist) {
+			
 			// Generate post objects
 			Dictionary<string, object> postParams = new Dictionary<string, object>();
 
@@ -1894,17 +2408,20 @@ namespace BrightcoveSDK
 			rpc.method = "create_playlist";
 			rpc.parameters = "\"playlist\": " + playlist.ToCreateJSON() + " ,\"token\": \"" + Account.WriteToken.Value + "\"";
 			postParams.Add("json", rpc.ToJSON());
-
-			//Get the JSon reader returned from the APIRequest
-			RPCResponse<long> rpcr = BCAPIRequest.ExecuteWrite<long>(postParams, Account);
-
-			return rpcr;
+			return postParams;
 		}
 
 		#endregion Create Playlist
 
 		#region Update Playlist
 
+		public RPCResponse<BCPlaylist> UpdatePlaylist(BCPlaylist playlist) {
+
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCPlaylist> rpcr = BCAPIRequest.ExecuteWrite<BCPlaylist>(UpdatePlaylistPostParams(playlist), Account);
+
+			return rpcr;
+		}
 		/// <summary>
 		/// Updates a playlist, specified by playlist id. This method must be called 
 		/// using an HTTP POST request and JSON parameters.
@@ -1916,7 +2433,15 @@ namespace BrightcoveSDK
 		/// playlist, not the videos property. 
 		/// </param>
 		/// <returns></returns>
-		public RPCResponse<BCPlaylist> UpdatePlaylist(BCPlaylist playlist) {
+		public RPCResponse<BCPlaylist<CustomFieldType>> UpdatePlaylist<CustomFieldType>(BCPlaylist<CustomFieldType> playlist) {
+
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCPlaylist<CustomFieldType>> rpcr = BCAPIRequest.ExecuteWrite<BCPlaylist<CustomFieldType>>(UpdatePlaylistPostParams<CustomFieldType>(playlist), Account);
+			
+			return rpcr;
+		}
+
+		private Dictionary<string, object> UpdatePlaylistPostParams<CustomFieldType>(BCPlaylist<CustomFieldType> playlist) {
 
 			// Generate post objects
 			Dictionary<string, object> postParams = new Dictionary<string, object>();
@@ -1926,11 +2451,7 @@ namespace BrightcoveSDK
 			rpc.method = "update_playlist";
 			rpc.parameters = "\"playlist\": " + playlist.ToUpdateJSON() + " ,\"token\": \"" + Account.WriteToken.Value + "\"";
 			postParams.Add("json", rpc.ToJSON());
-
-			//Get the JSon reader returned from the APIRequest
-			RPCResponse<BCPlaylist> rpcr = BCAPIRequest.ExecuteWrite<BCPlaylist>(postParams, Account);
-			
-			return rpcr;
+			return postParams;
 		}
 
 		#endregion Update Playlist
