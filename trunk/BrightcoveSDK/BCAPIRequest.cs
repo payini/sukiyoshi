@@ -31,7 +31,7 @@ namespace BrightcoveSDK
 			return qrp;
 		}
 
-		public static RPCResponse<T> ExecuteWrite<T>(Dictionary<String, Object> postParams, AccountConfigElement a) {
+		public static RPCResponse<ResultType> ExecuteWrite<ResultType>(Dictionary<String, Object> postParams, AccountConfigElement a) {
 						
 			// Create request and receive response
 			HttpWebResponse webResponse = PostRequests.MultipartFormDataPost(a.WriteURL.Value, "BCAPI SDK Write Request", postParams);
@@ -43,7 +43,7 @@ namespace BrightcoveSDK
 			
 			//this is so that we don't cast null as an object (replaces null with empty error)
 			jsonResult = jsonResult.Replace("\"error\": null", "\"error\": { \"name\" : null, \"message\" : null, \"code\" : null }");
-			RPCResponse<T> rpcr = JSON.Converter.Deserialize<RPCResponse<T>>(jsonResult);
+			RPCResponse<ResultType> rpcr = JSON.Converter.Deserialize<RPCResponse<ResultType>>(jsonResult);
 			
 			return rpcr;
 		}
