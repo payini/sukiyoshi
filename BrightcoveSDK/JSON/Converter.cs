@@ -8,7 +8,7 @@ namespace BrightcoveSDK.JSON
 {
 	public class Converter
 	{
-		public static string Serialize<T>(T obj) {
+		public static string Serialize<SendType>(SendType obj) {
 			System.Runtime.Serialization.Json.DataContractJsonSerializer serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(obj.GetType());
 			MemoryStream ms = new MemoryStream();
 			serializer.WriteObject(ms, obj);
@@ -16,11 +16,11 @@ namespace BrightcoveSDK.JSON
 			return retVal;
 		}
 
-		public static T Deserialize<T>(string json) {
-			T obj = Activator.CreateInstance<T>();
+		public static ReturnType Deserialize<ReturnType>(string json) {
+			ReturnType obj = Activator.CreateInstance<ReturnType>();
 			MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(json));
 			System.Runtime.Serialization.Json.DataContractJsonSerializer serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(obj.GetType());
-			obj = (T)serializer.ReadObject(ms);
+			obj = (ReturnType)serializer.ReadObject(ms);
 			ms.Close();
 			return obj;
 		}
