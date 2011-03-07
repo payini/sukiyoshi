@@ -79,6 +79,7 @@
     <Compile Include="UI\UpdatePlayer.cs" />
     <Compile Include="UI\VideoAddUpdate.cs" />
     <Compile Include="UI\VideoPlayer.cs" />
+    <Compile Include="Utils\EmbedCode.cs" />
     <Compile Include="VideoAPI.cs" />
   </ItemGroup>
   <ItemGroup>
