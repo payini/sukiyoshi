@@ -15,6 +15,10 @@ using BrightcoveSDK.UI;
 using Sitecore.Data.Items;
 using System.Web.UI;
 using Sitecore.Data;
+using BrightcoveSDK.SitecoreUtil.Entity;
+using BrightcoveSDK.Extensions;
+using System.Collections.Specialized;
+using BrightcoveSDK.Utils;
 
 namespace BrightcoveSDK.SitecoreUtil.Handlers
 {
@@ -23,79 +27,89 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 		// Override the ProcessRequest method.
 		public void ProcessRequest(HttpContext context) {
 			Assert.ArgumentNotNull(context, "context");
-			if (!this.DoProcessRequest(context)) {
-				context.Response.StatusCode = 0x194;
-				context.Response.ContentType = "text/html";
-			}
+			DoProcessRequest(context);
 		}
 		
 		// Methods
-		private bool DoProcessRequest(HttpContext context) {
+		private void DoProcessRequest(HttpContext context) {
 			Assert.ArgumentNotNull(context, "context");
 			
 			//return DoProcessRequest(context, request, media);
 			if (context != null) {
-				//get video from querystring
-				string bcVideoID = context.Request.QueryString.Get("video");
-                bcVideoID = (bcVideoID == "") ? "0" : bcVideoID; 
+				NameValueCollection nvc = context.Request.QueryString;
+				
+				//player
+				long qPlayer = 0;
+				if(nvc.HasKey("player")) 
+					long.TryParse(nvc.Get("player"), out qPlayer);
+				PlayerItem p = PlayerLibraryItem.GetPlayer(qPlayer);
+                if (p == null) { context.Response.Write("The player is null"); return; }
 
-				//get player from querystring
-				long playerid = -1;
-                if (long.TryParse(context.Request.QueryString.Get("player"), out playerid)) {
-                	Player p = PlayerLibrary.GetPlayer(playerid);
-                    if (p != null) {
-                        try {
-                            //get the playlist ids from the querystring
-                            string[] playlistids = context.Request.QueryString.Get("playlists").Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                            StringBuilder listIDs = new StringBuilder();
-                            //try to get the brightcove playlist id
-                            foreach (string id in playlistids) {
-                                long plist = -1;
-                                if (long.TryParse(id, out plist)) {
-                                    Playlist pl = PlaylistLibrary.GetPlaylist(plist);
-                                    if(pl != null){
-                                        if (listIDs.Length > 0) {
-                                            listIDs.Append(",");
-                                        }
-                                        listIDs.Append(pl.PlaylistID.ToString());
-                                    }
-                                }
-                            }
-
-                            //get the playlists from the querystring
-                            string listTab = "";
-                            string listCombo = "";
-                            string listSingle = "";
-
-                            switch (p.PlaylistType) {
-                                case PlayerPlaylistType.VideoList:
-                                    listSingle = listIDs.ToString();
-                                    break;
-                                case PlayerPlaylistType.Tabbed:
-                                    listTab = listIDs.ToString();
-                                    break;
-                                case PlayerPlaylistType.ComboBox:
-                                    listCombo = listIDs.ToString();
-                                    break;
-                            }
-
-                            context.Response.Write("<html><head>");
-                            context.Response.Write("<script type=\"text/javascript\" src=\"http://admin.brightcove.com/js/BrightcoveExperiences.js\"></script>");
-                            context.Response.Write("<script type=\"text/javascript\" src=\"http://admin.brightcove.com/js/APIModules_all.js\"></script>");
-                            context.Response.Write("<script type=\"text/javascript\" src=\"" + Page.ClientScript.GetWebResourceUrl(BrightcoveSDK.ActionType.READ.GetType(), "BrightcoveSDK.UI.Resources.AddRemovePlayer.js") + "\"></script>");
-                            context.Response.Write("</head><body onload=\"addPlayer(" + bcVideoID + ", " + p.PlayerID + ", '" + p.Name + "', false, 'None', " + p.Width.ToString() + ", " + p.Height.ToString() + ", true, 'transparent', 'bcvideo', '" + listTab + "', '" + listCombo + "', '" + listSingle + "');\">");
-                            context.Response.Write("<div id=\"bcvideo\"></div>");
-                            context.Response.Write("</body></html>");
-                        } catch {
-                            context.Response.Write("There was a problem loading the video. Your player may not have been set up properly");
-                            return false;
-                        }
-                    }
+				//video 
+				long qVideo = 0;
+				if(nvc.HasKey("video")) 
+					long.TryParse(nvc.Get("video"), out qVideo);
+								
+				//playlist ids
+				long qPlaylist = 0;
+				List<long> qPlaylistIds = new List<long>();
+				if(nvc.HasKey("playlists")) {
+					string[] playlistids = context.Request.QueryString.Get("playlists").Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+					//if you only want a single
+					if (p.PlaylistType.Equals(PlayerPlaylistType.None)) {
+						if (playlistids.Any())
+							long.TryParse(playlistids[0], out qPlaylist);
+					} else { //you're looking for multiple
+						foreach (string id in playlistids) {
+							long plist = -1;
+							if (long.TryParse(id, out plist))
+								qPlaylistIds.Add(plist);
+						}
+					}
 				}
-				return true;
-			} else {
-				return false;
+
+				//auto start
+				bool qAutoStart = false;
+				if(nvc.HasKey("autoStart")) 
+					bool.TryParse(nvc.Get("autoStart"), out qAutoStart);
+				
+				//bg color
+				string qBgColor = (nvc.HasKey("bgcolor")) ? nvc.Get("bgcolor") : "";
+				
+				//wmode 
+				WMode qWMode = WMode.Transparent;
+				if (nvc.HasKey("wmode")) {
+					string wmode = nvc.Get("wmode").ToLower();
+					if (wmode.Equals(WMode.Opaque.ToString().ToLower()))
+						qWMode = WMode.Opaque;
+					if (wmode.Equals(WMode.Window.ToString().ToLower()))
+						qWMode = WMode.Window;
+				}
+				
+                StringBuilder sb = new StringBuilder();
+				sb.AppendLine("<html><head>");
+                sb.AppendLine("</head><body>");
+				
+				string uniqueID = "video_" + DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.FFFF");
+				switch (p.PlaylistType) {
+                    case PlayerPlaylistType.VideoList:
+                        sb.AppendLine(EmbedCode.GetVideoListPlayerEmbedCode(qPlayer, qVideo, qPlaylist, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						break;
+                    case PlayerPlaylistType.Tabbed:
+						sb.AppendLine(EmbedCode.GetTabbedPlayerEmbedCode(qPlayer, qVideo, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						break;
+					case PlayerPlaylistType.ComboBox:
+                        sb.AppendLine(EmbedCode.GetComboBoxPlayerEmbedCode(qPlayer, qVideo, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						break;
+					case PlayerPlaylistType.None:
+						sb.AppendLine(EmbedCode.GetVideoPlayerEmbedCode(qPlayer, qVideo, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						break;
+				}
+
+                sb.AppendLine("</body></html>");
+				context.Response.Write(sb.ToString());
 			}
+			return;
 		}
 
 		// Override the IsReusable property.

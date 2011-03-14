@@ -7,25 +7,27 @@ using Sitecore.Data.Items;
 using System.Collections;
 using System.Web;
 using System.Text.RegularExpressions;
+using BrightcoveSDK.SitecoreUtil.Entity;
+using BrightcoveSDK.SitecoreUtil.Entity.Container;
 
 namespace BrightcoveSDK.SitecoreUtil.Extensions
 {
 	public static class BCPlaylistExtensions
 	{
 
-		public static UpdateInsertPair<Playlist> ImportToSitecore(this BCAccount account, BCPlaylist Playlist, UpdateType utype) {
+		public static UpdateInsertPair<PlaylistItem> ImportToSitecore(this AccountItem account, BCPlaylist Playlist, UpdateType utype) {
 			List<BCPlaylist> Playlists = new List<BCPlaylist>();
 			Playlists.Add(Playlist);
 			return ImportToSitecore(account, Playlists, utype);
 		}
 
-		public static UpdateInsertPair<Playlist> ImportToSitecore(this BCAccount account, List<BCPlaylist> Playlists, UpdateType utype) {
+		public static UpdateInsertPair<PlaylistItem> ImportToSitecore(this AccountItem account, List<BCPlaylist> Playlists, UpdateType utype) {
 
-			UpdateInsertPair<Playlist> uip = new UpdateInsertPair<Playlist>();
+			UpdateInsertPair<PlaylistItem> uip = new UpdateInsertPair<PlaylistItem>();
 
 			//set all BCVideos into hashtable for quick access
 			Hashtable ht = new Hashtable();
-			foreach (Playlist exPlay in account.PlaylistLib.Playlists) {
+			foreach (PlaylistItem exPlay in account.PlaylistLib.Playlists) {
 				if (!ht.ContainsKey(exPlay.playlistItem.ToString())) {
 					//set as string, Item pair
 					ht.Add(exPlay.PlaylistID.ToString(), exPlay);
@@ -39,11 +41,11 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 					//remove access filter
 					using (new Sitecore.SecurityModel.SecurityDisabler()) {
 
-						Playlist currentItem;
+						PlaylistItem currentItem;
 
 						//if it exists then update it
 						if (ht.ContainsKey(play.id.ToString()) && (utype.Equals(UpdateType.BOTH) || utype.Equals(UpdateType.UPDATE))) {
-							currentItem = (Playlist)ht[play.id.ToString()];
+							currentItem = (PlaylistItem)ht[play.id.ToString()];
 
 							//add it to the new items
 							uip.UpdatedItems.Add(currentItem);
@@ -56,7 +58,7 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 						else if (!ht.ContainsKey(play.id.ToString()) && (utype.Equals(UpdateType.BOTH) || utype.Equals(UpdateType.NEW))) {
 							//Create new item
 							TemplateItem templateType = account.Database.Templates["Modules/Brightcove/Brightcove Playlist"];
-							currentItem = new Playlist(account.PlaylistLib.playlistLibraryItem.Add(play.name.StripInvalidChars(), templateType));
+							currentItem = new PlaylistItem(account.PlaylistLib.playlistLibraryItem.Add(play.name.StripInvalidChars(), templateType));
 
 							//add it to the new items
 							uip.NewItems.Add(currentItem);

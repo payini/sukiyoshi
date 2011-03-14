@@ -7,13 +7,15 @@ using Sitecore.Data.Items;
 using System.Collections;
 using System.Web;
 using System.Text.RegularExpressions;
+using BrightcoveSDK.SitecoreUtil.Entity.Container;
+using BrightcoveSDK.SitecoreUtil.Entity;
 
 namespace BrightcoveSDK.SitecoreUtil.Extensions
 {
 	public static class BCVideoExtensions
 	{
 
-		public static UpdateInsertPair<Video> ImportToSitecore(this BCAccount account, BCVideo Video, UpdateType utype) {
+		public static UpdateInsertPair<VideoItem> ImportToSitecore(this AccountItem account, BCVideo Video, UpdateType utype) {
 			List<BCVideo> Videos = new List<BCVideo>();
 			Videos.Add(Video);
 			return ImportToSitecore(account, Videos, utype);
@@ -28,13 +30,13 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 		/// <returns>
 		/// returns a list of the new videos imported
 		/// </returns>
-		public static UpdateInsertPair<Video> ImportToSitecore(this BCAccount account, List<BCVideo> Videos, UpdateType utype) {
+		public static UpdateInsertPair<VideoItem> ImportToSitecore(this AccountItem account, List<BCVideo> Videos, UpdateType utype) {
 
-			UpdateInsertPair<Video> uip = new UpdateInsertPair<Video>();
+			UpdateInsertPair<VideoItem> uip = new UpdateInsertPair<VideoItem>();
 
 			//set all BCVideos into hashtable for quick access
 			Hashtable ht = new Hashtable();
-			foreach (Video exVid in account.VideoLib.Videos) {
+			foreach (VideoItem exVid in account.VideoLib.Videos) {
 				if (!ht.ContainsKey(exVid.VideoID.ToString())) {
 					//set as string, Item pair
 					ht.Add(exVid.VideoID.ToString(), exVid);
@@ -48,11 +50,11 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 					//remove access filter
 					using (new Sitecore.SecurityModel.SecurityDisabler()) {
 
-						Video currentItem;
+						VideoItem currentItem;
 
 						//if it exists then update it
 						if (ht.ContainsKey(vid.id.ToString()) && (utype.Equals(UpdateType.BOTH) || utype.Equals(UpdateType.UPDATE))) {
-							currentItem = (Video)ht[vid.id.ToString()];
+							currentItem = (VideoItem)ht[vid.id.ToString()];
 
 							//add it to the new items
 							uip.UpdatedItems.Add(currentItem);
@@ -66,7 +68,7 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 							//Create new item
 							TemplateItem templateType = account.Database.Templates["Modules/Brightcove/Brightcove Video"];
 
-							currentItem = new Video(account.VideoLib.videoLibraryItem.Add(vid.name.StripInvalidChars(), templateType));
+							currentItem = new VideoItem(account.VideoLib.videoLibraryItem.Add(vid.name.StripInvalidChars(), templateType));
 
 							//add it to the new items
 							uip.NewItems.Add(currentItem);

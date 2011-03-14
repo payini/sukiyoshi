@@ -27,7 +27,7 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Links;
 using BrightcoveSDK.SitecoreUtil.Entity;
 
-namespace BrightcoveSDK.SitecoreUtil.Controls
+namespace BrightcoveSDK.SitecoreUtil.XmlControls
 {
 	public class InsertVideoForm : DialogForm
 	{
@@ -69,7 +69,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 				//populate video from querystring
                 long vidID = -1;
                 if (long.TryParse(WebUtil.GetQueryString("video"), out vidID)) {
-                    Video v = VideoLibrary.GetVideo(vidID, masterDB);
+					VideoItem v = VideoLibraryItem.GetVideo(vidID, masterDB);
                     if (v != null) {
                         VideoDataContext.Folder = v.videoItem.ID.ToString();
                     }
@@ -78,7 +78,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 				//populate player from querystring
                 long playID = -1;
                 if (long.TryParse(WebUtil.GetQueryString("player"), out playID)) {
-                    Player p = PlayerLibrary.GetPlayer(playID, masterDB);
+					PlayerItem p = PlayerLibraryItem.GetPlayer(playID, masterDB);
                     if (p != null) {
                         PlayerDataContext.Folder = p.playerItem.ID.ToString();
                     }
@@ -90,7 +90,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
                     long pID = -1;
                     if (long.TryParse(listID, out pID)) {
                         //set the folder so it's opened
-                        Playlist pl = PlaylistLibrary.GetPlaylist(pID, masterDB);
+						PlaylistItem pl = PlaylistLibraryItem.GetPlaylist(pID, masterDB);
                         if (pl != null) {
                             PlaylistDataContext.Folder = pl.playlistItem.ID.ToString();
                             //set selected items
@@ -142,13 +142,13 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 				SheerResponse.Alert("Select a player.", new string[0]);
 				return;
 			}
-            Player vpl = new Player(player);
+			PlayerItem vpl = new PlayerItem(player);
 
 			//get the selected video
 			Item video = masterDB.Items[VideoTreeview.Value];
 			string videoid = "";
 			if (video != null && video.TemplateName.Equals(Constants.VideoTemplate)) {
-                Video vid = new Video(video);
+				VideoItem vid = new VideoItem(video);
                 videoid = vid.VideoID.ToString(); 
 			}
 			
@@ -160,7 +160,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 			int plistCount = 0;
 			foreach (Item p in playlists) {
 				if (p.TemplateName.Equals(Constants.PlaylistTemplate)) {
-                    Playlist pl = new Playlist(p);
+					PlaylistItem pl = new PlaylistItem(p);
                     if (playlistStr.Length > 0) {
                         playlistStr.Append(",");
                     }
@@ -206,7 +206,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 				selectedText = selectedText.Split('<')[0];
 			}
 			if (selectedText.Equals("")) {
-				Video vd = new Video(video);
+				VideoItem vd = new VideoItem(video);
 				selectedText = "Click To Watch " + vd.VideoName;
 			}
 			

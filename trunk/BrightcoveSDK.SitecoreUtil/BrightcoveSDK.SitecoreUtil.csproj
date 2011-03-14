@@ -53,12 +53,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BCAccount.cs" />
+    <Compile Include="Entity\AccountItem.cs" />
     <Compile Include="Constants.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\EmbedVideoForm.cs" />
-    <Compile Include="Controls\InsertVideoForm.cs" />
+    <Compile Include="Entity\PlayerItem.cs" />
+    <Compile Include="Entity\PlaylistItem.cs" />
+    <Compile Include="Entity\VideoItem.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="XmlControls\EmbedVideoForm.cs" />
+    <Compile Include="XmlControls\InsertVideoForm.cs" />
     <Compile Include="Entity\ModalLinkSettings.cs" />
     <Compile Include="Extensions\PlayerExtensions.cs" />
     <Compile Include="Extensions\PlaylistExtensions.cs" />
@@ -70,18 +74,17 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pipelines\GetRTEFieldValue.cs" />
-    <Compile Include="PlayerLibrary.cs" />
-    <Compile Include="PlaylistLibrary.cs" />
+    <Compile Include="Entity\PlayerLibraryItem.cs" />
+    <Compile Include="Entity\PlaylistLibraryItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\VideoPlayerWebControl.cs" />
-    <Compile Include="UpdateInsertPair.cs" />
-    <Compile Include="VideoLibrary.cs" />
+    <Compile Include="Entity\Container\UpdateInsertPair.cs" />
+    <Compile Include="Entity\VideoLibraryItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BrightcoveSDK\BrightcoveSDK.csproj">
       <Project>{66A5B904-883A-422F-A6E5-CAC6352D06F5}</Project>
       <Name>BrightcoveSDK</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
