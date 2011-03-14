@@ -11,8 +11,10 @@ using System.Web.UI.WebControls;
 using BrightcoveSDK.Media;
 using BrightcoveSDK.JSON;
 using BrightcoveSDK.HTTP;
+using BrightcoveSDK.Entities.Containers;
+using BrightcoveSDK;
 
-namespace BrightcoveSDK
+namespace BrightcoveSDK.HTTP
 {
 	public class BCAPIRequest
 	{
