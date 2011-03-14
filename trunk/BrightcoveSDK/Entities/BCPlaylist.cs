@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Runtime.Serialization;
-using BrightcoveSDK.Containers.Containers;
+using BrightcoveSDK.Containers;
 
 namespace BrightcoveSDK.Media
 {

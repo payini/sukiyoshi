@@ -5,7 +5,7 @@ using System.Text;
 using BrightcoveSDK.JSON;
 using BrightcoveSDK.Media;
 using BrightcoveSDK.HTTP;
-using BrightcoveSDK.Containers.Containers;
+using BrightcoveSDK.Containers;
 
 namespace BrightcoveSDK
 {
