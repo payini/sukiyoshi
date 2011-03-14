@@ -4,7 +4,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using BrightcoveSDK.Media;
-using BrightcoveSDK.Containers.Containers;
+using BrightcoveSDK.Containers;
 
 namespace BrightcoveSDK.UI
 {

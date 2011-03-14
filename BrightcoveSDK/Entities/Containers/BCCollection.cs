@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace BrightcoveSDK.Containers.Containers
+namespace BrightcoveSDK.Containers
 {
 	[CollectionDataContract]
 	public class BCCollection<T> : List<T>
