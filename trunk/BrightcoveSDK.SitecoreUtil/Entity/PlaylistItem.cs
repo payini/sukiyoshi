@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Sitecore.Data.Items;
 using BrightcoveSDK;
+using BrightcoveSDK.Containers;
 
 namespace BrightcoveSDK.SitecoreUtil.Entity
 {
