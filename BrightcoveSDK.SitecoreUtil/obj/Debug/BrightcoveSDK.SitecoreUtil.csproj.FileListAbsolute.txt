@@ -31,3 +31,5 @@ C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\B
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.dll
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.pdb
+C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.dll
+C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.pdb

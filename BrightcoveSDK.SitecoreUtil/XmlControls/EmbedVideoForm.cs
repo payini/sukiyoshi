@@ -29,9 +29,10 @@ using BrightcoveSDK;
 using BrightcoveSDK.Media;
 using scEditor = Sitecore.Shell.Applications.ContentEditor;
 using scWeb = Sitecore.Web;
+using BrightcoveSDK.SitecoreUtil.Entity;
 //using scControls = Sitecore.Controls;
 
-namespace BrightcoveSDK.SitecoreUtil.Controls
+namespace BrightcoveSDK.SitecoreUtil.XmlControls
 {
 	public class EmbedVideoForm : DialogForm
 	{
@@ -67,7 +68,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 				//populate video from querystring
 				long vidID = -1;
                 if (long.TryParse(WebUtil.GetQueryString("video"), out vidID)) {
-                    Video v = VideoLibrary.GetVideo(vidID, masterDB);
+                    VideoItem v = VideoLibraryItem.GetVideo(vidID, masterDB);
                     if (v != null) {
                         VideoDataContext.Folder = v.videoItem.ID.ToString();
                     }
@@ -76,7 +77,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 				//populate player from querystring
 				long playID = -1;
 				if (long.TryParse(WebUtil.GetQueryString("player"), out playID)) {
-                    Player p = PlayerLibrary.GetPlayer(playID, masterDB);
+					PlayerItem p = PlayerLibraryItem.GetPlayer(playID, masterDB);
                     if(p != null){
                         PlayerDataContext.Folder = p.playerItem.ID.ToString();
 					} 
@@ -90,7 +91,7 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
                     long pID = -1;
                     if (long.TryParse(listID, out pID)) {
 						//set the folder so it's opened
-                        Playlist pl = PlaylistLibrary.GetPlaylist(pID, masterDB);
+						PlaylistItem pl = PlaylistLibraryItem.GetPlaylist(pID, masterDB);
                         if(pl != null){
                             PlaylistDataContext.Folder = pl.playlistItem.ID.ToString();
 							//set selected items
@@ -147,20 +148,20 @@ namespace BrightcoveSDK.SitecoreUtil.Controls
 			Item video = masterDB.Items[VideoTreeview.Value];
 			string videoid = "";
 			if (video != null && video.TemplateName.Equals(Constants.VideoTemplate)) {
-                Video vid = new Video(video);
+				VideoItem vid = new VideoItem(video);
                 videoid = vid.VideoID.ToString();
 			}
 			
 			//get the selected playlists
 			Item[] playlists = this.PlaylistTreeview.GetSelectedItems();
-			Player vpl = new Player(player);
+			PlayerItem vpl = new PlayerItem(player);
 					
 			//set the playlists
 			StringBuilder playlistStr = new StringBuilder();
 			int plistCount = 0;
 			foreach (Item p in playlists) {
                 if (p.TemplateName.Equals(Constants.PlaylistTemplate)) {
-                    Playlist pl = new Playlist(p);
+					PlaylistItem pl = new PlaylistItem(p);
                     if (playlistStr.Length > 0) {
 						playlistStr.Append(",");
 					}

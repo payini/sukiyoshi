@@ -7,6 +7,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using BrightcoveSDK.SitecoreUtil.Extensions;
 using Sitecore.Security.Accounts;
+using BrightcoveSDK.SitecoreUtil.Entity;
 
 namespace BrightcoveSDK.SitecoreUtil.UI
 {
@@ -22,7 +23,7 @@ namespace BrightcoveSDK.SitecoreUtil.UI
 			//check to see if the guid is there
 			if(long.TryParse(this.Attributes["player"], out playerid)){
             	//get player obj
-				Player p = PlayerLibrary.GetPlayer(playerid);
+				PlayerItem p = PlayerLibraryItem.GetPlayer(playerid);
 				if(p != null){		
 				    //parse wmode
 				    WMode wmode = WMode.Window;
@@ -46,7 +47,7 @@ namespace BrightcoveSDK.SitecoreUtil.UI
                         long videoid = -1;
                         if(long.TryParse(this.Attributes["video"], out videoid)){
 					        //try parse the id and get the item
-							Video v = VideoLibrary.GetVideo(videoid);
+							VideoItem v = VideoLibraryItem.GetVideo(videoid);
                             if (v != null) {
                                 sbOut.Append(p.GetEmbedCode(v, bgcolor, autostart, wmode));
                             }
