@@ -5,6 +5,7 @@ using System.Text;
 using Sitecore.Data.Items;
 using BrightcoveSDK;
 using Sitecore.Data.Fields;
+using BrightcoveSDK.Containers;
 
 namespace BrightcoveSDK.SitecoreUtil.Entity
 {
