@@ -36,9 +36,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -54,6 +51,7 @@
     <Compile Include="BrightcoveConfig.cs" />
     <Compile Include="CustomFields.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Extensions\HttpContextExtensions.cs" />
     <Compile Include="Extensions\SystemTypeExtensions.cs" />
     <Compile Include="HTTP\PostRequests.cs" />
     <Compile Include="JSON\Converter.cs" />
@@ -69,7 +67,6 @@
     <Compile Include="Media\BCPlaylist.cs" />
     <Compile Include="Media\BCRendition.cs" />
     <Compile Include="Media\BCVideo.cs" />
-    <Compile Include="Media\FullLengthVideo.cs" />
     <Compile Include="Media\LogoOverlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryResultPair.cs" />

@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
+using BrightcoveSDK.Utils;
 
 namespace BrightcoveSDK.UI
 {
@@ -185,13 +186,6 @@ namespace BrightcoveSDK.UI
 			if (IncludeJSResources) {
 				//Add Brightcove experiences javascript
 				Page.ClientScript.RegisterClientScriptInclude("BCExperiences", "http://admin.brightcove.com/js/BrightcoveExperiences.js");
-
-				//Add Brightcove API Modules javascript
-				Page.ClientScript.RegisterClientScriptInclude("BCAPIModules", "http://admin.brightcove.com/js/APIModules_all.js");
-
-				//Add the Add/Remove player js from the page
-				// When pre-rendering, add in external JavaScript file
-				Page.ClientScript.RegisterClientScriptInclude("AddRemovePlayer", Page.ClientScript.GetWebResourceUrl(this.GetType(), "BrightcoveSDK.UI.Resources.AddRemovePlayer.js"));
 			}
 			base.OnPreRender(e); 
         }
@@ -223,14 +217,25 @@ namespace BrightcoveSDK.UI
 
 			if (!VideoID.Equals(-1) || !PlayerID.Equals(-1)) {
 
-				//Create the SWFObjectCustoms script block
+				//wmode 
+				WMode qWMode = BrightcoveSDK.WMode.Transparent;
+				if (WMode.Equals(BrightcoveSDK.WMode.Opaque.ToString().ToLower()))
+					qWMode = BrightcoveSDK.WMode.Opaque;
+				if (WMode.Equals(BrightcoveSDK.WMode.Window.ToString().ToLower()))
+					qWMode = BrightcoveSDK.WMode.Window;
+				
+				string uniqueID = "video_" + DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.FFFF");
 				Literal litScript = new Literal();
-				litScript.Text = "<script type=\"text/javascript\">\n";
-				litScript.Text += "addPlayer(" + VideoID + ", " + PlayerID + ", '" + PlayerName + "', " + AutoStart.ToString().ToLower() + ", '" + BackColor + "', " + Width + ", " + Height + ", " + IsVid.ToString().ToLower() + ", '" + WMode + "', '" + vp.ClientID + "', '" + PlaylistTabString + "', '" + PlaylistComboString + "', '" + VideoList.ToString() + "'); \n";
-				litScript.Text += "</script>";
-
-				//Add the SWFObjectCustoms script block to the page
-				//Page.ClientScript.RegisterStartupScript(this.GetType(), "addPlayer_" + this.ID.ToString(), litScript.Text);
+				if (PlaylistTabs.Any()) {
+					litScript.Text = EmbedCode.GetTabbedPlayerEmbedCode(PlayerID, VideoID, PlaylistTabs.GetValues(), Height, Width, BackColor, AutoStart, qWMode, uniqueID);
+				} else if (PlaylistCombos.Any()) {
+					litScript.Text = EmbedCode.GetComboBoxPlayerEmbedCode(PlayerID, VideoID, PlaylistCombos.GetValues(), Height, Width, BackColor, AutoStart, qWMode, uniqueID);
+				} else if (VideoList != -1) {
+					EmbedCode.GetVideoListPlayerEmbedCode(PlayerID, VideoID, VideoList, Height, Width, BackColor, AutoStart, qWMode, uniqueID);
+				} else {
+					litScript.Text = EmbedCode.GetVideoPlayerEmbedCode(PlayerID, VideoID, Height, Width, BackColor, AutoStart, qWMode, uniqueID);
+				}
+				
 				Controls.Add(litScript);
 			}
 		}
@@ -282,6 +287,28 @@ namespace BrightcoveSDK.UI
 
 		public PlaylistCombo(long Val) {
 			_value = Val;
+		}
+	}
+
+	public static class PlaylistComboExtensions
+	{
+		public static List<long> GetValues(this List<PlaylistCombo> c) {
+			List<long> i = new List<long>();
+			foreach(PlaylistCombo p in c){
+				i.Add(p.Value);
+			}
+			return i;
+		}
+	}
+
+	public static class PlaylistTabExtensions
+	{
+		public static List<long> GetValues(this List<PlaylistTab> c) {
+			List<long> i = new List<long>();
+			foreach (PlaylistTab p in c) {
+				i.Add(p.Value);
+			}
+			return i;
 		}
 	}
 }

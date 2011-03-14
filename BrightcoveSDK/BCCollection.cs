@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace BrightcoveSDK
 {
 	[CollectionDataContract]
-	public class BCCollection<ListType> : List<ListType>
+	public class BCCollection<T> : List<T>
 	{}
 
 	public static class BCCollectionExtensions {

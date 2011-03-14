@@ -30,14 +30,14 @@ namespace BrightcoveSDK.JSON
 	}
 
 	[DataContract]
-	public class RPCResponse<ResultType>
+	public class RPCResponse<T>
 	{
 
 		/// <summary>
 		/// The Object that was returned by the invoked method. This must be null in case there was an error invoking the method.
 		/// </summary>
 		[DataMember]
-		public ResultType result { get; set; }
+		public T result { get; set; }
 
 		/// <summary>
 		/// An Error object if there was an error invoking the method. It must be null if there was no error.

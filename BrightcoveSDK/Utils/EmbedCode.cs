@@ -49,8 +49,8 @@ namespace BrightcoveSDK.Utils
 			if (PlayerID != null) {
 				//this one works
 				embed.AppendLine("<!-- Start of Brightcove Player -->");
-				embed.AppendLine("");
 				embed.AppendLine("<div style=\"display:none\"></div>");
+				embed.AppendLine("<!-- By use of this code snippet, I agree to the Brightcove Publisher T and C found at https://accounts.brightcove.com/en/terms-and-conditions/. -->");
 				embed.AppendLine("<script language=\"JavaScript\" type=\"text/javascript\" src=\"http://admin.brightcove.com/js/BrightcoveExperiences.js\"></script>");
 				embed.AppendLine("<object id=\"" + objectTagID + "\" class=\"BrightcoveExperience\">");
 				embed.AppendLine("<param name=\"bgcolor\" value=\"" + BackgroundColor + "\" />");
@@ -75,7 +75,7 @@ namespace BrightcoveSDK.Utils
 				embed.AppendLine("<param name=\"dynamicStreaming\" value=\"true\" />");
 				embed.AppendLine("<param name=\"wmode\" value=\"" + WMode.ToString() + "\" /> ");
 				embed.AppendLine("</object>");
-				embed.AppendLine("");
+				embed.AppendLine("<script type=\"text/javascript\">brightcove.createExperiences();</script>");
 				embed.AppendLine("<!-- End of Brightcove Player -->");
 			}
 			return embed.ToString();

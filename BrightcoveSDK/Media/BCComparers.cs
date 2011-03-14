@@ -21,19 +21,4 @@ namespace BrightcoveSDK
 
 		#endregion
 	}
-	public class BCVideoComparer<CustomFieldType> : IEqualityComparer<BCVideo<CustomFieldType>>
-	{
-
-		#region IEqualityComparer<BCVideo> Members
-
-		public bool Equals(BCVideo<CustomFieldType> x, BCVideo<CustomFieldType> y) {
-			return x.id.Equals(y.id);
-		}
-
-		public int GetHashCode(BCVideo<CustomFieldType> obj) {
-			return obj.GetHashCode();
-		}
-
-		#endregion
-	}
 }
