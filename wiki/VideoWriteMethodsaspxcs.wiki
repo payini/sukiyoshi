@@ -7,21 +7,21 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using BrightcoveAPI.Media;
-using BrightcoveAPI;
 using System.Configuration;
-using BrightcoveAPI.JSON;
-using BrightcoveAPI.UI;
+using BrightcoveSDK;
+using BrightcoveSDK.Media;
+using BrightcoveSDK.JSON;
+using BrightcoveSDK.Containers;
 
 namespace testsite.BC {
     public partial class VideoWriteMethods : System.Web.UI.Page {
 
-        public VideoAPI bc;
+        public BCAPI bc;
 
         protected void Page_Load(object sender, EventArgs e) {
 
             BrightcoveConfig config = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
-            bc = new VideoAPI(config.Accounts[0].PublisherID);
+            bc = new BCAPI(config.Accounts[0].PublisherID);
 
         }
 
