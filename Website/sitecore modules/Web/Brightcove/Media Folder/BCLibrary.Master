@@ -1,0 +1,24 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" Debug="true" CodeFile="BCLibrary.master.cs" Inherits="BrightcoveSCUtil.EditorTabs.BCLibrary" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Brightcove Media Library</title>
+	
+	<link href="css/bcglobal.css?id=2w" rel="stylesheet" type="text/css"></link>
+    
+    <asp:ContentPlaceHolder ID="Head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+		<div class="MainWrapper">
+			<asp:ContentPlaceHolder ID="MainContent" runat="server">
+	        
+			</asp:ContentPlaceHolder>
+		</div>
+    </div>
+    </form>
+</body>
+</html>
