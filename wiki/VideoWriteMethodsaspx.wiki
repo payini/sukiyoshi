@@ -4,7 +4,7 @@
 
 {{{
 <%@ Page Language="C#" AutoEventWireup="true" CodeFile="VideoWriteMethods.aspx.cs" Inherits="testsite.BC.VideoWriteMethods" %>
-<%@ Register TagPrefix="bc" Namespace="BrightcoveAPI.UI" Assembly="BrightcoveSDK" %>
+<%@ Register TagPrefix="bc" Namespace="BrightcoveSDK.UI" Assembly="BrightcoveSDK" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
