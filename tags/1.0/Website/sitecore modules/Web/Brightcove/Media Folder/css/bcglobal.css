@@ -1,0 +1,127 @@
+﻿.clear {
+	clear:both;
+}
+.MainWrapper {
+	width:650px;
+	color:#777;
+	margin:20px 0 0 20px;
+	font-family:Arial;
+	font-size:12px;
+}
+	.CheckList {
+		height:150px;
+		overflow:auto;
+		border:1px solid #777;
+	}
+	.PreviewBox {
+		text-align:center;
+		margin:10px 0;
+	}
+	.EmbedWrapper {
+		text-align:center;
+	}
+		.EmbedBox {
+			width:550px;
+			height:200px;
+			margin:10px auto;
+		}
+	.VideoList {
+		width:400px;
+	}
+#Library {
+}
+
+#Account {
+}
+	.AccountInfo, .LibraryInfo, .VideoUpload, .PlaylistCreate, .UpdatePanel, .AddImage, .VideoInfo, .PlaylistInfo {
+		margin-bottom:20px;
+		padding-bottom:20px;
+		border-bottom:1px solid #777777;
+	}
+		.Videos, .Playlists  {
+			margin:0 0 10px 0;
+		}
+			.SectionTitle {	
+				font-weight:bold;
+				margin:0 0 10px;
+				font-size:15px;
+			}
+			.Details {
+				margin:0 0 10px;
+			}
+			.Detail {
+				margin:0 0 20px;
+			}
+			.DetailTitle {
+				margin:0 0 5px;
+				font-weight:bold;
+				font-size:12px;
+			}
+	.VideoUpload {
+	}
+		.VideoName, 
+		.ShortDesc,
+		.LongDesc,
+		.Tags,
+		.Economics,
+		.VideoFile,
+		.PlaylisName,
+		.FilterTags,
+		.VideoIDs,
+		.PlaylistType,
+		.ImageName,
+		.Type,
+		.Resize,
+		.ImageFile {
+			clear:both;
+			margin-bottom:10px;
+		}
+			.AddImage label,
+			.PlaylistCreate label,
+			.VideoUpload label {
+				font-size:12px;
+				margin-right:10px;
+				padding-right:10px;
+				width:120px;
+				display:block;
+				float:left;
+				text-align:right;
+			}
+			.AddImage input,
+			.PlaylistCreate input,
+			.VideoUpload input {
+				width:250px;
+			}
+			.AddImage .Resize input {
+				width:auto;
+			}
+			.PlaylistCreate textarea,
+			.VideoUpload textarea {
+				width:300px;
+			}
+			.PlaylistCreate input.Submit,
+			.AddImage input.Submit,
+			.VideoUpload input.Submit {
+				margin:0 0 0 140px;
+			}
+			input.Submit {
+				width:auto;
+				font-size:10px;
+			}
+#Video {
+}
+		.fieldRow {
+			font-size:12px;
+			margin:0 0 5px;
+			clear:both;
+		}
+			.fieldLabel {
+				text-align:right;
+				font-weight:bold;
+				float:left;
+				width:160px;
+				margin:0 3px 0 0;
+			}
+#Playlist {
+}
+
