@@ -14,7 +14,7 @@ To be able to support multiple accounts per website I've added support for a cus
 <configuration>
   <configSections>
     ...
-    <section name="brightcove" type="BrightcoveAPI.BrightcoveConfig, BrightcoveSDK"></section>
+    <section name="brightcove" type="BrightcoveSDK.BrightcoveConfig, BrightcoveSDK"></section>
   </configSections>
   ...
   <brightcove>
@@ -40,11 +40,11 @@ To be able to support multiple accounts per website I've added support for a cus
 *Classes To Access Config*
 
 {{{
-using BrightcoveAPI.Media;
-using BrightcoveAPI;
 using System.Configuration;
-using BrightcoveAPI.JSON;
-using BrightcoveAPI.UI;
+using BrightcoveSDK;
+using BrightcoveSDK.Media;
+using BrightcoveSDK.JSON;
+using BrightcoveSDK.UI;
 
 BrightcoveConfig config = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
 BCAPI bc = new BCAPI(config.Accounts[0].PublisherID);
