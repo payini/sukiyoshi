@@ -1,0 +1,36 @@
+#summary One-sentence summary of this page.
+
+= Using BrightcoveSDK.UI =
+
+These samples are direct from the usage in Sitecore. They use the UI controls and SDK to retrieve data and display videos, playlists and images and showcase how to upload and edit video and create and modify playlists.
+
+==Playlist==
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcovePlaylist.aspx BrightcovePlaylist.aspx]
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcovePlaylist.aspx.cs BrightcovePlaylist.aspx.cs]
+
+==Playlist Images==
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcovePlaylistImages.aspx]
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcovePlaylistImages.aspx.cs]
+
+==Video==
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideo.aspx]
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideo.aspx.cs]
+
+==Video Images
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoImages.aspx]
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoImages.aspx.cs]
+
+==Video Preview==
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoPreview.aspx]
+
+[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoPreview.aspx.cs]
+
