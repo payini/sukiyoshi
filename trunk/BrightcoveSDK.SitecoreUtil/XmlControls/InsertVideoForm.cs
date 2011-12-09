@@ -116,11 +116,11 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 				//get and set the autostart
 				string autostart = WebUtil.GetQueryString("autostart");
 				try {
-					chkAutoStart.Checked = (autostart == "") ? false : bool.Parse(autostart);
+					chkAutoStart.Checked = (autostart.ToLower() == "true") ? true : false;
 				}catch{}
 
 				//get and set the bgcolor
-				string bgcolor = WebUtil.GetQueryString("bgcolor");
+				string bgcolor = HttpUtility.UrlDecode(WebUtil.GetQueryString("bgcolor"));
 				try {
 					txtBGColor.Value = (bgcolor == "") ? "#ffffff" : bgcolor;
 				} catch { txtBGColor.Value = "#ffffff"; }
@@ -135,7 +135,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 		protected override void OnOK(object sender, EventArgs args) {
 			Assert.ArgumentNotNull(sender, "sender");
 			Assert.ArgumentNotNull(args, "args");
-
+			
 			//get the selected player
 			Item player = masterDB.Items[PlayerTreeview.Value];
 			if (player == null || !player.TemplateName.Equals(Constants.PlayerTemplate)) {
@@ -215,13 +215,23 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 			mediaUrl.Append("<a href=\"/BrightcoveVideo.ashx?video=" + videoid + "&player=" + vpl.PlayerID);
 			mediaUrl.Append("&playlists=" + playlistStr.ToString() + "&autoStart=" + chkAutoStart.Checked.ToString().ToLower() + "&bgcolor=" + txtBGColor.Value + "&wmode=" + WMode.SelectedItem.Header);
 			mediaUrl.Append(sbQstring.ToString());
-            mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + ">" + selectedText + "</a>");
+            mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + " title=\"" + selectedText + "\">" + selectedText + "</a>");
 						
 			if (this.Mode == "webedit") {
 				SheerResponse.SetDialogValue(StringUtil.EscapeJavascriptString(mediaUrl.ToString()));
 				base.OnOK(sender, args);
 			} else {
-				SheerResponse.Eval("scClose(" + StringUtil.EscapeJavascriptString(mediaUrl.ToString()) + "," + StringUtil.EscapeJavascriptString(player.DisplayName) + ")");
+				SheerResponse.Eval("scCloseLink(" + StringUtil.EscapeJavascriptString(mediaUrl.ToString()) + ")");
+			}
+		}
+
+		protected override void OnCancel(object sender, EventArgs args) {
+			Assert.ArgumentNotNull(sender, "sender");
+			Assert.ArgumentNotNull(args, "args");
+			if (this.Mode == "webedit") {
+				base.OnCancel(sender, args);
+			} else {
+				SheerResponse.Eval("scCancel()");
 			}
 		}
 

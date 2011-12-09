@@ -42,7 +42,7 @@ namespace BrightcoveSDK.Utils
 		/// <param name="AutoStart">A flag to cause the video to automatically start playing</param>
 		/// <param name="WMode">The wmode </param>
 		/// <returns></returns>
-		private static string GetEmbedCode(long PlayerID, long VideoID, PlayerPlaylistType PlaylistType, long PlaylistID, List<long> PlaylistIDs, int height, int width, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
+		public static string GetEmbedCode(long PlayerID, long VideoID, PlayerPlaylistType PlaylistType, long PlaylistID, List<long> PlaylistIDs, int height, int width, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
 
 			StringBuilder embed = new StringBuilder();
 

@@ -30,6 +30,7 @@ namespace BrightcoveSDK.SitecoreUtil
         public static string PlaylistTemplateID = "{B43E8881-DAD6-42A7-B091-7165184DB1D1}";
 
         //modal window settings root
+		public static string BrightcoveSettingsTemplate = "System Settings Folder";
         public static string BrightcoveSettingsID = "{2F1ECBC7-23D9-49DF-8623-B8D60ED33D8D}";
         public static string BrightcoveSettingsTemplateID = "{D274E8F1-E2D4-467D-A973-E4F9B3917101}";
 
