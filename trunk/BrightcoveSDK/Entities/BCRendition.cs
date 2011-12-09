@@ -21,6 +21,12 @@ namespace BrightcoveSDK.Media
 		public string url { get; set; }
 
 		/// <summary>
+		/// The referenceId of the rendition file.
+		/// </summary> 
+		[DataMember]
+		public string referenceId { get; set; }
+
+		/// <summary>
 		/// The rendition's encoding rate, in bits per second.
 		/// </summary> 
 		[DataMember]
@@ -53,7 +59,7 @@ namespace BrightcoveSDK.Media
 		/// attribute to provide the stream name.
 		/// </summary>
 		[DataMember]
-		public long remoteUrl { get; set; }
+		public string remoteUrl { get; set; }
 
 		/// <summary>
 		/// required for streaming remote assets only. A stream name for Flash 
@@ -104,5 +110,73 @@ namespace BrightcoveSDK.Media
 		}
 
 		#endregion
+	}
+	public static class BCRenditionExtensions
+	{
+
+		#region Extension Methods
+
+		public static string ToJSON(this List<BCRendition> renditions) {
+
+			StringBuilder jsonCP = new StringBuilder();
+
+			foreach (BCRendition r in renditions) {
+				if (jsonCP.Length > 0) {
+					jsonCP.Append(",");
+				}
+				jsonCP.Append(r.ToJSON());
+			}
+
+			return "[" + jsonCP.ToString() + "]";
+		}
+
+		public static string ToJSON(this BCRendition rendition) {
+
+			//--Build Rendition in JSON -------------------------------------//
+
+			StringBuilder jsonPlaylist = new StringBuilder();
+
+			StringBuilder jsonR = new StringBuilder();
+			jsonR.Append("{");
+
+			//referenceId
+			if (!string.IsNullOrEmpty(rendition.referenceId)) {
+				jsonR.Append("\"referenceId\": \"" + rendition.referenceId + "\"");
+			}
+
+			//remoteUrl
+			if (!string.IsNullOrEmpty(rendition.remoteUrl)) {
+				if (jsonR.Length > 0) jsonR.Append(",");
+				jsonR.Append("\"remoteUrl\": \"" + rendition.remoteUrl + "\"");
+			}
+
+			//remoteStreamName
+			if (!string.IsNullOrEmpty(rendition.remoteStreamName)) {
+				if (jsonR.Length > 0) jsonR.Append(","); 
+				jsonR.Append(",\"remoteStreamName\": \"" + rendition.remoteStreamName + "\"");
+			}
+
+			//size
+			if (!string.IsNullOrEmpty(rendition.size.ToString())) {
+				if (jsonR.Length > 0) jsonR.Append(","); 
+				jsonR.Append(",\"size\": " + rendition.size.ToString());
+			}
+
+			//videoDuration
+			if (!string.IsNullOrEmpty(rendition.videoDuration.ToString())) {
+				if (jsonR.Length > 0) jsonR.Append(","); 
+				jsonR.Append(",\"videoDuration\": " + rendition.videoDuration.ToString());
+			}
+
+			//type
+			if (!string.IsNullOrEmpty(rendition.videoCodec.ToString())) {
+				if (jsonR.Length > 0) jsonR.Append(","); 
+				jsonR.Append(",\"videoCodec\": \"" + (int)Enum.Parse(typeof(VideoCodecEnum), rendition.videoCodec.ToString()) + "\"");
+			}
+
+			return "{" + jsonR.ToString() + "}";
+		}
+
+		#endregion Extension Methods
 	}
 }
