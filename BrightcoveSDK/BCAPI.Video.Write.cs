@@ -16,6 +16,12 @@ namespace BrightcoveSDK
 		#region Create Video
 
 		//favors no processing renditions
+		public RPCResponse<long> CreateVideo(BCVideo video) {
+			return CreateVideo(video, "");
+		}
+		public RPCResponse<long> CreateVideo(BCVideo video, string filename) {
+			return CreateVideo(video, filename, null);
+		}
 		public RPCResponse<long> CreateVideo(BCVideo video, string filename, byte[] file, bool H264NoProcessing) {
 			return CreateVideo(video, filename, file, H264NoProcessing, false);
 		}
@@ -112,7 +118,6 @@ namespace BrightcoveSDK
 			if (file_checksum != null) {
 				rpc.parameters += ", \"file_checksum\": \"" + file_checksum + "\"";
 			}
-			rpc.parameters += ", \"filename\": \"" + filename + "\"";
 			if (!encode_to.Equals(BCEncodeType.UNDEFINED)) {
 				rpc.parameters += ", \"encode_to\": " + encode_to.ToString();
 			}
@@ -122,7 +127,12 @@ namespace BrightcoveSDK
 			postParams.Add("json", rpc.ToJSON());
 
 			//add the file to the post
-			postParams.Add("file", new FileParameter(file, filename));
+			if(!string.IsNullOrEmpty(filename)){
+				rpc.parameters += ", \"filename\": \"" + filename + "\"";
+			}
+			if (!string.IsNullOrEmpty(filename) && file != null) {
+				postParams.Add("file", new FileParameter(file, filename));
+			}
 
 			//Get the JSon reader returned from the APIRequest
 			RPCResponse rpcr = BCAPIRequest.ExecuteWrite(postParams, this.Account);
