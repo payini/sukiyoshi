@@ -38,7 +38,7 @@ namespace BrightcoveSDK.SitecoreUtil.UI
 				    //parse autostart
 				    bool autostart = false; 
 				    try {
-					    bool.Parse(this.Attributes["autostart"]);
+					    autostart = (this.Attributes["autostart"].Equals("true")) ? true : false;
 				    }catch{}
 
 				    //determine which embed code to display

@@ -101,41 +101,7 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 		/// <returns></returns>
 		private static string GetEmbedCode(this PlayerItem player, VideoItem video, long PlaylistID, List<long> PlaylistIDs, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
 
-			StringBuilder embed = new StringBuilder();
-
-			if (player != null) {
-				//this one works
-				embed.AppendLine("<!-- Start of Brightcove Player -->");
-				embed.AppendLine("");
-				embed.AppendLine("<div style=\"display:none\"></div>");
-				embed.AppendLine("<script language=\"JavaScript\" type=\"text/javascript\" src=\"http://admin.brightcove.com/js/BrightcoveExperiences.js\"></script>");
-				embed.AppendLine("<object id=\"" + objectTagID + "\" class=\"BrightcoveExperience\">");
-				embed.AppendLine("<param name=\"bgcolor\" value=\"" + BackgroundColor + "\" />");
-				embed.AppendLine("<param name=\"width\" value=\"" + player.Width.ToString() + "\" />");
-				embed.AppendLine("<param name=\"height\" value=\"" + player.Height.ToString() + "\" />");
-				embed.AppendLine("<param name=\"playerID\" value=\"" + player.PlayerID + "\" />");
-
-				//add in video ids or playlist ids
-				if (player.PlaylistType.Equals(PlayerPlaylistType.None) && video != null) {
-					embed.AppendLine("<param name=\"@videoPlayer\" value=\"" + video.VideoID + "\"/>");
-				} else if (player.PlaylistType.Equals(PlayerPlaylistType.Tabbed) && PlaylistIDs != null) {
-					embed.AppendLine("<param name=\"@playlistTabs\" value=\"" + PlaylistIDs.ToDelimString(",") + "\"/>");
-				} else if (player.PlaylistType.Equals(PlayerPlaylistType.ComboBox) && PlaylistIDs != null) {
-					embed.AppendLine("<param name=\"@playlistCombo\" value=\"" + PlaylistIDs.ToDelimString(",") + "\"/>");
-				} else if (player.PlaylistType.Equals(PlayerPlaylistType.VideoList) && PlaylistID != -1) {
-					embed.AppendLine("<param name=\"@videoList\" value=\"" + PlaylistID.ToString() + "\"/>");
-				}
-
-				embed.AppendLine("<param name=\"isVid\" value=\"true\" />");
-				embed.AppendLine("<param name=\"autoStart\" value=\"" + AutoStart.ToString().ToLower() + "\" />");
-				embed.AppendLine("<param name=\"isUI\" value=\"true\" />");
-				embed.AppendLine("<param name=\"dynamicStreaming\" value=\"true\" />");
-				embed.AppendLine("<param name=\"wmode\" value=\"" + WMode.ToString() + "\" /> ");
-				embed.AppendLine("</object>");
-				embed.AppendLine("");
-				embed.AppendLine("<!-- End of Brightcove Player -->");
-			}
-			return embed.ToString();
+			return BrightcoveSDK.Utils.EmbedCode.GetEmbedCode(player.PlayerID, video.VideoID, player.PlaylistType, PlaylistID, PlaylistIDs, player.Height, player.Width, BackgroundColor, AutoStart, WMode, objectTagID);
         }
 
         #endregion GetEmbedCode

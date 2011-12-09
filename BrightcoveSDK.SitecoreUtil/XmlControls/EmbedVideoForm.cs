@@ -117,7 +117,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 				//get and set the autostart
 				string autostart = WebUtil.GetQueryString("autostart");
 				try {
-					chkAutoStart.Checked = (autostart == "") ? false : bool.Parse(autostart);
+					chkAutoStart.Checked = (autostart.ToLower() == "true") ? true : false;
 				} catch { }
 
 				//get and set the bgcolor
@@ -211,7 +211,17 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 				SheerResponse.SetDialogValue(StringUtil.EscapeJavascriptString(mediaUrl.ToString()));
 				base.OnOK(sender, args);
 			} else {
-				SheerResponse.Eval("scClose(" + StringUtil.EscapeJavascriptString(mediaUrl.ToString()) + "," + StringUtil.EscapeJavascriptString(player.DisplayName) + ")");
+				SheerResponse.Eval("scCloseEmbed(" + StringUtil.EscapeJavascriptString(mediaUrl.ToString()) + ")");
+			}
+		}
+
+		protected override void OnCancel(object sender, EventArgs args) {
+			Assert.ArgumentNotNull(sender, "sender");
+			Assert.ArgumentNotNull(args, "args");
+			if (this.Mode == "webedit") {
+				base.OnCancel(sender, args);
+			} else {
+				SheerResponse.Eval("scCancel()");
 			}
 		}
 
