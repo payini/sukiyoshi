@@ -135,6 +135,40 @@ namespace BrightcoveSDK.Media
             }
         }
 
+		private BCCollection<BCRendition> _renditions;
+
+		/// <summary>
+		/// A list of cuePoints representing the cue points assigned to this Video.
+		/// </summary> 
+		[DataMember]
+		public BCCollection<BCRendition> renditions {
+			get {
+				if (_renditions == null) {
+					_renditions = new BCCollection<BCRendition>();
+				}
+				return _renditions;
+			}
+			set {
+				_renditions = value;
+			}
+		}
+
+		private BCRendition _videoFullLength;
+		/// <summary>
+		/// A single Rendition that represents the the video file for the Video. 
+		/// </summary>
+		public BCRendition videoFullLength {
+			get {
+				if (_videoFullLength == null) {
+					_videoFullLength = new BCRendition();
+				}
+				return _videoFullLength;
+			}
+			set {
+				_videoFullLength = value;
+			}
+		}
+
 		/// <summary>
 		/// The URL to the video still image associated with this Video. Video stills are 480x360 pixels.
 		/// </summary> 
@@ -459,6 +493,14 @@ namespace BrightcoveSDK.Media
             if (video.cuePoints.Count > 0) {
                 jsonVideo.Append(",\"cuePoints\": " + video.cuePoints.ToJSON());
             }
+
+			if (video.renditions.Count > 0) {
+				jsonVideo.Append(",\"renditions\": " + video.renditions.ToJSON());
+			}
+
+			if (!string.IsNullOrEmpty(video.videoFullLength.url) || !string.IsNullOrEmpty(video.videoFullLength.remoteUrl)) {
+				jsonVideo.Append(",\"videoFullLength\": " + video.videoFullLength.ToJSON());
+			}
 
 			//economics
 			jsonVideo.Append(",\"economics\": " + video.economics.ToString());
