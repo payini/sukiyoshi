@@ -102,7 +102,32 @@ namespace BrightcoveSDK.Media
 				codecType = value.ToString();
 			}
 		}
-						
+			
+		[DataMember]
+		private string controllerType { get; set; }
+
+		/// <summary>
+		/// Required. Valid values are AKAMAI_STREAMING, AKAMAI_SECURE_STREAMING, AKAMAI_LIVE, AKAMAI_HD, AKAMAI_HD_LIVE, LIMELIGHT_LIVE, LIMELIGHT_MEDIAVAULT.
+		/// </summary> 
+		public ControllerType ControllerType {
+			get {
+				if (controllerType.Equals(ControllerType.AKAMAI_HD.ToString())) {
+					return ControllerType.AKAMAI_HD;
+				} else if (controllerType.Equals(ControllerType.AKAMAI_HD_LIVE.ToString())) {
+					return ControllerType.AKAMAI_HD_LIVE;
+				} else if (controllerType.Equals(ControllerType.AKAMAI_LIVE.ToString())) {
+					return ControllerType.AKAMAI_LIVE;
+				} else if (controllerType.Equals(ControllerType.AKAMAI_SECURE_STREAMING.ToString())) {
+					return ControllerType.AKAMAI_SECURE_STREAMING;
+				} else {
+					return ControllerType.AKAMAI_STREAMING;
+				}
+			}
+			set {
+				codecType = value.ToString();
+			}
+		}
+			
 		#region IComparable Comparators
 
 		public int CompareTo(BCRendition other) {
@@ -168,10 +193,16 @@ namespace BrightcoveSDK.Media
 				jsonR.Append(",\"videoDuration\": " + rendition.videoDuration.ToString());
 			}
 
-			//type
+			//videoCodec
 			if (!string.IsNullOrEmpty(rendition.videoCodec.ToString())) {
 				if (jsonR.Length > 0) jsonR.Append(","); 
 				jsonR.Append(",\"videoCodec\": \"" + (int)Enum.Parse(typeof(VideoCodecEnum), rendition.videoCodec.ToString()) + "\"");
+			}
+
+			//controllerType
+			if (!string.IsNullOrEmpty(rendition.ControllerType.ToString())) {
+				if (jsonR.Length > 0) jsonR.Append(",");
+				jsonR.Append(",\"controllerType\": \"" + (int)Enum.Parse(typeof(ControllerType), rendition.ControllerType.ToString()) + "\"");
 			}
 
 			return "{" + jsonR.ToString() + "}";
