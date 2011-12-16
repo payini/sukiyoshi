@@ -48,17 +48,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BCAPI.Playlist.Read.cs">
-	  <DependentUpon>BCAPI.cs</DependentUpon>
-	</Compile>
+      <DependentUpon>BCAPI.cs</DependentUpon>
+    </Compile>
     <Compile Include="BCAPI.Playlist.Write.cs">
-	  <DependentUpon>BCAPI.cs</DependentUpon>
-	</Compile>
+      <DependentUpon>BCAPI.cs</DependentUpon>
+    </Compile>
     <Compile Include="BCAPI.Video.Read.cs">
       <SubType>Code</SubType>
-	  <DependentUpon>BCAPI.cs</DependentUpon>
-	</Compile>
+      <DependentUpon>BCAPI.cs</DependentUpon>
+    </Compile>
     <Compile Include="BCAPI.Video.Write.cs">
-	  <DependentUpon>BCAPI.cs</DependentUpon>
+      <DependentUpon>BCAPI.cs</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HTTP\BCAPIRequest.cs" />
