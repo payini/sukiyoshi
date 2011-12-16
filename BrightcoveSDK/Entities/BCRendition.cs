@@ -119,8 +119,14 @@ namespace BrightcoveSDK.Media
 					return ControllerType.AKAMAI_LIVE;
 				} else if (controllerType.Equals(ControllerType.AKAMAI_SECURE_STREAMING.ToString())) {
 					return ControllerType.AKAMAI_SECURE_STREAMING;
-				} else {
+				} else if (controllerType.Equals(ControllerType.AKAMAI_STREAMING.ToString())) {
 					return ControllerType.AKAMAI_STREAMING;
+				} else if (controllerType.Equals(ControllerType.LIMELIGHT_LIVE.ToString())) {
+					return ControllerType.LIMELIGHT_LIVE;
+				} else if (controllerType.Equals(ControllerType.LIMELIGHT_MEDIAVAULT.ToString())) {
+					return ControllerType.LIMELIGHT_MEDIAVAULT;
+				} else {
+					return ControllerType.UNDEFINED;
 				}
 			}
 			set {
@@ -194,15 +200,15 @@ namespace BrightcoveSDK.Media
 			}
 
 			//videoCodec
-			if (!string.IsNullOrEmpty(rendition.videoCodec.ToString())) {
-				if (jsonR.Length > 0) jsonR.Append(","); 
-				jsonR.Append(",\"videoCodec\": \"" + (int)Enum.Parse(typeof(VideoCodecEnum), rendition.videoCodec.ToString()) + "\"");
+			if (!rendition.videoCodec.Equals(VideoCodecEnum.NONE)) {
+				if (jsonR.Length > 0) jsonR.Append(",");
+				jsonR.Append(",\"videoCodec\": \"" + rendition.videoCodec.ToString() + "\"");
 			}
 
 			//controllerType
-			if (!string.IsNullOrEmpty(rendition.ControllerType.ToString())) {
+			if (!rendition.ControllerType.Equals(ControllerType.UNDEFINED)) {
 				if (jsonR.Length > 0) jsonR.Append(",");
-				jsonR.Append(",\"controllerType\": \"" + (int)Enum.Parse(typeof(ControllerType), rendition.ControllerType.ToString()) + "\"");
+				jsonR.Append(",\"controllerType\": \"" + rendition.ControllerType.ToString() + "\"");
 			}
 
 			return "{" + jsonR.ToString() + "}";
