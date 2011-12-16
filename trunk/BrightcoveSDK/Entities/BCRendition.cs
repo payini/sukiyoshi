@@ -130,7 +130,7 @@ namespace BrightcoveSDK.Media
 				}
 			}
 			set {
-				codecType = value.ToString();
+				controllerType = value.ToString();
 			}
 		}
 			
