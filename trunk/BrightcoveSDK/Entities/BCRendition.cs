@@ -168,8 +168,7 @@ namespace BrightcoveSDK.Media
 			StringBuilder jsonPlaylist = new StringBuilder();
 
 			StringBuilder jsonR = new StringBuilder();
-			jsonR.Append("{");
-
+			
 			//referenceId
 			if (!string.IsNullOrEmpty(rendition.referenceId)) {
 				jsonR.Append("\"referenceId\": \"" + rendition.referenceId + "\"");
@@ -184,31 +183,31 @@ namespace BrightcoveSDK.Media
 			//remoteStreamName
 			if (!string.IsNullOrEmpty(rendition.remoteStreamName)) {
 				if (jsonR.Length > 0) jsonR.Append(","); 
-				jsonR.Append(",\"remoteStreamName\": \"" + rendition.remoteStreamName + "\"");
+				jsonR.Append("\"remoteStreamName\": \"" + rendition.remoteStreamName + "\"");
 			}
 
 			//size
 			if (!string.IsNullOrEmpty(rendition.size.ToString())) {
 				if (jsonR.Length > 0) jsonR.Append(","); 
-				jsonR.Append(",\"size\": " + rendition.size.ToString());
+				jsonR.Append("\"size\": " + rendition.size.ToString());
 			}
 
 			//videoDuration
 			if (!string.IsNullOrEmpty(rendition.videoDuration.ToString())) {
 				if (jsonR.Length > 0) jsonR.Append(","); 
-				jsonR.Append(",\"videoDuration\": " + rendition.videoDuration.ToString());
+				jsonR.Append("\"videoDuration\": " + rendition.videoDuration.ToString());
 			}
 
 			//videoCodec
 			if (!rendition.videoCodec.Equals(VideoCodecEnum.NONE)) {
 				if (jsonR.Length > 0) jsonR.Append(",");
-				jsonR.Append(",\"videoCodec\": \"" + rendition.videoCodec.ToString() + "\"");
+				jsonR.Append("\"videoCodec\": " + rendition.videoCodec.ToString());
 			}
 
 			//controllerType
 			if (!rendition.ControllerType.Equals(ControllerType.UNDEFINED)) {
 				if (jsonR.Length > 0) jsonR.Append(",");
-				jsonR.Append(",\"controllerType\": \"" + rendition.ControllerType.ToString() + "\"");
+				jsonR.Append("\"controllerType\": " + rendition.ControllerType.ToString());
 			}
 
 			return "{" + jsonR.ToString() + "}";
