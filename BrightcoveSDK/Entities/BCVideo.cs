@@ -487,9 +487,14 @@ namespace BrightcoveSDK.Media
 
 			//videoStillURL
 			if (!string.IsNullOrEmpty(video.videoStillURL)) {
-				jsonVideo.Append(",\" videoStillURL\": \"" + video.videoStillURL + "\"");
+				jsonVideo.Append(",\" videoStillURL\": \"" + HttpUtility.UrlEncode(video.videoStillURL) + "\"");
 			}
 
+			//thumbnailURL
+			if (!string.IsNullOrEmpty(video.thumbnailURL)) {
+				jsonVideo.Append(",\" thumbnailURL\": \"" + HttpUtility.UrlEncode(video.thumbnailURL) + "\"");
+			}
+			
 			//longDescription
 			if (!string.IsNullOrEmpty(video.longDescription)) {
 				jsonVideo.Append(",\"longDescription\": \"" + video.longDescription + "\"");
