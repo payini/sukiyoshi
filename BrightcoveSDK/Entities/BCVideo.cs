@@ -485,6 +485,11 @@ namespace BrightcoveSDK.Media
 				jsonVideo.Append(",\"referenceId\": \"" + video.referenceId + "\"");
 			}
 
+			//videoStillURL
+			if (!string.IsNullOrEmpty(video.videoStillURL)) {
+				jsonVideo.Append(",\" videoStillURL\": \"" + video.videoStillURL + "\"");
+			}
+
 			//longDescription
 			if (!string.IsNullOrEmpty(video.longDescription)) {
 				jsonVideo.Append(",\"longDescription\": \"" + video.longDescription + "\"");
