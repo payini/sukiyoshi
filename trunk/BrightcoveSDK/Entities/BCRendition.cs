@@ -180,6 +180,12 @@ namespace BrightcoveSDK.Media
 				jsonR.Append("\"remoteUrl\": \"" + rendition.remoteUrl + "\"");
 			}
 
+			//encodingRate
+			if (rendition.encodingRate != null) {
+				if (jsonR.Length > 0) jsonR.Append(",");
+				jsonR.Append("\"encodingRate\": \"" + rendition.encodingRate.ToString() + "\"");
+			}
+
 			//remoteStreamName
 			if (!string.IsNullOrEmpty(rendition.remoteStreamName)) {
 				if (jsonR.Length > 0) jsonR.Append(","); 
