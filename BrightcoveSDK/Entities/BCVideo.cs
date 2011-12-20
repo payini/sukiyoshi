@@ -512,6 +512,16 @@ namespace BrightcoveSDK.Media
 				jsonVideo.Append(",\"videoFullLength\": " + video.videoFullLength.ToJSON());
 			}
 
+			if (video.customFields.Values.Count > 0) {
+				StringBuilder sbFields = new StringBuilder();
+				foreach(KeyValuePair<string, string> field in video.customFields.Values){
+					if (sbFields.Length > 0)
+						sbFields.Append(",");
+					sbFields.Append("\"" + field.Key + "\":\"" + field.Value + "\"");
+				}
+				jsonVideo.Append(",\"customFields\":{" + sbFields.ToString() + "}");
+			}
+
 			//economics
 			jsonVideo.Append(",\"economics\": " + video.economics.ToString());
 
