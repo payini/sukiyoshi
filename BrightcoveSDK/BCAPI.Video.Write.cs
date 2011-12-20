@@ -388,6 +388,12 @@ namespace BrightcoveSDK
 		#region Add Image
 
 		//using video id
+		public RPCResponse<BCImage> AddImage(BCImage image, long video_id) {
+			return AddImage(image, "", video_id);
+		}
+		public RPCResponse<BCImage> AddImage(BCImage image, string filename, long video_id) {
+			return AddImage(image, filename, null, video_id);
+		}
 		public RPCResponse<BCImage> AddImage(BCImage image, string filename, byte[] file, long video_id) {
 			return AddImage(image, filename, file, video_id, true);
 		}
@@ -402,6 +408,12 @@ namespace BrightcoveSDK
 		}
 
 		//using ref id
+		public RPCResponse<BCImage> AddImage(BCImage image, string video_reference_id) {
+			return AddImage(image, "", video_reference_id);
+		}
+		public RPCResponse<BCImage> AddImage(BCImage image, string filename, string video_reference_id) {
+			return AddImage(image, filename, null, video_reference_id);
+		}
 		public RPCResponse<BCImage> AddImage(BCImage image, string filename, byte[] file, string video_reference_id) {
 			return AddImage(image, filename, file, video_reference_id, true);
 		}
@@ -477,7 +489,9 @@ namespace BrightcoveSDK
 			postParams.Add("json", rpc.ToJSON());
 
 			//add the file to the post
-			postParams.Add("file", new FileParameter(file, filename));
+			if (file != null && !string.IsNullOrEmpty(filename)) {
+				postParams.Add("file", new FileParameter(file, filename));
+			}
 
 			//Get the JSon reader returned from the APIRequest
 			RPCResponse<BCImage> rpcr = BCAPIRequest.ExecuteWrite<BCImage>(postParams, Account);
