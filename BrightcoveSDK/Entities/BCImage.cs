@@ -95,6 +95,9 @@ namespace BrightcoveSDK.Media
 			if(!string.IsNullOrEmpty(image.referenceId)){
 				jsonImage += ", \"referenceId\": \"" + image.referenceId + "\"";
 			}
+			if(!string.IsNullOrEmpty(image.remoteUrl)){
+				jsonImage += ", \"remoteUrl\": \"" + image.remoteUrl + "\"";
+			}
 			jsonImage += ", \"type\": " + image.type.ToString() + "}";
 			
 			return jsonImage;
