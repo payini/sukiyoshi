@@ -1,35 +1,51 @@
 ﻿function GetDialogArguments() {
+    return getRadWindow().ClientParameters;
+}
+
+function getRadWindow() {
   if (window.radWindow) {
-    return window.radWindow.Argument;
+        return window.radWindow;
   }
-  else {
+    
+    if (window.frameElement && window.frameElement.radWindow) {
+        return window.frameElement.radWindow;
+    }
+    
     return null;
-  }
 }
 
 var isRadWindow = true;
 
-var radWindow = GetEditorRadWindowManager().GetCurrentRadWindow(window);
+var radWindow = getRadWindow();
 
 if (radWindow) { 
   if (window.dialogArguments) { 
     radWindow.Window = window;
   } 
-  
-  radWindow.OnLoad(); 
 }
 
-function scClose(url, text) {
+function scCloseEmbed(embedTag) {
 	var returnValue = {
-		url:url,
-		text:text
+		EmbedTag:embedTag
 	};
 	
-	CloseDlg(returnValue);
+	getRadWindow().close(returnValue);
+}
+function scCloseLink(url) {
+	var returnValue = {
+		URL:url
+	};
+	
+	getRadWindow().close(returnValue);
 }
 
-function scCloseWebEdit(url) {
-  window.returnValue = url;
+function scCancel() {
+
+  getRadWindow().close();
+}
+
+function scCloseWebEdit(embedTag) {
+  window.returnValue = embedTag;
   window.close();
 }
 
