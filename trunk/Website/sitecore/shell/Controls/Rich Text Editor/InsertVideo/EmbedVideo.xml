@@ -4,7 +4,6 @@
     <FormDialog Icon="Network/32x32/link.png" Header="Embed a Video" 
       Text="Select the item or media that you want to create a link to." OKButton="Link">
 
-      <script Type="text/javascript" Language="javascript" Src="/sitecore/shell/RadControls/Editor/Scripts/7_2_0/RadWindow.js">.</script>
       <script Type="text/javascript" Language="javascript" Src="/sitecore/shell/Controls/Rich Text Editor/InsertVideo/InsertVideo.js">.</script>
 
       <CodeBeside Type="BrightcoveSDK.SitecoreUtil.XmlControls.EmbedVideoForm,BrightcoveSDK.SitecoreUtil"/>
