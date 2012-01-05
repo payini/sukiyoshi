@@ -1,51 +1,68 @@
-RadEditorCommandList["InsertBrightcoveVideo"] = function(commandName, editor, tool) {
-	var args = editor.GetDialogParameters(commandName);
-
-	var html = editor.GetSelectionHtml();
+/* This file is shared between older developer center rich text editor and the new EditorPage, that is used exclusively by Content Editor */
+RadEditorCommandList["InsertBrightcoveVideo"] = function(commandName, editor, args) {
+	
+	var html = editor.getSelectionHtml();
 	var videoid = scItemID;
 	var playerid = scItemID;
 	var playlistids = scItemID;
 	var wmode = "window";
 	var bgcolor = "#ffffff";
 	var autostart = "false";
-
+	var selectedText = "";
+	
 	if (html) {
+		selectedText = editor.getSelection().getText();
+		html = unescape(getVidAttrVal(html, 'href'));
+		html = html.split('/BrightcoveVideo.ashx').join('').split('&amp;').join('&');
 		videoid = getVidQStringVal(html, 'video');
 		playerid = getVidQStringVal(html, 'player');
 		playlistids = getVidQStringVal(html, 'playlists');
 		wmode = getVidQStringVal(html, 'wmode');
 		bgcolor = getVidQStringVal(html, 'bgcolor');
-		autostart = getVidQStringVal(html, 'autostart');
+		autostart = getVidQStringVal(html, 'autoStart');
 	}
 
 	scEditor = editor;
 
-	editor.ShowDialog(
-		"/sitecore/shell/default.aspx?xmlcontrol=RichText.InsertVideo&la=" + scLanguage + "&video=" + videoid + "&player=" + playerid + "&playlists=" + playlistids + "&selectedText=" + escape(html) + "&wmode=" + wmode + "&bgcolor=" + bgcolor + "&autostart=" + autostart,
+	editor.showExternalDialog(
+		"/sitecore/shell/default.aspx?xmlcontrol=RichText.InsertVideo&la=" + scLanguage + "&video=" + videoid + "&player=" + playerid + "&playlists=" + playlistids + "&wmode=" + wmode + "&bgcolor=" + escape(bgcolor) + "&autostart=" + autostart + "&selectedText=" + selectedText,
 		null, //argument
-		600, //width
-		500, //height
-		scInsertBrightcoveVideo,
-		null,
-		"Insert Video");
+		600,
+		600,
+		scInsertBrightcoveVideo, //callback
+		null, // callback args
+		"Insert Video",
+		true, //modal
+		Telerik.Web.UI.WindowBehaviors.Close, // behaviors
+		false, //showStatusBar
+		false //showTitleBar
+	);
 };
 
-function scInsertBrightcoveVideo(returnValue) {
-	if (returnValue) {
-		var text = scEditor.GetSelectionHtml();
-
-		if (text != "" && text != null) {
-			// if selected string is a full paragraph, we want to insert the link inside the paragraph, and not the other way around.
-			var regex = new RegExp("^[\s]*<p>(.+)<\/p>[\s]*$", ["i"]);
-			var match = regex.exec(text);
-			if (match && match.length >= 2) {
-				scEditor.PasteHtml("<p>" + returnValue.url + "</p>");
-				return;
-			}
-		}
-
-		scEditor.PasteHtml(returnValue.url);
+function scInsertBrightcoveVideo(sender, returnValue) {
+	if (!returnValue) {
+		return;
 	}
+	
+	var d = scEditor.getSelection().getParentElement();
+
+	if ($telerik.isFirefox && d.tagName == "A") {
+		d.parentNode.removeChild(d);
+	} else {
+		scEditor.fire("Unlink");
+	}
+		
+	var text = scEditor.getSelectionHtml();
+
+	// if selected string is a full paragraph, we want to insert the link inside the paragraph, and not the other way around.
+	var regex = /^[\s]*<p>(.+)<\/p>[\s]*$/i;
+	var match = regex.exec(text);
+	if (match && match.length >= 2) {
+		scEditor.pasteHtml("<p>" + returnValue.URL + "</p>", "DocumentManager");
+		return;
+	}
+
+	scEditor.pasteHtml(returnValue.URL, "DocumentManager");
 }
 
 function getVidQStringVal(html, name) {
@@ -72,11 +89,10 @@ function getVidQStringVal(html, name) {
 	return value;
 }
 
-RadEditorCommandList["EmbedBrightcoveVideo"] = function(commandName, editor, tool) {
+RadEditorCommandList["EmbedBrightcoveVideo"] = function(commandName, editor, args) {
 
-	var args = editor.GetDialogParameters(commandName);
-
-	var html = editor.GetSelectionHtml();
+	var html = editor.getSelectionHtml();
+	
 	var videoid = scItemID;
 	var playerid = scItemID;
 	var playlisttabs = "";
@@ -87,56 +103,39 @@ RadEditorCommandList["EmbedBrightcoveVideo"] = function(commandName, editor, too
 	var autostart = "false";
 
 	if (html) {
-		html = unescape(getVidAttrVal(html, 'src'));
-		html = html.split('parameters=').join('').split('&amp;').join('&');
-		videoid = getVidQStringVal(html, 'video');
-		playerid = getVidQStringVal(html, 'player');
-		playlisttabs = getVidQStringVal(html, 'playlisttabs');
-		playlistcombo = getVidQStringVal(html, 'playlistcombo');
-		videolist = getVidQStringVal(html, 'videolist');
-		wmode = getVidQStringVal(html, 'wmode');
-		bgcolor = getVidQStringVal(html, 'bgcolor');
-		autostart = getVidQStringVal(html, 'autostart');
+		videoid = getVidAttrVal(html, 'video');
+		playerid = getVidAttrVal(html, 'player');
+		playlisttabs = getVidAttrVal(html, 'playlisttabs');
+		playlistcombo = getVidAttrVal(html, 'playlistcombo');
+		videolist = getVidAttrVal(html, 'videolist');
+		wmode = getVidAttrVal(html, 'wmode');
+		bgcolor = getVidAttrVal(html, 'bgcolor');
+		autostart = getVidAttrVal(html, 'autostart');
 	}
 
 	scEditor = editor;
-
-	editor.ShowDialog(
+	
+	editor.showExternalDialog(
 		"/sitecore/shell/default.aspx?xmlcontrol=RichText.EmbedVideo&la=" + scLanguage + "&video=" + videoid + "&player=" + playerid + "&playlisttabs=" + playlisttabs + "&playlistcombo=" + playlistcombo + "&videolist=" + videolist + "&wmode=" + wmode + "&bgcolor=" + escape(bgcolor) + "&autostart=" + autostart,
 		null, //argument
-		600, //width
-		600, //height
-		scEmbedBrightcoveVideo,
-		null,
-		"Embed Video");
+		600,
+		600,
+		scEmbedBrightcoveVideo, //callback
+		null, // callback args
+		"Embed Video",
+		true, //modal
+		Telerik.Web.UI.WindowBehaviors.Close, // behaviors
+		false, //showStatusBar
+		false //showTitleBar
+	);
 };
 
-function scEmbedBrightcoveVideo(returnValue) {
-	if (returnValue) {
-		var text = scConvertWebControl(returnValue.url);
-		scEditor.PasteHtml(text);
+function scEmbedBrightcoveVideo(sender, returnValue) {
+	if (!returnValue) {
+		return;
 	}
-}
 
-function scConvertWebControl(html) {
-	try {
-		var win = window.dialogArguments[0];
-	} catch (e) { win = window; }
-
-	var form = win.scForm;
-	if (form != null) {
-		var request = new win.scRequest();
-		request.form = "html=" + encodeURIComponent(html);
-		request.build("", "", "", 'Convert(\"' + scMode + '\")', true);
-		var url = "/sitecore/shell/Applications/Content Manager/Execute.aspx?cmd=Convert&mode=" + scMode;
-		request.url = url;
-		request.send();
-		var r = "";
-		if (request.httpRequest != null && request.httpRequest.status == "200") {
-			r = request.httpRequest.responseText;
-		}
-		return r;
-	}
+	scEditor.pasteHtml(returnValue.EmbedTag);
 }
 
 function getVidAttrVal(html, name) {
