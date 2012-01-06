@@ -35,14 +35,40 @@ namespace BrightcoveSDK.Media
 		/// <summary>
 		/// The rendition's display height, in pixels.
 		/// </summary> 
-		[DataMember]
-		public int frameHeight { get; set; }
+		[DataMember(Name = "frameHeight")]
+		private string fHeight { get; set; }
+
+		public int frameHeight {
+			get {
+				if (!String.IsNullOrEmpty(fHeight)) {
+					return int.Parse(fHeight);
+				} else {
+					return 0;
+				}
+			}
+			set {
+				fHeight = value.ToString();
+			}
+		}
 
 		/// <summary>
 		/// The rendition's display width, in pixels.
 		/// </summary> 
-		[DataMember]
-		public int frameWidth { get; set; }
+		[DataMember(Name = "frameWidth")]
+		private string fWidth { get; set; }
+
+		public int frameWidth {
+			get {
+				if (!String.IsNullOrEmpty(fWidth)) {
+					return int.Parse(fWidth);
+				} else {
+					return 0;
+				}
+			}
+			set {
+				fWidth = value.ToString();
+			}
+		}
 
 		/// <summary>
 		/// The file size of the rendition, in bytes.
