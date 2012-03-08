@@ -58,11 +58,7 @@ namespace BrightcoveSDK.SitecoreUtil.Entity
 		public BCVideoEconomics Economics {
 			get {
 				string val = videoItem.Fields["Economics"].Value;
-				if (val.Equals(BCVideoEconomics.AD_SUPPORTED.ToString())) {
-					return BCVideoEconomics.AD_SUPPORTED;
-				} else {
-					return BCVideoEconomics.FREE;
-				}
+				return (string.IsNullOrEmpty(val)) ? BCVideoEconomics.AD_SUPPORTED : (BCVideoEconomics)Enum.Parse(typeof(BCVideoEconomics), val, true); 
 			}
 			set {
 				videoItem.Fields["Economics"].Value = value.ToString();

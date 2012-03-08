@@ -218,11 +218,7 @@ namespace BrightcoveSDK.UI
 			if (!VideoID.Equals(-1) || !PlayerID.Equals(-1)) {
 
 				//wmode 
-				WMode qWMode = BrightcoveSDK.WMode.Transparent;
-				if (WMode.Equals(BrightcoveSDK.WMode.Opaque.ToString().ToLower()))
-					qWMode = BrightcoveSDK.WMode.Opaque;
-				if (WMode.Equals(BrightcoveSDK.WMode.Window.ToString().ToLower()))
-					qWMode = BrightcoveSDK.WMode.Window;
+				WMode qWMode = (string.IsNullOrEmpty(WMode)) ? BrightcoveSDK.WMode.Transparent : (BrightcoveSDK.WMode)Enum.Parse(typeof(BrightcoveSDK.WMode), WMode, true);	
 				
 				string uniqueID = "video_" + DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.FFFF");
 				Literal litScript = new Literal();

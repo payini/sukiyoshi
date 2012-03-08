@@ -63,19 +63,7 @@ namespace BrightcoveSDK.SitecoreUtil.Entity
 		public PlaylistTypeEnum PlaylistType {
 			get {
 				string val = playlistItem.Fields["Playlist Type"].Value;
-				if (val.Equals(PlaylistTypeEnum.ALPHABETICAL.ToString())) {
-					return PlaylistTypeEnum.ALPHABETICAL;
-				} else if (val.Equals(PlaylistTypeEnum.EXPLICIT.ToString())) {
-					return PlaylistTypeEnum.EXPLICIT;
-				} else if (val.Equals(PlaylistTypeEnum.NEWEST_TO_OLDEST.ToString())) {
-					return PlaylistTypeEnum.NEWEST_TO_OLDEST;
-				} else if (val.Equals(PlaylistTypeEnum.OLDEST_TO_NEWEST.ToString())) {
-					return PlaylistTypeEnum.OLDEST_TO_NEWEST;
-				} else if (val.Equals(PlaylistTypeEnum.PLAYS_TOTAL.ToString())) {
-					return PlaylistTypeEnum.PLAYS_TOTAL;
-				} else {
-					return PlaylistTypeEnum.PLAYS_TRAILING_WEEK;
-				}
+				return (string.IsNullOrEmpty(val)) ? PlaylistTypeEnum.NEWEST_TO_OLDEST : (PlaylistTypeEnum)Enum.Parse(typeof(PlaylistTypeEnum), val, true);
 			}
 			set {
 				playlistItem.Fields["Playlist Type"].Value = value.ToString();

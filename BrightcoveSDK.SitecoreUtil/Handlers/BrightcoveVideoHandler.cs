@@ -77,14 +77,7 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 				string qBgColor = (nvc.HasKey("bgcolor")) ? nvc.Get("bgcolor") : "";
 				
 				//wmode 
-				WMode qWMode = WMode.Transparent;
-				if (nvc.HasKey("wmode")) {
-					string wmode = nvc.Get("wmode").ToLower();
-					if (wmode.Equals(WMode.Opaque.ToString().ToLower()))
-						qWMode = WMode.Opaque;
-					if (wmode.Equals(WMode.Window.ToString().ToLower()))
-						qWMode = WMode.Window;
-				}
+				WMode qWMode = (!nvc.HasKey("wmode") || string.IsNullOrEmpty(nvc.Get("wmode"))) ? BrightcoveSDK.WMode.Transparent : (BrightcoveSDK.WMode)Enum.Parse(typeof(BrightcoveSDK.WMode), nvc.Get("wmode"), true);	
 				
                 StringBuilder sb = new StringBuilder();
 				sb.AppendLine("<html><head>");
