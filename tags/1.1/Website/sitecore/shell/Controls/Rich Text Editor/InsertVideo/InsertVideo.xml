@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <RichText.InsertVideo>
+    <FormDialog Icon="Network/32x32/link.png" Header="Insert a Link" 
+      Text="Select the item or media that you want to create a link to." OKButton="Link">
+
+      <script Type="text/javascript" Language="javascript" Src="/sitecore/shell/Controls/Rich Text Editor/InsertVideo/InsertVideo.js">.</script>
+
+      <CodeBeside Type="BrightcoveSDK.SitecoreUtil.XmlControls.InsertVideoForm,BrightcoveSDK.SitecoreUtil"/>
+
+      <DataContext ID="VideoDataContext" Root="/sitecore/content/Brightcove Media"/>
+			<DataContext ID="PlayerDataContext" Root="/sitecore/content/Brightcove Media"/>
+			<DataContext ID="PlaylistDataContext" Root="/sitecore/content/Brightcove Media"/>
+			
+			<GridPanel Width="100%" Height="100%" Style="table-layout:fixed">
+				<div style="font-size:11px;font-weight:bold;margin:2px 0;">Auto Start</div>
+				<Checkbox ID="chkAutoStart"/>
+				<div style="font-size:11px;font-weight:bold;margin:2px 0;">Background Color</div>
+				<Edit ID="txtBGColor" Value="Default Value" />
+				<div style="font-size:11px;font-weight:bold;margin:2px 0;">WMode</div>
+				<Combobox ID="WMode" />
+				<div style="font-size:11px;font-weight:bold;margin:2px 0;">Player</div>
+				<Scrollbox ID="scrlPlayer" Width="95%" Height="40px" Background="none" Border="none" Padding="0" >
+					<TreePicker ID="PlayerTreeview" DataContext="PlayerDataContext" Root="true" />
+				</Scrollbox>
+				<div style="font-size:11px;font-weight:bold;margin:2px 0;">Video</div>
+				<Scrollbox Width="95%" Height="40px" Background="None" Border="none" Padding="0" >
+					<TreePicker ID="VideoTreeview" DataContext="VideoDataContext" Root="true" />
+				</Scrollbox>
+				<div style="font-size:11px;font-weight:bold;margin:2px 0;">Playlists</div>
+				<Scrollbox Width="96%" Height="200px" Background="white" Padding="0">
+					<TreeviewEx ID="PlaylistTreeview" DataContext="PlaylistDataContext" Root="true" />
+				</Scrollbox>
+			</GridPanel>
+    </FormDialog>
+  </RichText.InsertVideo>
+</control>
