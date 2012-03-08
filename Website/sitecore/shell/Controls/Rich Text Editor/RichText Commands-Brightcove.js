@@ -27,8 +27,8 @@ RadEditorCommandList["InsertBrightcoveVideo"] = function(commandName, editor, ar
 	editor.showExternalDialog(
 		"/sitecore/shell/default.aspx?xmlcontrol=RichText.InsertVideo&la=" + scLanguage + "&video=" + videoid + "&player=" + playerid + "&playlists=" + playlistids + "&wmode=" + wmode + "&bgcolor=" + escape(bgcolor) + "&autostart=" + autostart + "&selectedText=" + selectedText,
 		null, //argument
-		600,
-		600,
+		600, //width
+		500, //height
 		scInsertBrightcoveVideo, //callback
 		null, // callback args
 		"Insert Video",
@@ -118,8 +118,8 @@ RadEditorCommandList["EmbedBrightcoveVideo"] = function(commandName, editor, arg
 	editor.showExternalDialog(
 		"/sitecore/shell/default.aspx?xmlcontrol=RichText.EmbedVideo&la=" + scLanguage + "&video=" + videoid + "&player=" + playerid + "&playlisttabs=" + playlisttabs + "&playlistcombo=" + playlistcombo + "&videolist=" + videolist + "&wmode=" + wmode + "&bgcolor=" + escape(bgcolor) + "&autostart=" + autostart,
 		null, //argument
-		600,
-		600,
+		600, //width
+		500, //height
 		scEmbedBrightcoveVideo, //callback
 		null, // callback args
 		"Embed Video",
