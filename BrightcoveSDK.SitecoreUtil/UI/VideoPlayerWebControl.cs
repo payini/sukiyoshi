@@ -77,9 +77,9 @@ namespace BrightcoveSDK.SitecoreUtil.UI
 					    sbOut.Append(p.GetEmbedCode(playlists, bgcolor, autostart, wmode));
 				    } 
 
-				    //if nothing then just get embed for player with nothing
-				    if(sbOut.Length.Equals(0)){
-					    sbOut.Append(p.GetEmbedCode(bgcolor, autostart, wmode));
+				    //Notify the user
+				    if(sbOut.Length < 1){
+						sbError.AppendLine("Player playlist type wasn't selected.");
 				    }
 			    }
 				else {

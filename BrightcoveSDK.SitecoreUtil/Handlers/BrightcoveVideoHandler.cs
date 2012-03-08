@@ -86,13 +86,13 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 				string uniqueID = "video_" + DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.FFFF");
 				switch (p.PlaylistType) {
                     case PlayerPlaylistType.VideoList:
-                        sb.AppendLine(EmbedCode.GetVideoListPlayerEmbedCode(qPlayer, qVideo, qPlaylist, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
-						break;
+						sb.AppendLine(EmbedCode.GetVideoListPlayerEmbedCode(qPlayer, qPlaylist, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+                        break;
                     case PlayerPlaylistType.Tabbed:
-						sb.AppendLine(EmbedCode.GetTabbedPlayerEmbedCode(qPlayer, qVideo, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						sb.AppendLine(EmbedCode.GetTabbedPlayerEmbedCode(qPlayer, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
 						break;
 					case PlayerPlaylistType.ComboBox:
-                        sb.AppendLine(EmbedCode.GetComboBoxPlayerEmbedCode(qPlayer, qVideo, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+                        sb.AppendLine(EmbedCode.GetComboBoxPlayerEmbedCode(qPlayer, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
 						break;
 					case PlayerPlaylistType.None:
 						sb.AppendLine(EmbedCode.GetVideoPlayerEmbedCode(qPlayer, qVideo, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));

@@ -223,11 +223,11 @@ namespace BrightcoveSDK.UI
 				string uniqueID = "video_" + DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.FFFF");
 				Literal litScript = new Literal();
 				if (PlaylistTabs.Any()) {
-					litScript.Text = EmbedCode.GetTabbedPlayerEmbedCode(PlayerID, VideoID, PlaylistTabs.GetValues(), Height, Width, BackColor, AutoStart, qWMode, uniqueID);
+					litScript.Text = EmbedCode.GetTabbedPlayerEmbedCode(PlayerID, PlaylistTabs.GetValues(), Height, Width, BackColor, AutoStart, qWMode, uniqueID);
 				} else if (PlaylistCombos.Any()) {
-					litScript.Text = EmbedCode.GetComboBoxPlayerEmbedCode(PlayerID, VideoID, PlaylistCombos.GetValues(), Height, Width, BackColor, AutoStart, qWMode, uniqueID);
+					litScript.Text = EmbedCode.GetComboBoxPlayerEmbedCode(PlayerID, PlaylistCombos.GetValues(), Height, Width, BackColor, AutoStart, qWMode, uniqueID);
 				} else if (VideoList != -1) {
-					EmbedCode.GetVideoListPlayerEmbedCode(PlayerID, VideoID, VideoList, Height, Width, BackColor, AutoStart, qWMode, uniqueID);
+					litScript.Text = EmbedCode.GetVideoListPlayerEmbedCode(PlayerID, VideoList, Height, Width, BackColor, AutoStart, qWMode, uniqueID);
 				} else {
 					litScript.Text = EmbedCode.GetVideoPlayerEmbedCode(PlayerID, VideoID, Height, Width, BackColor, AutoStart, qWMode, uniqueID);
 				}
