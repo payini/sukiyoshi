@@ -67,24 +67,7 @@ namespace BrightcoveSDK.UI
 		public ImageTypeEnum Type {
 			get {
 				EnsureChildControls();
-				if (type.Text.Equals(ImageTypeEnum.BACKGROUND.ToString())) {
-					return ImageTypeEnum.BACKGROUND;
-				}
-				else if (type.Text.Equals(ImageTypeEnum.LOGO.ToString())) {
-					return ImageTypeEnum.LOGO;
-				}
-				else if (type.Text.Equals(ImageTypeEnum.LOGO_OVERLAY.ToString())) {
-					return ImageTypeEnum.LOGO_OVERLAY;
-				}
-				else if (type.Text.Equals(ImageTypeEnum.SYNDICATION_STILL.ToString())) {
-					return ImageTypeEnum.SYNDICATION_STILL;
-				}
-				else if (type.Text.Equals(ImageTypeEnum.THUMBNAIL.ToString())) {
-					return ImageTypeEnum.THUMBNAIL;
-				}
-				else {
-					return ImageTypeEnum.VIDEO_STILL;
-				}
+				return (string.IsNullOrEmpty(type.Text)) ? ImageTypeEnum.VIDEO_STILL : (ImageTypeEnum)Enum.Parse(typeof(ImageTypeEnum), type.Text, true);
 			}
 			set {
 				EnsureChildControls();

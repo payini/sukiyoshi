@@ -143,24 +143,7 @@ namespace BrightcoveSDK.UI
 		public PlaylistTypeEnum PlaylistType {
 			get {
 				EnsureChildControls();
-				if (playlistType.SelectedValue.Equals(PlaylistTypeEnum.ALPHABETICAL.ToString())) {
-					return PlaylistTypeEnum.ALPHABETICAL;
-				} 
-				else if (playlistType.SelectedValue.Equals(PlaylistTypeEnum.EXPLICIT.ToString())) {
-					return PlaylistTypeEnum.EXPLICIT;
-				}
-				else if (playlistType.SelectedValue.Equals(PlaylistTypeEnum.NEWEST_TO_OLDEST.ToString())) {
-					return PlaylistTypeEnum.NEWEST_TO_OLDEST;
-				}
-				else if (playlistType.SelectedValue.Equals(PlaylistTypeEnum.OLDEST_TO_NEWEST.ToString())) {
-					return PlaylistTypeEnum.OLDEST_TO_NEWEST;
-				}
-				else if (playlistType.SelectedValue.Equals(PlaylistTypeEnum.PLAYS_TOTAL.ToString())) {
-					return PlaylistTypeEnum.PLAYS_TOTAL;
-				}
-				else {
-					return PlaylistTypeEnum.PLAYS_TRAILING_WEEK;
-				}
+				return (string.IsNullOrEmpty(playlistType.SelectedValue)) ? PlaylistTypeEnum.PLAYS_TRAILING_WEEK : (PlaylistTypeEnum)Enum.Parse(typeof(PlaylistTypeEnum), playlistType.SelectedValue, true);
 			}
 			set {
 				EnsureChildControls();

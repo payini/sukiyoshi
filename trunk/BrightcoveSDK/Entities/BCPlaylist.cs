@@ -71,24 +71,7 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		public PlaylistTypeEnum playlistType {
 			get {
-				if (pType.Equals(PlaylistTypeEnum.ALPHABETICAL.ToString())) {
-					return PlaylistTypeEnum.ALPHABETICAL;
-				}
-				if (pType.Equals(PlaylistTypeEnum.EXPLICIT.ToString())) {
-					return PlaylistTypeEnum.EXPLICIT;
-				}
-				if (pType.Equals(PlaylistTypeEnum.OLDEST_TO_NEWEST.ToString())) {
-					return PlaylistTypeEnum.OLDEST_TO_NEWEST;
-				}
-				if (pType.Equals(PlaylistTypeEnum.PLAYS_TOTAL.ToString())) {
-					return PlaylistTypeEnum.PLAYS_TOTAL;
-				}
-				if (pType.Equals(PlaylistTypeEnum.PLAYS_TRAILING_WEEK.ToString())) {
-					return PlaylistTypeEnum.PLAYS_TRAILING_WEEK;
-				}
-				else {
-					return PlaylistTypeEnum.NEWEST_TO_OLDEST;
-				}
+				return (string.IsNullOrEmpty(pType)) ? PlaylistTypeEnum.NEWEST_TO_OLDEST : (PlaylistTypeEnum)Enum.Parse(typeof(PlaylistTypeEnum), pType, true);
 			}
 			set {
 				pType = value.ToString();

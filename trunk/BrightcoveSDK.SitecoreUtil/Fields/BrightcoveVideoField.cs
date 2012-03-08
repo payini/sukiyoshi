@@ -17,7 +17,7 @@ namespace BrightcoveSDK.SitecoreUtil.Fields
 	internal class BrightcoveVideoField : Sitecore.Web.UI.HtmlControls.Control
 	{
 
-		#region Varibles
+		#region Variables
 
 		private string fieldName = string.Empty;
 		private string itemID = string.Empty;
@@ -157,19 +157,6 @@ namespace BrightcoveSDK.SitecoreUtil.Fields
 			
 			//SheerResponse.Alert("hey", true);
 		}
-
-		//protected override void OK_Click() {
-		//    ReadValuesIntoResponse();
-		//    SheerResponse.SetDialogValue(this.ScheduleValue.XmlValue.ToString());
-		//    base.OK_Click();
-		//}
-
-		//if (!Sitecore.Web.UI.XamlSharp.Xaml.XamlControl.AjaxScriptManager.IsEvent) {
-		//    Sitecore.Shell.Applications.ContentEditor.Checklist list = FindControl(GetID("list")) as Sitecore.Shell.Applications.ContentEditor.Checklist;
-		//    Sitecore.Shell.Applications.ContentEditor.Text text = FindControl(GetID("text")) as Sitecore.Shell.Applications.ContentEditor.Text;
-			
-		//    list.CheckAll();
-		//}
 
 		public override void HandleMessage(Sitecore.Web.UI.Sheer.Message message) {
 

@@ -126,12 +126,7 @@ namespace BrightcoveSDK.UI
 		public BCVideoEconomics Economics {
 			get {
 				EnsureChildControls();
-				if(economics.SelectedValue.Equals(BCVideoEconomics.AD_SUPPORTED.ToString())){
-					return BCVideoEconomics.AD_SUPPORTED;
-				}
-				else {
-					return BCVideoEconomics.FREE;
-				}	
+				return (string.IsNullOrEmpty(economics.SelectedValue)) ? BCVideoEconomics.FREE : (BCVideoEconomics)Enum.Parse(typeof(BCVideoEconomics), economics.SelectedValue, true);	
 			}
 			set {
 				EnsureChildControls();

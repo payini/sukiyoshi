@@ -108,21 +108,7 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		public VideoCodecEnum videoCodec {
 			get {
-				if (codecType.Equals(VideoCodecEnum.H264.ToString())) {
-					return VideoCodecEnum.H264;
-				}
-				else if (codecType.Equals(VideoCodecEnum.NONE.ToString())) {
-					return VideoCodecEnum.NONE;
-				}
-				else if (codecType.Equals(VideoCodecEnum.ON2.ToString())) {
-					return VideoCodecEnum.ON2;
-				}
-				else if (codecType.Equals(VideoCodecEnum.SORENSON.ToString())) {
-					return VideoCodecEnum.SORENSON;
-				}
-				else {
-					return VideoCodecEnum.UNDEFINED;
-				}
+				return (string.IsNullOrEmpty(codecType)) ? VideoCodecEnum.UNDEFINED : (VideoCodecEnum)Enum.Parse(typeof(VideoCodecEnum), codecType, true);
 			}
 			set {
 				codecType = value.ToString();
@@ -137,23 +123,7 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		public ControllerType ControllerType {
 			get {
-				if (controllerType.Equals(ControllerType.AKAMAI_HD.ToString())) {
-					return ControllerType.AKAMAI_HD;
-				} else if (controllerType.Equals(ControllerType.AKAMAI_HD_LIVE.ToString())) {
-					return ControllerType.AKAMAI_HD_LIVE;
-				} else if (controllerType.Equals(ControllerType.AKAMAI_LIVE.ToString())) {
-					return ControllerType.AKAMAI_LIVE;
-				} else if (controllerType.Equals(ControllerType.AKAMAI_SECURE_STREAMING.ToString())) {
-					return ControllerType.AKAMAI_SECURE_STREAMING;
-				} else if (controllerType.Equals(ControllerType.AKAMAI_STREAMING.ToString())) {
-					return ControllerType.AKAMAI_STREAMING;
-				} else if (controllerType.Equals(ControllerType.LIMELIGHT_LIVE.ToString())) {
-					return ControllerType.LIMELIGHT_LIVE;
-				} else if (controllerType.Equals(ControllerType.LIMELIGHT_MEDIAVAULT.ToString())) {
-					return ControllerType.LIMELIGHT_MEDIAVAULT;
-				} else {
-					return ControllerType.UNDEFINED;
-				}
+				return (string.IsNullOrEmpty(controllerType)) ? ControllerType.UNDEFINED : (ControllerType)Enum.Parse(typeof(ControllerType), controllerType, true);
 			}
 			set {
 				controllerType = value.ToString();

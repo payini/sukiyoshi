@@ -53,17 +53,7 @@ namespace BrightcoveSDK.Media
         /// </summary>
         public Alignment alignment {
             get {
-                if (_alignment == null) {
-                    return Alignment.BOTTOM_RIGHT;
-                } else if (_alignment.Equals(Alignment.BOTTOM_LEFT.ToString())) {
-                    return Alignment.BOTTOM_LEFT;
-                } else if (_alignment.Equals(Alignment.TOP_LEFT.ToString())) {
-                    return Alignment.TOP_LEFT;
-                } else if (_alignment.Equals(Alignment.TOP_RIGHT.ToString())) {
-                    return Alignment.TOP_RIGHT;
-                } else {
-                    return Alignment.BOTTOM_RIGHT;
-                }
+				return (string.IsNullOrEmpty(_alignment)) ? Alignment.BOTTOM_RIGHT : (Alignment)Enum.Parse(typeof(Alignment), _alignment, true);
             }
             set {
                 _alignment = value.ToString();

@@ -35,15 +35,7 @@ namespace BrightcoveSDK.SitecoreUtil.Entity
 		public PlayerPlaylistType PlaylistType {
 			get {
 				string type = playerItem.Fields["Playlist Type"].Value.Replace(" ", "");
-				if (type.Equals(PlayerPlaylistType.ComboBox.ToString())) {
-					return PlayerPlaylistType.ComboBox;
-				} else if (type.Equals(PlayerPlaylistType.Tabbed.ToString())) {
-					return PlayerPlaylistType.Tabbed;
-				} else if (type.Equals(PlayerPlaylistType.VideoList.ToString())) {
-					return PlayerPlaylistType.VideoList;
-				} else {
-					return PlayerPlaylistType.None;
-				}
+				return (string.IsNullOrEmpty(type)) ? PlayerPlaylistType.None : (PlayerPlaylistType)Enum.Parse(typeof(PlayerPlaylistType), type, true);
 			}
 			set {
 				playerItem.Fields["Playlist Type"].Value = value.ToString();

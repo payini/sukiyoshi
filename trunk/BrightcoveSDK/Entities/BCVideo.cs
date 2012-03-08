@@ -201,18 +201,7 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		public BCVideoEconomics economics {
 			get {
-				if (ecs == null) {
-					return BCVideoEconomics.AD_SUPPORTED;
-				}
-				else if (ecs.Equals(BCVideoEconomics.AD_SUPPORTED.ToString())) {
-					return BCVideoEconomics.AD_SUPPORTED;
-				}
-				else if (ecs.Equals(BCVideoEconomics.FREE.ToString())) {
-					return BCVideoEconomics.FREE;
-				}
-				else {
-					return BCVideoEconomics.AD_SUPPORTED;
-				}
+				return (string.IsNullOrEmpty(ecs)) ? BCVideoEconomics.AD_SUPPORTED : (BCVideoEconomics)Enum.Parse(typeof(BCVideoEconomics), ecs, true);
 			}
 			set {
 				ecs = value.ToString();
@@ -272,21 +261,7 @@ namespace BrightcoveSDK.Media
 
         public ItemStateEnum itemState {
             get {
-				if (_itemState == null) {
-					return ItemStateEnum.ACTIVE;
-				}
-				else if (_itemState.Equals(ItemStateEnum.ACTIVE.ToString())) {
-					return ItemStateEnum.ACTIVE;
-				}
-				else if (_itemState.Equals(ItemStateEnum.DELETED.ToString())) {
-					return ItemStateEnum.DELETED;
-				}
-                else if (_itemState.Equals(ItemStateEnum.INACTIVE.ToString())) {
-					return ItemStateEnum.INACTIVE;
-				}
-				else {
-					return ItemStateEnum.ACTIVE;
-				}
+				return (_itemState == null) ? ItemStateEnum.ACTIVE : (ItemStateEnum)Enum.Parse(typeof(ItemStateEnum), _itemState, true);
 			}
 			set {
 				ecs = value.ToString();

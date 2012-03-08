@@ -35,27 +35,7 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		public ImageTypeEnum type {
 			get {
-				if (imageType.Equals(ImageTypeEnum.THUMBNAIL.ToString())) {
-					return ImageTypeEnum.THUMBNAIL;
-				}
-				else if (imageType.Equals(ImageTypeEnum.VIDEO_STILL.ToString())) {
-					return ImageTypeEnum.VIDEO_STILL;
-				}
-				else if (imageType.Equals(ImageTypeEnum.BACKGROUND.ToString())) {
-					return ImageTypeEnum.BACKGROUND;
-				}
-				else if (imageType.Equals(ImageTypeEnum.LOGO.ToString())) {
-					return ImageTypeEnum.LOGO;
-				}
-				else if (imageType.Equals(ImageTypeEnum.LOGO_OVERLAY.ToString())) {
-					return ImageTypeEnum.LOGO_OVERLAY;
-				}
-				else if (imageType.Equals(ImageTypeEnum.SYNDICATION_STILL.ToString())) {
-					return ImageTypeEnum.SYNDICATION_STILL;
-				}
-				else {
-					return ImageTypeEnum.VIDEO_STILL;
-				}
+				return (string.IsNullOrEmpty(imageType)) ? ImageTypeEnum.VIDEO_STILL : (ImageTypeEnum)Enum.Parse(typeof(ImageTypeEnum), imageType, true);
 			}
 			set {
 				imageType = value.ToString();
