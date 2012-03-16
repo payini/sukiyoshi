@@ -49,7 +49,7 @@ namespace BrightcoveSDK.UI
 		}
 
 		[Bindable(true), Category("Appearance"), DefaultValue("#000000"), Localizable(true)]
-		public string BackColor {
+		public new string BackColor {
 			get {
 				return (ViewState["BackColor"] == null) ? String.Empty : (String)ViewState["BackColor"];
 			}
@@ -59,7 +59,7 @@ namespace BrightcoveSDK.UI
 		}
 
 		[Bindable(true), Category("Appearance"), DefaultValue(0), Localizable(true)]
-		public int Width {
+		public new int Width {
 			get {
 				return (ViewState["Width"] == null) ? 0 : (int)ViewState["Width"];
 			}
@@ -69,7 +69,7 @@ namespace BrightcoveSDK.UI
 		}
 
 		[Bindable(true), Category("Appearance"), DefaultValue(0), Localizable(true)]
-		public int Height {
+		public new int Height {
 			get {
 				return (ViewState["Height"] == null) ? 0 : (int)ViewState["Height"];
 			}

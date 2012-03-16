@@ -57,5 +57,17 @@ namespace BrightcoveSDK.Extensions
             }
             return sb.ToString();
         }
+
+		public static string DicToString(this Dictionary<string, string> dic) {
+
+			StringBuilder sb = new StringBuilder();
+			foreach (KeyValuePair<string, string> row in dic) {
+				if (sb.Length > 0) {
+					sb.Append(",");
+				}
+				sb.Append(row.Key.ToString() + ":" + row.Value);
+			}
+			return sb.ToString();
+		}
     }
 }

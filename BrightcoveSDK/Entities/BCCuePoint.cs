@@ -64,7 +64,7 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		public CuePointType type {
 			get {
-				return (cueType == null) ? CuePointType.CODE : (CuePointType)Enum.ToObject(typeof(CuePointType), cueType);
+				return (CuePointType)Enum.ToObject(typeof(CuePointType), cueType);
 			}
 			set {
 				cueType = (int)value;

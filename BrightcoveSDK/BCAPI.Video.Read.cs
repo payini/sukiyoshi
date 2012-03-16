@@ -15,100 +15,63 @@ namespace BrightcoveSDK
 
 		#region Search Videos
 
-		/*
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches) {
-            return SearchVideos(howMany, required_matches, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match) {
-            return SearchVideos(howMany, required_matches, at_least_one_match, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match) {
-            return SearchVideos(howMany, required_matches, at_least_one_match, must_not_match, BCSortOrderType.ASC);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder) {
-            return SearchVideos(howMany, required_matches, at_least_one_match, must_not_match, sortOrder, true);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact) {
-            return SearchVideos(howMany, required_matches, at_least_one_match, must_not_match, sortOrder, exact, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields) {
-            return SearchVideos(howMany, required_matches, at_least_one_match, must_not_match, sortOrder, exact, video_fields, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields) {
-            return SearchVideos(howMany, required_matches, at_least_one_match, must_not_match, sortOrder, exact, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, BCSortOrderType sortOrder) {
-            return SearchVideos(howMany, sortOrder, true);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, BCSortOrderType sortOrder, bool exact) {
-            return SearchVideos(howMany, null, null, null, sortOrder, exact);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, BCSortOrderType sortOrder, List<VideoFields> video_fields) {
-            return SearchVideos(howMany, sortOrder, true, video_fields, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, bool exact, List<VideoFields> video_fields) {
-            return SearchVideos(howMany, BCSortOrderType.ASC, exact, video_fields, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, bool exact, List<VideoFields> video_fields) {
-            return SearchVideos(howMany, BCSortOrderType.ASC, exact, video_fields, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields) {
-            return SearchVideos(howMany, sortOrder, exact, video_fields, null);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields) {
-            return SearchVideos(howMany, sortOrder, exact, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
-        }
-
-        public BCQueryResult SearchVideos(int howMany, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
-            return SearchVideos(howMany, null, null, null, sortOrder, exact, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
-        }
-        */
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match) {
+			return SearchVideos(required_matches, at_least_one_match, must_not_match, null);
+		}
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, Dictionary<string, string> field_sort_by) {
+			return SearchVideos(required_matches, at_least_one_match, must_not_match, field_sort_by, false);
+		}
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, Dictionary<string, string> field_sort_by, bool exact) {
+			return SearchVideos(required_matches, at_least_one_match, must_not_match, field_sort_by, exact, -1);
+		}
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, Dictionary<string, string> field_sort_by, bool exact, int page_size) {
+			return SearchVideos(required_matches, at_least_one_match, must_not_match, field_sort_by, exact, page_size, -1);
+		}
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, Dictionary<string, string> field_sort_by, bool exact, int page_size, int page_number) {
+			return SearchVideos(required_matches, at_least_one_match, must_not_match, field_sort_by, exact, page_size, page_number, null);
+		}
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, Dictionary<string, string> field_sort_by, bool exact, int page_size, int page_number, List<VideoFields> video_fields) {
+			return SearchVideos(required_matches, at_least_one_match, must_not_match, field_sort_by, exact, page_size, page_number, video_fields, null);
+		}
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, Dictionary<string, string> field_sort_by, bool exact, int page_size, int page_number, List<VideoFields> video_fields, List<string> custom_fields) {
+			return SearchVideos(required_matches, at_least_one_match, must_not_match, field_sort_by, exact, page_size, page_number, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
 
 		/// <summary>
-		/// 
+		/// Searches videos according to the criteria provided by the user. The criteria are constructed using field/value pairs specified in the command. Consider using the search_videos method for video searches rather than using the other find_video read methods. The search_videos method offers more flexible search and sorting options than the find_video methods, and is especially more flexible than the find_videos_by_text and find_videos_by_tags methods. For specifications of the search_videos method
 		/// </summary>
-		/// <param name="howMany">
-		/// Number of items returned per page. A page is a subset of all of the items that satisfy the request. The maximum page size is 100; if you do not set this argument, or if you set it to an integer > 100, your results will come back as if you had set page_size=100.
-		/// </param>
 		/// <param name="required_matches">
-		/// Specifies the field:value pairs for search criteria that MUST be present in the index in order to return a hit in the result set. The format is fieldName:value. If the field's name is not present, it is assumed to be name and shortDescription.
+		/// Specifies the field:value pairs for search criteria that MUST be present in the index in order to return a hit in the result set. The format is fieldName:value. If the field's name is not present, it is assumed to be displayName, shortDescription, and longDescription.
 		/// </param>
 		/// <param name="at_least_one_match">
-		/// Specifies the field:value pairs for search criteria AT LEAST ONE of which must be present to return a hit in the result set. The format is fieldName:value. If the field's name is not present, it is assumed to be name and shortDescription.
+		/// Specifies the field:value pairs for search criteria AT LEAST ONE of which must be present to return a hit in the result set. The format is fieldName:value. If the field's name is not present, it is assumed to be displayName, shortDescription, and longDescription.
 		/// </param>
 		/// <param name="must_not_match">
-		/// Specifies the field:value pairs for search criteria that MUST NOT be present to return a hit in the result set. The format is fieldName:value. If the field's name is not present, it is assumed to be name and shortDescription.
+		/// Specifies the field:value pairs for search criteria that MUST NOT be present to return a hit in the result set. The format is fieldName:value. If the field's name is not present, it is assumed to be displayName, shortDescription, and longDescription.
 		/// </param>
-		/// <param name="sortOrder">
-		/// Specifies the field to sort by, and the direction to sort in. This is specified as: sortFieldName:direction If the direction is not provided, it is assumed to be in ascending order Specify the direction as "asc" for ascending or "desc" for descending.
+		/// <param name="field_sort_by">
+		/// Specifies the field to sort by, and the direction to sort in. This is specified as: sortFieldName:direction If the direction is not provided, it is assumed to be in ascending order Specify the direction as ASC for ascending or DESC for descending. You can sort by the following fields: DISPLAY_NAME, REFERENCE_ID, PUBLISH_DATE, CREATION_DATE, MODIFIED_DATE, START_DATE, PLAYS_TRAILING_WEEK, PLAYS_TOTAL. Example: sort_by=PUBLISH_DATE:DESC
 		/// </param>
 		/// <param name="exact">
 		/// If true, disables fuzzy search and requires an exact match of search terms. A fuzzy search does not require an exact match of the indexed terms, but will return a hit for terms that are closely related based on language-specific criteria. The fuzzy search is available only if your account is based in the United States.
 		/// </param>
+		/// <param name="page_size">
+		/// Number of items returned per page. A page is a subset of all of the items that satisfy the request. The maximum page size is 100; if you do not set this argument, or if you set it to an integer > 100, your results will come back as if you had set page_size=100.
+		/// </param>
+		/// <param name="page_number">
+		/// The zero-indexed number of the page to return.
+		/// </param>
 		/// <param name="video_fields">
-		/// A comma-separated list of the fields you wish to have populated in the Videos  contained in the returned object. If you omit this parameter, the method returns the following fields of the video: id, name, shortDescription, longDescription, creationDate, publisheddate, lastModifiedDate, linkURL, linkText, tags, videoStillURL, thumbnailURL, referenceId, length, economics, playsTotal, playsTrailingWeek. If you use a token with URL access, this method also returns FLVURL, renditions, FLVFullLength, videoFullLength.
+		/// A comma-separated list of the fields you wish to have populated in the Videos contained in the returned object. If you omit this parameter, the method returns the following fields of the video: id, name, shortDescription, longDescription, creationDate, publishedDate , lastModifiedDate, linkURL, linkText, tags, videoStillURL, thumbnailURL, referenceId, length, economics, playsTotal, playsTrailingWeek. If you use a token with URL access, this method also returns FLVURL, renditions, FLVFullLength, videoFullLength.
 		/// </param>
 		/// <param name="custom_fields">
-		/// A comma-separated list of the custom fields  you wish to have populated in the videos contained in the returned object. If you omit this parameter, no custom fields are returned, unless you include the value 'customFields' in the video_fields parameter.
+		/// A comma-separated list of the custom fields you wish to have populated in the videos contained in the returned object. If you omit this parameter, no custom fields are returned, unless you include the value customFields in the video_fields parameter.
 		/// </param>
 		/// <param name="media_delivery">
-		/// If universal delivery service  is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. Meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. This is a MediaDeliveryTypeEnum with a value of http or default.
+		/// This is a MediaDeliveryTypeEnum with a value of http, http_ios or default. It is meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. If universal delivery service is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. For Apple HTTP Live Streaming videos, set this optional parameter to http_ios to return the HTTP URL of the master index file as the videoFullLength parameter. For more information, see Delivering Videos with Apple HTTP Live Streaming.
 		/// </param>
 		/// <returns></returns>
-		public BCQueryResult SearchVideos(int howMany, Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, BCSortOrderType sortOrder, bool exact, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+		public BCQueryResult SearchVideos(Dictionary<VideoFields, string> required_matches, Dictionary<VideoFields, string> at_least_one_match, Dictionary<VideoFields, string> must_not_match, Dictionary<string, string> field_sort_by, bool exact, int page_size, int page_number, List<VideoFields> video_fields, List<string> custom_fields, MediaDeliveryTypeEnum media_delivery) {
 
 			Dictionary<String, String> reqparams = new Dictionary<string, string>();
 
@@ -121,8 +84,9 @@ namespace BrightcoveSDK
 			reqparams.Add("media_delivery", media_delivery.ToString());
 			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
 			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
-			reqparams.Add("sort_order", sortOrder.ToString());
-			if (howMany >= 0) reqparams.Add("page_size", howMany.ToString());
+			if (field_sort_by != null) reqparams.Add("sort_by", field_sort_by.DicToString());
+			if (page_size >= 0) reqparams.Add("page_size", page_size.ToString());
+			if (page_number >= 0) reqparams.Add("page_number", page_number.ToString());
 
 			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
 		}
@@ -838,6 +802,204 @@ namespace BrightcoveSDK
 		}
 
 		#endregion Find Videos By Tags
+
+		#region Find Video By ID Unfiltered
+
+		public BCVideo FindVideoByIdUnfiltered(long videoId) {
+			return FindVideoByIdUnfiltered(videoId, null);
+		}
+
+		public BCVideo FindVideoByIdUnfiltered(long videoId, List<VideoFields> video_fields) {
+			return FindVideoByIdUnfiltered(videoId, video_fields, null);
+		}
+
+		public BCVideo FindVideoByIdUnfiltered(long videoId, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideoByIdUnfiltered(videoId, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
+
+		/// <summary>
+		/// Finds a single video with the specified ID. Unlike find_video_by_id, this unfiltered version also returns videos that are unscheduled, inactive, or deleted. See Searching for Unavailable Videos with the Media API for more information about the find_video_by_id_unfiltered method.
+		/// </summary>
+		/// <param name="videoId">
+		/// The id of the video you would like to retrieve.
+		/// </param>
+		/// <param name="video_fields">
+		/// A comma-separated list of the fields you wish to have populated in the Videos contained in the returned object. If you omit this parameter, the method returns the following fields of the video: id, name, shortDescription, longDescription, creationDate, publishedDate , lastModifiedDate, linkURL, linkText, tags, videoStillURL, thumbnailURL, referenceId, length, economics, playsTotal, playsTrailingWeek. If you use a token with URL access, this method also returns FLVURL, renditions, FLVFullLength, videoFullLength.
+		/// </param>
+		/// <param name="custom_fields">
+		/// A comma-separated list of the custom fields you wish to have populated in the videos contained in the returned object. If you omit this parameter, no custom fields are returned, unless you include the value customFields in the video_fields parameter.
+		/// </param>
+		/// <param name="media_delivery">
+		/// This is a MediaDeliveryTypeEnum with a value of http, http_ios or default. It is meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. If universal delivery service is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. For Apple HTTP Live Streaming videos, set this optional parameter to http_ios to return the HTTP URL of the master index file as the videoFullLength parameter. For more information, see Delivering Videos with Apple HTTP Live Streaming.
+		/// </param>
+		/// <returns>
+		/// Returns a BCVideo item
+		/// </returns>
+		public BCVideo FindVideoByIdUnfiltered(long videoId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_video_by_id_unfiltered");
+			reqparams.Add("video_id", videoId.ToString());
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+
+			//Get the JSon reader returned from the APIRequest
+			QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, Account);
+
+			return JSON.Converter.Deserialize<BCVideo>(qrp.JsonResult);
+		}
+
+		#endregion Find Video By ID Unfiltered
+
+		#region Find Videos By IDs Unfiltered
+
+		public BCQueryResult FindVideosByIdsUnfiltered(List<long> videoIds) {
+			return FindVideosByIdsUnfiltered(videoIds, null);
+		}
+
+		public BCQueryResult FindVideosByIdsUnfiltered(List<long> videoIds, List<VideoFields> video_fields) {
+			return FindVideosByIdsUnfiltered(videoIds, video_fields, null);
+		}
+
+		public BCQueryResult FindVideosByIdsUnfiltered(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideosByIdsUnfiltered(videoIds, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
+
+		/// <summary>
+		/// Find multiple videos, given their IDs. Unlike find_videos_by_ids, this unfiltered version also returns videos that are unscheduled, inactive, or deleted. See Searching for Unavailable Videos with the Media API for more information about the find_videos_by_id_unfiltered method.
+		/// </summary>
+		/// <param name="videoIds">
+		/// The list of video ids for the videos we'd like to retrieve.
+		/// </param>
+		/// <param name="video_fields">
+		/// A comma-separated list of the fields you wish to have populated in the Videos contained in the returned object. If you omit this parameter, the method returns the following fields of the video: id, name, shortDescription, longDescription, creationDate, publishedDate , lastModifiedDate, linkURL, linkText, tags, videoStillURL, thumbnailURL, referenceId, length, economics, playsTotal, playsTrailingWeek. If you use a token with URL access, this method also returns FLVURL, renditions, FLVFullLength, videoFullLength.
+		/// </param>
+		/// <param name="custom_fields">
+		/// A comma-separated list of the custom fields you wish to have populated in the videos contained in the returned object. If you omit this parameter, no custom fields are returned, unless you include the value customFields in the video_fields parameter.
+		/// </param>
+		/// <param name="media_delivery">
+		/// This is a MediaDeliveryTypeEnum with a value of http, http_ios or default. It is meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. If universal delivery service is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. For Apple HTTP Live Streaming videos, set this optional parameter to http_ios to return the HTTP URL of the master index file as the videoFullLength parameter. For more information, see Delivering Videos with Apple HTTP Live Streaming.
+		/// </param>
+		/// <returns>
+		/// Returns a BCQueryResult item
+		/// </returns>
+		public BCQueryResult FindVideosByIdsUnfiltered(List<long> videoIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_videos_by_ids_unfiltered");
+			reqparams.Add("video_ids", Implode(videoIds));
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+			reqparams.Add("page_size", "-1");
+
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
+
+		#endregion Find Videos By IDs Unfiltered
+
+		#region Find Video By Reference ID Unfiltered
+
+		public BCVideo FindVideoByReferenceIdUnfiltered(String referenceId) {
+			return FindVideoByReferenceIdUnfiltered(referenceId, null);
+		}
+
+		public BCVideo FindVideoByReferenceIdUnfiltered(String referenceId, List<VideoFields> video_fields) {
+			return FindVideoByReferenceIdUnfiltered(referenceId, video_fields, null);
+		}
+
+		public BCVideo FindVideoByReferenceIdUnfiltered(String referenceId, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideoByReferenceIdUnfiltered(referenceId, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
+
+		/// <summary>
+		/// Find a video based on its publisher-assigned reference ID. Unlike find_video_by_reference_id, this unfiltered version also returns videos that are unscheduled, inactive, or deleted. See Searching for Unavailable Videos with the Media API for more information about the find_video_by_reference_id_unfiltered method.
+		/// </summary>
+		/// <param name="referenceId">
+		/// The publisher-assigned reference id for the video we're searching for.
+		/// </param>
+		/// <param name="video_fields">
+		/// A comma-separated list of the fields you wish to have populated in the Videos contained in the returned object. If you omit this parameter, the method returns the following fields of the video: id, name, shortDescription, longDescription, creationDate, publishedDate , lastModifiedDate, linkURL, linkText, tags, videoStillURL, thumbnailURL, referenceId, length, economics, playsTotal, playsTrailingWeek. If you use a token with URL access, this method also returns FLVURL, renditions, FLVFullLength, videoFullLength.
+		/// </param>
+		/// <param name="custom_fields">
+		/// A comma-separated list of the custom fields you wish to have populated in the videos contained in the returned object. If you omit this parameter, no custom fields are returned, unless you include the value customFields in the video_fields parameter.
+		/// </param>
+		/// <param name="media_delivery">
+		/// This is a MediaDeliveryTypeEnum with a value of http, http_ios or default. It is meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. If universal delivery service is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. For Apple HTTP Live Streaming videos, set this optional parameter to http_ios to return the HTTP URL of the master index file as the videoFullLength parameter. For more information, see Delivering Videos with Apple HTTP Live Streaming.
+		/// </param>
+		/// <returns>
+		/// Returns a BCVideo item
+		/// </returns>
+		public BCVideo FindVideoByReferenceIdUnfiltered(String referenceId, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_video_by_reference_id_unfiltered");
+			reqparams.Add("reference_id", referenceId);
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+
+			//Get the JSon reader returned from the APIRequest
+			string jsonStr = BCAPIRequest.ExecuteRead(reqparams, Account).JsonResult;
+			return JSON.Converter.Deserialize<BCVideo>(jsonStr);
+		}
+
+		#endregion Find Video By Reference ID Unfiltered
+
+		#region Find Videos By Reference IDs Unfiltered
+
+		public BCQueryResult FindVideosByReferenceIdsUnfiltered(List<String> referenceIds) {
+			return FindVideosByReferenceIdsUnfiltered(referenceIds, null);
+		}
+
+		public BCQueryResult FindVideosByReferenceIdsUnfiltered(List<String> referenceIds, List<VideoFields> video_fields) {
+			return FindVideosByReferenceIdsUnfiltered(referenceIds, video_fields, null);
+		}
+
+		public BCQueryResult FindVideosByReferenceIdsUnfiltered(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields) {
+			return FindVideosByReferenceIdsUnfiltered(referenceIds, video_fields, custom_fields, MediaDeliveryTypeEnum.DEFAULT);
+		}
+
+		/// <summary>
+		/// Find multiple videos based on their publisher-assigned reference IDs. Unlike find_videos_by_reference_ids, this unfiltered version also returns videos that are unscheduled, inactive, or deleted. See Searching for Unavailable Videos with the Media API for more information about the find_videos_by_reference_ids_unfiltered method.
+		/// </summary>
+		/// <param name="referenceIds">
+		/// The list of reference IDs for the videos we'd like to retrieve. This value is limited to 150 characters. The value cannot contain commas; to work around this issue, avoid using commas in reference_id values.
+		/// </param>
+		/// <param name="video_fields">
+		/// A comma-separated list of the fields you wish to have populated in the Videos contained in the returned object. If you omit this parameter, the method returns the following fields of the video: id, name, shortDescription, longDescription, creationDate, publishedDate , lastModifiedDate, linkURL, linkText, tags, videoStillURL, thumbnailURL, referenceId, length, economics, playsTotal, playsTrailingWeek. If you use a token with URL access, this method also returns FLVURL, renditions, FLVFullLength, videoFullLength.
+		/// </param>
+		/// <param name="custom_fields">
+		/// A comma-separated list of the custom fields you wish to have populated in the videos contained in the returned object. If you omit this parameter, no custom fields are returned, unless you include the value customFields in the video_fields parameter.
+		/// </param>
+		/// <param name="media_delivery">
+		/// This is a MediaDeliveryTypeEnum with a value of http, http_ios or default. It is meaningful only if used together with the video_fields=FLVURL, videoFullLength, or renditions parameters. If universal delivery service is enabled for your account, set this optional parameter to http to return video by HTTP, rather than streaming. For Apple HTTP Live Streaming videos, set this optional parameter to http_ios to return the HTTP URL of the master index file as the videoFullLength parameter. For more information, see Delivering Videos with Apple HTTP Live Streaming.
+		/// </param>
+		/// <returns>
+		/// Returns a BCQueryResult item
+		/// </returns>
+		public BCQueryResult FindVideosByReferenceIdsUnfiltered(List<String> referenceIds, List<VideoFields> video_fields, List<String> custom_fields, MediaDeliveryTypeEnum media_delivery) {
+
+			Dictionary<String, String> reqparams = new Dictionary<string, string>();
+
+			//Build the REST parameter list
+			reqparams.Add("command", "find_videos_by_reference_ids_unfiltered");
+			reqparams.Add("reference_ids", Implode(referenceIds));
+			reqparams.Add("media_delivery", media_delivery.ToString());
+			if (video_fields != null) reqparams.Add("video_fields", video_fields.ToFieldString());
+			if (custom_fields != null) reqparams.Add("custom_fields", Implode(custom_fields));
+
+			return MultipleQueryHandler(reqparams, BCObjectType.videos, Account);
+		}
+
+		#endregion Find Videos By Reference IDs Unfiltered
 
 		#endregion Video Read
 	}
