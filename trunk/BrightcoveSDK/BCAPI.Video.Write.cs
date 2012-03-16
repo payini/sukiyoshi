@@ -385,6 +385,50 @@ namespace BrightcoveSDK
 
 		#endregion Share Video
 
+		#region Unshare Video
+
+		public RPCResponse<BCCollection<long>> UnshareVideo(long video_id, long sharee_account_id) {
+			
+			List<long> sharee_account_ids = new List<long>();
+			sharee_account_ids.Add(sharee_account_id);
+
+			return UnshareVideo(video_id, sharee_account_ids);
+		}
+
+		/// <summary>
+		/// Deletes the specified previously shared video from a list of sharee accounts. If a shared version of the specified video does not exist in a sharee account, no action is taken. For more information, see Media Sharing with the Media API.
+		/// </summary>
+		/// <param name="video_id">The ID for video that will be shared. The video be owned by the account making the call.</param>
+		/// <param name="sharee_account_ids">List of Account IDs from which to stop sharing the video.</param>
+		/// <returns>Array of sharee account IDs for accounts previously containing shared videos specifically removed by this method.</returns>
+		public RPCResponse<BCCollection<long>> UnshareVideo(long video_id, List<long> sharee_account_ids) {
+
+			// Generate post objects
+			Dictionary<string, object> postParams = new Dictionary<string, object>();
+
+			//add video to the post params
+			RPCRequest rpc = new RPCRequest();
+			rpc.method = "unshare_video";
+			rpc.parameters = "\"video_id\": " + video_id;
+			rpc.parameters += ", \"sharee_account_ids\": [";
+			for (int i = 0; i < sharee_account_ids.Count; i++) {
+				if (i > 0) {
+					rpc.parameters += ", ";
+				}
+				rpc.parameters += "\"" + sharee_account_ids[i].ToString() + "\"";
+			}
+			rpc.parameters += "]";
+			rpc.parameters += ", \"token\": \"" + Account.WriteToken.Value + "\"";
+			postParams.Add("json", rpc.ToJSON());
+
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<BCCollection<long>> rpcr = BCAPIRequest.ExecuteWrite<BCCollection<long>>(postParams, Account);
+
+			return rpcr;
+		}
+
+		#endregion Unshare Video
+
 		#region Add Image
 
 		//using video id
@@ -501,20 +545,103 @@ namespace BrightcoveSDK
 
 		#endregion Add Image
 
+		#region Add Logo Overlay
+
+		//using video id
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, long video_id) {
+			return AddLogoOverlay(logo_overlay, null, video_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, byte[] file, long video_id) {
+			return AddLogoOverlay(logo_overlay, file, null, video_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, byte[] file, string file_checksum, long video_id) {
+			return AddLogoOverlay(logo_overlay, -1, file, file_checksum, video_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, long maxsize, byte[] file, string file_checksum, long video_id) {
+			return AddLogoOverlay(logo_overlay, "", maxsize, file, file_checksum, video_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, string filename, long maxsize, byte[] file, string file_checksum, long video_id) {
+			return AddLogoOverlay(logo_overlay, filename, maxsize, file, file_checksum, video_id, null);
+		}
+		
+		//using ref id
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, string video_reference_id) {
+			return AddLogoOverlay(logo_overlay, null, video_reference_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, byte[] file, string video_reference_id) {
+			return AddLogoOverlay(logo_overlay, file, "", video_reference_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, byte[] file, string file_checksum, string video_reference_id) {
+			return AddLogoOverlay(logo_overlay, -1, file, file_checksum, video_reference_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, long maxsize, byte[] file, string file_checksum, string video_reference_id) {
+			return AddLogoOverlay(logo_overlay, "", maxsize, file, file_checksum, video_reference_id);
+		}
+		public RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, string filename, long maxsize, byte[] file, string file_checksum, string video_reference_id) {
+			return AddLogoOverlay(logo_overlay, filename, maxsize, file, file_checksum, -1, video_reference_id);
+		}
+
+		/// <summary>
+		/// Add a logo overlay image to a video. For code examples, see Adding Logo Overlays to Videos with the Media API: http://support.brightcove.com/en/docs/adding-logo-overlays-videos-media-api
+		/// </summary>
+		/// <param name="logo_overlay">The metadata for the logo overlay you want to create (or update). This takes the form of a JSON object of name/value pairs, each of which corresponds to a property of the LogoOverlay object.</param>
+		/// <param name="file_name">The name of the file that's being uploaded. You don't need to specify this in the JSON if it is specified in the file part of the POST.</param>
+		/// <param name="maxsize">The maximum size that the file will be. This is used as a limiter to know when something has gone wrong with the upload. The maxsize is same as the file you uploaded. You don't need to specify this in the JSON if it is specified in the file part of the POST.</param>
+		/// <param name="file">An input stream associated with the image file you're uploading. This takes the form of a file part, in a multipart/form-data HTTP request. This input stream and the filename and maxsize parameters are automatically inferred from that file part.</param>
+		/// <param name="file_checksum">An optional MD5 hash of the file. The checksum can be used to verify that the file checked into your Video Cloud Media Library is the same as the file you uploaded.</param>
+		/// <param name="video_id">The ID of the video you want to assign a logo overlay to. You must specify either a video_id or a video_reference_id.</param>
+		/// <param name="video_reference_id">The publisher-assigned reference ID of the video you want to assign a logo overlay to. You must specify either a video_id or a video_reference_id.</param>
+		/// <returns>LogoOverlay</returns>
+		private RPCResponse<LogoOverlay> AddLogoOverlay(LogoOverlay logo_overlay, string filename, long maxsize, byte[] file, string file_checksum, long video_id, string video_reference_id) {
+
+			// Generate post objects
+			Dictionary<string, object> postParams = new Dictionary<string, object>();
+
+			//add video to the post params
+			RPCRequest rpc = new RPCRequest();
+			rpc.method = "add_logo_overlay";
+			rpc.parameters += ", \"filename\": \"" + filename + "\"";
+			if (video_id > -1) {
+				rpc.parameters += ",\"video_id\": \"" + video_id.ToString() + "\"";
+			} else if (video_reference_id != null) {
+				rpc.parameters += ",\"video_reference_id\": \"" + video_reference_id + "\"";
+			}
+			if (maxsize > -1) {
+				rpc.parameters += ", \"maxsize\": \"" + maxsize.ToString() + "\"";
+			}
+
+			if (file_checksum != null) {
+				rpc.parameters += ", \"file_checksum\": \"" + file_checksum + "\"";
+			}
+			rpc.parameters += ", \"token\": \"" + Account.WriteToken.Value + "\"";
+			postParams.Add("json", rpc.ToJSON());
+
+			//add the file to the post
+			if (file != null && !string.IsNullOrEmpty(filename)) {
+				postParams.Add("file", new FileParameter(file, filename));
+			}
+			
+			//Get the JSon reader returned from the APIRequest
+			RPCResponse<LogoOverlay> rpcr = BCAPIRequest.ExecuteWrite<LogoOverlay>(postParams, Account);
+
+			return rpcr;
+		}
+		#endregion Add Logo Overlay
+
 		#region Remove Logo Overlay
 
-		private RPCResponse<BCVideo> RemoveLogoOverlay(string video_reference_id) {
+		public RPCResponse<BCVideo> RemoveLogoOverlay(string video_reference_id) {
 			return RemoveLogoOverlay(-1, video_reference_id);
 		}
 		public RPCResponse<BCVideo> RemoveLogoOverlay(long videoId) {
 			return RemoveLogoOverlay(videoId, null);
 		}
 		/// <summary>
-		/// 
+		/// Removes a logo overlay previously assigned to a video.
 		/// </summary>
-		/// <param name="videoId"></param>
-		/// <param name="reference_id"></param>
-		/// <returns></returns>
+		/// <param name="videoId">The ID of the video to remove the logo overlay from. You must specify either a video_id or a video_reference_id</param>
+		/// <param name="reference_id">The publisher-assigned reference ID of the video to remove the logo overlay from. You must specify either a video_id or a video_reference_id.</param>
+		/// <returns>void</returns>
 		private RPCResponse<BCVideo> RemoveLogoOverlay(long video_id, string video_reference_id) {
 
 			// Generate post objects
