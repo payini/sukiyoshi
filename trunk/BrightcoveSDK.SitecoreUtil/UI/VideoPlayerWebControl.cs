@@ -58,12 +58,15 @@ namespace BrightcoveSDK.SitecoreUtil.UI
 						    sbOut.Append(p.GetEmbedCode(videolist, bgcolor, autostart, wmode));
 					    }
 				    } else if(p.PlaylistType.Equals(PlayerPlaylistType.ComboBox) || p.PlaylistType.Equals(PlayerPlaylistType.Tabbed)){
-					    //get both the lists and build a string list
-					    string tabs = this.Attributes["playlisttabs"];
-					    string combo = this.Attributes["playlistcombo"];
-					    List<string> t = tabs.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries).ToList();
-					    t.AddRange(combo.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries).ToList());
-
+						List<string> t = new List<string>();
+						//get both the lists and build a string list
+						if (p.PlaylistType.Equals(PlayerPlaylistType.ComboBox)) {
+							string combo = (this.Attributes["playlistcombo"] != null) ? this.Attributes["playlistcombo"] : "";
+							t.AddRange(combo.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+						} else if (p.PlaylistType.Equals(PlayerPlaylistType.Tabbed)) {
+							string tabs = (this.Attributes["playlisttabs"] != null) ? this.Attributes["playlisttabs"] : "";
+							t.AddRange(tabs.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+						}
 					    //convert to a list of long
 					    List<long> playlists = new List<long>();
 					    foreach(string s in t){
@@ -72,8 +75,7 @@ namespace BrightcoveSDK.SitecoreUtil.UI
                                 playlists.Add(temp);    
                             } 
 					    }
-
-					    //get the embed code
+						//get the embed code
 					    sbOut.Append(p.GetEmbedCode(playlists, bgcolor, autostart, wmode));
 				    } 
 
