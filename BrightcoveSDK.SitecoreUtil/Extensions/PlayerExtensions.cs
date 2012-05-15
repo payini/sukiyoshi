@@ -100,8 +100,8 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 		/// <param name="WMode">The wmode </param>
 		/// <returns></returns>
 		private static string GetEmbedCode(this PlayerItem player, VideoItem video, long PlaylistID, List<long> PlaylistIDs, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
-
-			return BrightcoveSDK.Utils.EmbedCode.GetEmbedCode(player.PlayerID, video.VideoID, player.PlaylistType, PlaylistID, PlaylistIDs, player.Height, player.Width, BackgroundColor, AutoStart, WMode, objectTagID);
+			long videoID = (video != null) ? video.VideoID : -1;
+			return BrightcoveSDK.Utils.EmbedCode.GetEmbedCode(player.PlayerID, videoID, player.PlaylistType, PlaylistID, PlaylistIDs, player.Height, player.Width, BackgroundColor, AutoStart, WMode, objectTagID);
         }
 
         #endregion GetEmbedCode
