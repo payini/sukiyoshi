@@ -31,3 +31,8 @@ C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK\bin\Deb
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.dll
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.pdb
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb

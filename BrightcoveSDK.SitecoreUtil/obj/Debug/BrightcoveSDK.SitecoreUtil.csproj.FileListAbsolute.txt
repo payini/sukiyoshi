@@ -38,3 +38,8 @@ C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.Sitecor
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.dll
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.pdb
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.dll
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.pdb
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\ResolveAssemblyReference.cache
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.dll
+C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb

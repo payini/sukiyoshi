@@ -50,7 +50,7 @@ namespace BrightcoveSDK.Utils
 			embed.AppendLine("<!-- Start of Brightcove Player -->");
 			embed.AppendLine("<div style=\"display:none\"></div>");
 			embed.AppendLine("<!-- By use of this code snippet, I agree to the Brightcove Publisher T and C found at https://accounts.brightcove.com/en/terms-and-conditions/. -->");
-			embed.AppendLine("<script language=\"JavaScript\" type=\"text/javascript\" src=\"http://admin.brightcove.com/js/BrightcoveExperiences.js\"></script>");
+			embed.AppendLine("<script language=\"JavaScript\" type=\"text/javascript\" src=\"http://admin.brightcove.com/js/BrightcoveExperiences_all.js\"></script>");
 			embed.AppendLine("<object id=\"" + objectTagID + "\" class=\"BrightcoveExperience\">");
 			embed.AppendLine("<param name=\"bgcolor\" value=\"" + BackgroundColor + "\" />");
 			embed.AppendLine("<param name=\"width\" value=\"" + width.ToString() + "\" />");
