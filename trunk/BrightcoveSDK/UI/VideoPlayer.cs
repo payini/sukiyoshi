@@ -185,7 +185,7 @@ namespace BrightcoveSDK.UI
 			//only if you're not going to add them yourself.
 			if (IncludeJSResources) {
 				//Add Brightcove experiences javascript
-				Page.ClientScript.RegisterClientScriptInclude("BCExperiences", "http://admin.brightcove.com/js/BrightcoveExperiences.js");
+				Page.ClientScript.RegisterClientScriptInclude("BCExperiences", "http://admin.brightcove.com/js/BrightcoveExperiences_all.js");
 			}
 			base.OnPreRender(e); 
         }
