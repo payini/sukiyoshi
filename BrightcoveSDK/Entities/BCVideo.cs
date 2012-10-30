@@ -84,6 +84,36 @@ namespace BrightcoveSDK.Media
 			}
 		}
 
+		[DataMember]
+		private string startDate { get; set; }
+
+		/// <summary>
+		/// The start date this Video is allowed to be available, represented as the number of milliseconds since the Unix epoch.
+		/// </summary> 
+		public DateTime StartDate {
+			get {
+				return DateFromUnix(startDate);
+			}
+			set {
+				startDate = DateToUnix(value);
+			}
+		}
+
+		[DataMember]
+		private string endDate { get; set; }
+
+		/// <summary>
+		/// The end date this Video is allowed to be available, represented as the number of milliseconds since the Unix epoch.
+		/// </summary> 
+		public DateTime EndDate {
+			get {
+				return DateFromUnix(endDate);
+			}
+			set {
+				endDate = DateToUnix(value);
+			}
+		}
+
 		/// <summary>
 		/// An optional URL to a related item.
 		/// </summary> 
