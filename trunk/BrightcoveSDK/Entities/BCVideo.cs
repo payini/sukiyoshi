@@ -84,33 +84,37 @@ namespace BrightcoveSDK.Media
 			}
 		}
 
-		[DataMember]
-		private string startDate { get; set; }
+		[DataMember(Name = "startDate")]
+		private string sDate { get; set; }
 
 		/// <summary>
 		/// The start date this Video is allowed to be available, represented as the number of milliseconds since the Unix epoch.
 		/// </summary> 
-		public DateTime StartDate {
+		public DateTime? startDate {
 			get {
-				return DateFromUnix(startDate);
+				if (string.IsNullOrEmpty(sDate))
+					return null;
+				return DateFromUnix(sDate);
 			}
 			set {
-				startDate = DateToUnix(value);
+				sDate = (value != null) ? DateToUnix((DateTime)value) : "";
 			}
 		}
 
-		[DataMember]
-		private string endDate { get; set; }
+		[DataMember(Name = "endDate")]
+		private string eDate { get; set; }
 
 		/// <summary>
 		/// The end date this Video is allowed to be available, represented as the number of milliseconds since the Unix epoch.
 		/// </summary> 
-		public DateTime EndDate {
+		public DateTime? endDate {
 			get {
-				return DateFromUnix(endDate);
+				if (string.IsNullOrEmpty(eDate))
+					return null;
+				return DateFromUnix(eDate);
 			}
 			set {
-				endDate = DateToUnix(value);
+				eDate = (value != null) ? DateToUnix((DateTime)value) : "";
 			}
 		}
 
@@ -492,12 +496,12 @@ namespace BrightcoveSDK.Media
 
 			//videoStillURL
 			if (!string.IsNullOrEmpty(video.videoStillURL)) {
-				jsonVideo.Append(",\" videoStillURL\": \"" + HttpUtility.UrlEncode(video.videoStillURL) + "\"");
+				jsonVideo.Append(",\"videoStillURL\": \"" + HttpUtility.UrlEncode(video.videoStillURL) + "\"");
 			}
 
 			//thumbnailURL
 			if (!string.IsNullOrEmpty(video.thumbnailURL)) {
-				jsonVideo.Append(",\" thumbnailURL\": \"" + HttpUtility.UrlEncode(video.thumbnailURL) + "\"");
+				jsonVideo.Append(",\"thumbnailURL\": \"" + HttpUtility.UrlEncode(video.thumbnailURL) + "\"");
 			}
 			
 			//longDescription
@@ -525,6 +529,16 @@ namespace BrightcoveSDK.Media
 					sbFields.Append("\"" + field.Key + "\":\"" + field.Value + "\"");
 				}
 				jsonVideo.Append(",\"customFields\":{" + sbFields.ToString() + "}");
+			}
+
+			//startdate
+			if (video.startDate != null) {
+				jsonVideo.Append(",\"startDate\": \"" + BCObject.DateToUnix(video.startDate.Value) + "\"");
+			}
+
+			//enddate
+			if (video.endDate != null) {
+				jsonVideo.Append(",\"endDate\": \"" + BCObject.DateToUnix(video.endDate.Value) + "\"");
 			}
 
 			//economics
