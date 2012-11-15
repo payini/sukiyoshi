@@ -67,7 +67,50 @@ namespace BrightcoveSDK.HTTP
 			return rpcr;
 		}
 
-		public static String BuildReadQuery(Dictionary<String, String> reqParams, AccountConfigElement a) {
+      #region RJE Begin
+
+      private static string _ExecuteWriteNew(Dictionary<String, Object> postParams, AccountConfigElement a) 
+      {
+         MultipartForm form = new MultipartForm();
+         form.BuildForm(a.WriteURL.Value, "BCAPI SDK Write Request", postParams);
+
+         // Uncomment this line to debug the form
+         // string debug = form.ToString();
+
+         HttpWebResponse webResponse = form.PostForm();
+
+			// Process response
+			StreamReader responseReader = new StreamReader(webResponse.GetResponseStream());
+			string jsonResult = responseReader.ReadToEnd();
+			webResponse.Close();
+			
+			//this is so that we don't cast null as an object (replaces null with empty error)
+			jsonResult = jsonResult.Replace("\"error\": null", "\"error\": { \"name\" : null, \"message\" : null, \"code\" : null }");
+         
+         return jsonResult;
+      }
+
+      public static RPCResponse<T> ExecuteWriteNew<T>(Dictionary<String, Object> postParams, AccountConfigElement a) 
+      {
+         string jsonResult = _ExecuteWriteNew(postParams, a);
+
+			RPCResponse<T> rpcr = JSON.Converter.Deserialize<RPCResponse<T>>(jsonResult);
+
+			return rpcr;
+		}
+
+		public static RPCResponse ExecuteWriteNew(Dictionary<String, Object> postParams, AccountConfigElement a) 
+      {
+         string jsonResult = _ExecuteWriteNew(postParams, a);
+
+			RPCResponse rpcr = JSON.Converter.Deserialize<RPCResponse>(jsonResult);
+
+			return rpcr;
+		}
+
+      #endregion RJE End
+
+      public static String BuildReadQuery(Dictionary<String, String> reqParams, AccountConfigElement a) {
 
 			String reqUrl = "";
 
