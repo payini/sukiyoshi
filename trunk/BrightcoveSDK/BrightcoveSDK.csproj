@@ -63,6 +63,7 @@
       <DependentUpon>BCAPI.cs</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\BCCaptionSource.cs" />
     <Compile Include="HTTP\BCAPIRequest.cs" />
     <Compile Include="Entities\Containers\BCCollection.cs" />
     <Compile Include="Entities\Errors\BCErrorException.cs" />
@@ -72,7 +73,9 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions\HttpContextExtensions.cs" />
     <Compile Include="Extensions\SystemTypeExtensions.cs" />
+    <Compile Include="HTTP\MultipartForm.cs" />
     <Compile Include="HTTP\PostRequests.cs" />
+    <Compile Include="JSON\Builder.cs" />
     <Compile Include="JSON\Converter.cs" />
     <Compile Include="JSON\RPCError.cs" />
     <Compile Include="JSON\RPCExtensions.cs" />
