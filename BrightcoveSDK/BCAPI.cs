@@ -20,6 +20,14 @@ namespace BrightcoveSDK
 
 		#region Constructors
 
+      /// <summary>
+      /// RJE 10-16-2012
+      /// Construct an API with a supplied configuration
+      /// </summary>
+      public BCAPI(AccountConfigElement account) {
+         Account = account;
+      }
+
 		public BCAPI(string accountName) {
 			BrightcoveConfig bc = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
 			foreach (AccountConfigElement a in bc.Accounts) {

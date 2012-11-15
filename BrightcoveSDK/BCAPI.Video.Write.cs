@@ -32,7 +32,7 @@ namespace BrightcoveSDK
 			return CreateVideo(video, filename, file, H264NoProcessing, preserve_source_rendition, maxsize, null);
 		}
 		public RPCResponse<long> CreateVideo(BCVideo video, string filename, byte[] file, bool H264NoProcessing, bool preserve_source_rendition, long maxsize, string file_checksum) {
-			return CreateVideo(video, filename, file, BCEncodeType.UNDEFINED, false, H264NoProcessing, preserve_source_rendition, maxsize, file_checksum);
+			return CreateVideo(video, filename, file, BCEncodeType.UNDEFINED, false, H264NoProcessing, preserve_source_rendition, maxsize, file_checksum, null);
 		}
 
 		//favors multiple renditions
@@ -52,7 +52,34 @@ namespace BrightcoveSDK
 			return CreateVideo(video, filename, file, encode_to, create_multiple_renditions, preserve_source_rendition, maxsize, null);
 		}
 		public RPCResponse<long> CreateVideo(BCVideo video, string filename, byte[] file, BCEncodeType encode_to, bool create_multiple_renditions, bool preserve_source_rendition, long maxsize, string file_checksum) {
-			return CreateVideo(video, filename, file, encode_to, create_multiple_renditions, false, preserve_source_rendition, maxsize, file_checksum);
+			return CreateVideo(video, filename, file, encode_to, create_multiple_renditions, false, preserve_source_rendition, maxsize, file_checksum, null);
+		}
+
+      /// <summary>
+      /// The above calls difficult to track and prone to caller error.
+      /// This initializes all the defaults and let's the caller pick which properties to override.
+      /// </summary>
+      public class BCCreateVideoOptions
+      {
+         public string filename = "";
+         public byte[] file = null;
+         public BCEncodeType encode_to = BCEncodeType.UNDEFINED;
+         public bool create_multiple_renditions = false;
+         public bool preserve_source_rendition = false;
+         public bool H264NoProcessing = false;
+         public long maxsize = -1;
+         public string file_checksum = null;
+
+         /// <summary>
+         /// path to local file to upload (which will be streamed)
+         /// </summary>
+         public string fileFullPath = null;
+      }
+
+		public RPCResponse<long> CreateVideo(BCVideo video, BCCreateVideoOptions options) {
+			return CreateVideo(video, 
+            options.filename, options.file, options.encode_to, options.create_multiple_renditions, options.H264NoProcessing, 
+            options.preserve_source_rendition, options.maxsize, options.file_checksum, options.fileFullPath);
 		}
 
 		/// <summary>
@@ -103,7 +130,8 @@ namespace BrightcoveSDK
 		/// <returns>
 		/// The id of the video that's been created. if null or error returns -1
 		/// </returns>
-		private RPCResponse<long> CreateVideo(BCVideo video, string filename, byte[] file, BCEncodeType encode_to, bool create_multiple_renditions, bool H264NoProcessing, bool preserve_source_rendition, long maxsize, string file_checksum) {
+		private RPCResponse<long> CreateVideo(BCVideo video, string filename, byte[] file, BCEncodeType encode_to, bool create_multiple_renditions, 
+         bool H264NoProcessing, bool preserve_source_rendition, long maxsize, string file_checksum, string fileFullPath) {
 
 			// Generate post objects
 			Dictionary<string, object> postParams = new Dictionary<string, object>();
@@ -133,9 +161,15 @@ namespace BrightcoveSDK
 			if (!string.IsNullOrEmpty(filename) && file != null) {
 				postParams.Add("file", new FileParameter(file, filename));
 			}
+         else if (!string.IsNullOrEmpty(fileFullPath)) {
+            postParams.Add("file", new UploadFileParameter(fileFullPath));
+         }
 
 			//Get the JSon reader returned from the APIRequest
-			RPCResponse rpcr = BCAPIRequest.ExecuteWrite(postParams, this.Account);
+			RPCResponse rpcr = string.IsNullOrEmpty(fileFullPath) ?
+            BCAPIRequest.ExecuteWrite(postParams, this.Account) :
+            BCAPIRequest.ExecuteWriteNew(postParams, this.Account);
+
 			RPCResponse<long> rpcr2 = new RPCResponse<long>();
 			rpcr2.error = rpcr.error;
 			rpcr2.id = rpcr.id;
@@ -150,9 +184,143 @@ namespace BrightcoveSDK
 
 		#endregion Create Video
 
-		#region Update Video
+      #region Add Captioning
 
-		/// <summary>
+      public class BCAddCaptioningOptions
+      {
+         /// <summary>
+         /// (optional)	The name of the file that is being uploaded. 
+         /// You don't need to specify this in the JSON if it is specified in the file part of the POST.
+         /// </summary>
+         public string filename;
+
+         /// <summary>
+         /// (optional) The maximum size that the file will be. This is used as a limiter to know when something has gone wrong with the upload. 
+         /// The maxsize is same as the size of the file you uploaded. You don't need to specify this in the JSON if it is specified in the file part of the POST.
+         /// </summary>
+         public long maxsize;
+
+         /// <summary>
+         /// (optional) An input stream associated with the video file you're uploading. 
+         /// This takes the form of a file part, in a multipart/form-data HTTP request. 
+         /// This input stream and the filename and maxsize parameters are automatically inferred from that file part.
+         /// </summary>
+         public string file;
+
+         /// <summary>
+         /// (optional)	An optional MD5 hash of the file. 
+         /// The checksum can be used to verify that the file checked into your Video Cloud Media Library is the same as the file you uploaded. 
+         /// Checksums should use lowercase letters, not uppercase letters.
+         /// </summary>
+         public string file_checksum;
+
+         /// <summary>
+         /// The ID of the video to delete Captioning from. You must specify either video_id or video_reference_id.
+         /// </summary>
+         public long video_id;
+
+         /// <summary>
+         /// The publisher-generated reference ID of the video to delete the Captioning from. You must specify either video_id or video_reference_id.
+         /// </summary>
+         public string video_reference_id;
+      }
+
+
+      /// <summary>
+      /// Adds a Captioning to an existing video
+      /// http://docs.brightcove.com/en/media/reference.html#Video_Write
+      /// The captions can either be uploaded to BC or be referred to by an external url
+      /// BrightCove supports the DFXP and SMPTE-TT formats
+      /// http://support.brightcove.com/en/docs/using-captions-smart-player-api
+      /// </summary>
+      /// <param name="caption_source">Metadata about the captions</param>
+      /// <param name="options">Parameters (options) including the ID of the video that MUST be set</param>
+      /// <param name="captions">a buffer containing DFXP or SMPTE-TT caption data</param>
+      /// <returns>the captionSources object</returns>
+      public RPCResponse<BCCaptionSources> AddCaptioning(BCCaptionSource caption_source, BCAddCaptioningOptions options, byte[] captions)
+      {
+			Dictionary<string, object> postParams = new Dictionary<string, object>();
+
+         Builder builder = new Builder()
+            .AppendObject("caption_source", caption_source.ToJSON(JSONType.Create))
+            .Append(",").AppendField("token", Account.WriteToken.Value);
+
+         if (!string.IsNullOrEmpty(options.filename))
+            builder.Append(",").AppendField("filename", options.filename);
+
+         if (options.maxsize > 0)
+            builder.Append(",").AppendField("maxsize", options.maxsize);
+
+         if (!string.IsNullOrEmpty(options.file))
+            throw new System.ArgumentException("The file property not supported.  Pass the captions in as a byte array.");
+
+         if (!string.IsNullOrEmpty(options.file_checksum))
+            builder.Append(",").AppendField("file_checksum", options.file_checksum);
+
+         // Either a video_id or video_reference_id is required
+         if (options.video_id > 0)
+            builder.Append(",").AppendField("video_id", options.video_id);
+         else if (!string.IsNullOrEmpty(options.video_reference_id))
+            builder.Append(",").AppendField("video_reference_id", options.video_reference_id);
+         else
+            throw new System.ArgumentException("A video_id or video_reference_id is required for add_captioning");
+
+			RPCRequest rpc = new RPCRequest();
+			rpc.method = "add_captioning";
+         rpc.parameters = builder.ToString();
+			postParams.Add("json", rpc.ToJSON());
+
+         postParams.Add("file", new UploadBufferParameter(captions, "captions.dfxp"));
+
+			// Get the JSon reader returned from the APIRequest
+			// RPCResponse<BCCaptionSources> rpcr = BCAPIRequest.ExecuteWriteFile<BCCaptionSources>(postParams, this.Account, @"C:\dev\svn\BrightCove\TestFormApp\sample_captions.dfxp");
+			RPCResponse<BCCaptionSources> rpcr = BCAPIRequest.ExecuteWriteNew<BCCaptionSources>(postParams, this.Account);
+
+         return rpcr;
+      }
+
+      #endregion Add Captioning
+
+      #region Delete Captioning
+
+      public RPCResponse DeleteCaptioning(long video_id) {
+         return DeleteCaptioning(video_id, null);
+      }
+      public RPCResponse DeleteCaptioning(string video_reference_id) {
+         return DeleteCaptioning(-1, video_reference_id);
+      }
+
+      private RPCResponse DeleteCaptioning(long video_id, string video_reference_id)
+      {
+			Dictionary<string, object> postParams = new Dictionary<string, object>();
+
+         Builder builder = new Builder()
+            .AppendField("token", Account.WriteToken.Value);
+
+         // Either a video_id or video_reference_id is required
+         if (video_id > 0)
+            builder.Append(",").AppendField("video_id", video_id);
+         else if (!string.IsNullOrEmpty(video_reference_id))
+            builder.Append(",").AppendField("video_reference_id", video_reference_id);
+         else
+            throw new System.ArgumentException("A video_id or video_reference_id is required for delete_captioning");
+
+			RPCRequest rpc = new RPCRequest();
+			rpc.method = "delete_captioning";
+         rpc.parameters = builder.ToString();
+			postParams.Add("json", rpc.ToJSON());
+
+			// Get the JSon reader returned from the APIRequest
+			RPCResponse rpcr = BCAPIRequest.ExecuteWrite(postParams, this.Account);
+
+         return rpcr;
+      }
+
+      #endregion Delete Captioning
+
+      #region Update Video
+
+      /// <summary>
 		/// Updates the video you specify
 		/// </summary>
 		/// <param name="video">
