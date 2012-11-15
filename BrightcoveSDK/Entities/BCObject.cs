@@ -10,18 +10,15 @@ namespace BrightcoveSDK.Media
 	public class BCObject
 	{
 		public static DateTime DateFromUnix(string value) {
-			double millisecs = double.Parse(value.ToString());
-			double secs = millisecs / 1000;
-			return new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(secs);
+			double unixTimeStamp = double.Parse(value.ToString())/1000;
+			System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
+			return dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
 		}
 
         public static string DateToUnix(DateTime value) {
-            //create Timespan by subtracting the value provided from
-            //the Unix Epoch
-            TimeSpan span = (value - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime());
-
-            //return the total seconds (which is a UNIX timestamp)
-            return span.TotalSeconds.ToString();
+			DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
+			TimeSpan span = (value - epoch);
+			return (span.TotalSeconds*1000).ToString();
         }
 	}
 
