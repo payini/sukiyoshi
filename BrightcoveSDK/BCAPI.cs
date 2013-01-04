@@ -59,36 +59,32 @@ namespace BrightcoveSDK
 			try {
 
 				//set some global request paramameters
-                if (!reqparams.ContainsKey("page_number")) {
+                if (!reqparams.ContainsKey("page_number"))
                     reqparams.Add("page_number", "0");
-                }
-
-				//set if not set or 
-				if (!reqparams.ContainsKey("page_size")) {
-					qr.MaxToGet = -1;
-				}
-				else {
-					qr.MaxToGet = Convert.ToInt32(reqparams["page_size"]);
-				}
+                
+				//determine what the page size should be
+				qr.MaxToGet = (!reqparams.ContainsKey("page_size")) ? -1 : Convert.ToInt32(reqparams["page_size"]);
+				int defaultPageSize = (qr.MaxToGet.Equals(-1)) ? 100 : qr.MaxToGet;
+				if (qr.MaxToGet.Equals(-1))
+					reqparams.Add("page_size", defaultPageSize.ToString());
 
 				//get initial query
-				double maxPageNum = 0;
-
 				QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, account);
 				//convert the result for deserialization
 				qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 				qr.QueryResults.Add(qrp);
                 qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
 
-                //make sure you get the correct page num
-                if (qr.TotalCount > 0) {
+				//make sure you get the correct page num
+				double maxPageNum = 0;
+				if (qr.TotalCount > 0) {
                     //if you want all use the total count to calculate the number of pages
                     if (qr.MaxToGet.Equals(-1)) {
-                        maxPageNum = Math.Ceiling((double)(qr.TotalCount / 100));
+						maxPageNum = Math.Ceiling((double)(qr.TotalCount / defaultPageSize));
                     }
                     //or just use the max you want to calculate the number of pages
 				    else {
-					    maxPageNum = Math.Ceiling((double)(qr.MaxToGet / 100));
+						maxPageNum = Math.Ceiling((double)(qr.MaxToGet / defaultPageSize));
 				    }
                 }
 
