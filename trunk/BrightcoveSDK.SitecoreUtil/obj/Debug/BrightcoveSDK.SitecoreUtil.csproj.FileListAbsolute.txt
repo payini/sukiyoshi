@@ -26,13 +26,10 @@ C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK.SitecoreUtil\ob
 C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb
 C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.dll
 C:\Inetpub\wwwroot\genzyme_sc62\platform\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.pdb
-C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\ResolveAssemblyReference.cache
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.dll
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.dll
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.SitecoreUtil.pdb
-C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.dll
-C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.pdb
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\ResolveAssemblyReference.cache
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.dll
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb
@@ -43,3 +40,4 @@ C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.S
 C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\ResolveAssemblyReference.cache
 C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.dll
 C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb
+C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.csprojResolveAssemblyReference.cache

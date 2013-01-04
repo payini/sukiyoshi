@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Web;
+using BrightcoveSDK.JSON;
 
 namespace BrightcoveSDK.Media
 {	
@@ -69,18 +70,21 @@ namespace BrightcoveSDK.Media
 		#region Extension Methods
 
 		public static string ToJSON(this BCImage image) {
-			
+
+			Builder jsonImage = new Builder(",", "{", "}");
+
 			//Build Image in JSON 
-			string jsonImage = "{\"displayName\": \"" + image.displayName + "\"";
-			if(!string.IsNullOrEmpty(image.referenceId)){
-				jsonImage += ", \"referenceId\": \"" + image.referenceId + "\"";
-			}
-			if(!string.IsNullOrEmpty(image.remoteUrl)){
-				jsonImage += ", \"remoteUrl\": \"" + image.remoteUrl + "\"";
-			}
-			jsonImage += ", \"type\": " + image.type.ToString() + "}";
+			jsonImage.AppendField("displayName", image.displayName);
 			
-			return jsonImage;
+			if(!string.IsNullOrEmpty(image.referenceId))
+				jsonImage.AppendField("referenceId", image.referenceId);
+			
+			if(!string.IsNullOrEmpty(image.remoteUrl))
+				jsonImage.AppendField("remoteUrl", image.remoteUrl);
+			
+			jsonImage.AppendObject("type", image.type.ToString());
+			
+			return jsonImage.ToString();
 		}
 
 		#endregion

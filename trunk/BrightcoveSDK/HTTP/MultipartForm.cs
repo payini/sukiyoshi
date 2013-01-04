@@ -236,42 +236,44 @@ namespace BrightcoveSDK.HTTP
    /// </summary>
 	public class UploadFileParameter
 	{
-      /// <summary>
-      /// Fully qualified path of the file
-      /// </summary>
+		/// <summary>
+		/// Fully qualified path of the file
+		/// </summary>
 		public string FilePath { get; set; }
 		
-      public string ContentType { get; set; }
+		public string ContentType { get; set; }
 
-		public UploadFileParameter(string filepath, string contenttype = null) 
-      {
+		public UploadFileParameter(string filepath) : this(filepath, null) {}
+
+		public UploadFileParameter(string filepath, string contenttype) {
 			this.FilePath = filepath;
 			this.ContentType = contenttype ?? "application/octet-stream";
 		}
 	}
 
-   /// <summary>
-   /// Represents a binary buffer of data to be included in the form
-   /// </summary>
-   public class UploadBufferParameter
-   {
-      /// <summary>
-      /// Binary buffer to upload
-      /// </summary>
-      public byte[] Data { get; set; }
+	/// <summary>
+	/// Represents a binary buffer of data to be included in the form
+	/// </summary>
+	public class UploadBufferParameter
+	{
+		/// <summary>
+		/// Binary buffer to upload
+		/// </summary>
+		public byte[] Data { get; set; }
 
-      /// <summary>
-      /// Filename to place in the upload information (does not have to correspond to a real file)
-      /// </summary>
+		/// <summary>
+		/// Filename to place in the upload information (does not have to correspond to a real file)
+		/// </summary>
 		public string FileName { get; set; }
 		
-      public string ContentType { get; set; }
+		public string ContentType { get; set; }
 
-		public UploadBufferParameter(byte[] data, string filename, string contenttype = null) 
-      {
-         this.Data = data;
-         this.FileName = filename;
+		public UploadBufferParameter(byte[] data, string filename) : this(data, filename, null) { }
+
+		public UploadBufferParameter(byte[] data, string filename, string contenttype) {
+			this.Data = data;
+			this.FileName = filename;
 			this.ContentType = contenttype ?? "application/octet-stream";
 		}
-   }
+	}
 }
