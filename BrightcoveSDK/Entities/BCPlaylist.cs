@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Web;
 using System.Runtime.Serialization;
 using BrightcoveSDK.Containers;
+using BrightcoveSDK.JSON;
 
 namespace BrightcoveSDK.Media
 {
@@ -115,75 +117,42 @@ namespace BrightcoveSDK.Media
 
 			//--Build Playlist in JSON -------------------------------------//
 
-			StringBuilder jsonPlaylist = new StringBuilder();
+			Builder jsonPlaylist = new Builder(",", "{", "}");
 			
 			//id
-			if(t.Equals(JSONType.Update)){
-				jsonPlaylist.Append("\"id\": " + playlist.id.ToString());
-			}
+			if(t.Equals(JSONType.Update))
+				jsonPlaylist.AppendObject("id", playlist.id.ToString());
 
 			//name
-			if (!string.IsNullOrEmpty(playlist.name)) {
-				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist.Append(",");
-				}
-				jsonPlaylist.Append("\"name\": \"" + playlist.name + "\"");
-			}
-
+			if (!string.IsNullOrEmpty(playlist.name))
+				jsonPlaylist.AppendField("name", playlist.name);
+			
 			//referenceId
-			if (!string.IsNullOrEmpty(playlist.referenceId)) {
-				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist.Append(",");
-				}
-				jsonPlaylist.Append("\"referenceId\": \"" + playlist.referenceId + "\"");
-			}
-
+			if (!string.IsNullOrEmpty(playlist.referenceId))
+				jsonPlaylist.AppendField("referenceId", playlist.referenceId);
+			
 			//playlist type
-			if (jsonPlaylist.Length > 0) {
-				jsonPlaylist.Append(",");
-			}
-			jsonPlaylist.Append("\"playlistType\": \"" + playlist.playlistType.ToString() + "\"");
+			jsonPlaylist.AppendField("playlistType", playlist.playlistType.ToString());
 
 			if(t.Equals(JSONType.Create)){
-								
 				//Video Ids should be a list of strings
 				if (playlist.videoIds != null && playlist.videoIds.Count > 0) {
-					if (jsonPlaylist.Length > 0) {
-						jsonPlaylist.Append(",");
-					}
-					jsonPlaylist.Append("\"videoIds\": [");
-					string append = "";
-					foreach (long id in playlist.videoIds) {
-						jsonPlaylist.Append(append + "" + id.ToString() + "");
-						append = ",";
-					}
-					jsonPlaylist.Append("]");
+					IEnumerable<string> values = from val in playlist.videoIds
+												 select val.ToString();
+					jsonPlaylist.AppendObjectArray("videoIds", values);
 				}
 			}
 
 			//filter tags should be a list of strings
-			if (playlist.filterTags != null && playlist.filterTags.Count > 0) {
-				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist.Append(",");
-				} 
-				jsonPlaylist.Append("\"filterTags\": [");
-				string append = "";
-				foreach (string tag in playlist.filterTags) {
-					jsonPlaylist.Append(append + "\"" + tag + "\"");
-					append = ",";
-				}
-				jsonPlaylist.Append("]");
-			}
+			if (playlist.filterTags != null && playlist.filterTags.Count > 0)
+				jsonPlaylist.AppendStringArray("filterTags", playlist.filterTags);
 			
 			//shortDescription
 			if (!string.IsNullOrEmpty(playlist.shortDescription)) {
-				if (jsonPlaylist.Length > 0) {
-					jsonPlaylist.Append(",");
-				} 
-				jsonPlaylist.Append("\"shortDescription\": \"" + playlist.shortDescription + "\"");
+				jsonPlaylist.AppendField("shortDescription", playlist.shortDescription);
 			}
 						
-			return "{" + jsonPlaylist.ToString() + "}";
+			return jsonPlaylist.ToString();
 		}
 
 		#endregion

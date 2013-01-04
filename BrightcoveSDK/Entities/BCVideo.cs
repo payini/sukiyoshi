@@ -6,6 +6,7 @@ using System.Web;
 using System.Runtime.Serialization;
 using BrightcoveSDK.Entities.Containers;
 using BrightcoveSDK.Containers;
+using BrightcoveSDK.JSON;
 
 namespace BrightcoveSDK.Media
 {
@@ -455,96 +456,66 @@ namespace BrightcoveSDK.Media
 		public static string ToJSON(this BCVideo video) {
 			return ToJSON(video, JSONType.Update);
 		}
-		
+
         private static string ToJSON(this BCVideo video, JSONType type) {
 
 			//--Build Video in JSON -------------------------------------//
+			Builder jsonVideo = new Builder(",", "{", "}");
 
-            StringBuilder jsonVideo = new StringBuilder();
-            jsonVideo.Append("{");
-
-			if(type.Equals(JSONType.Update)){
-				//id
-				jsonVideo.Append("\"id\": " + video.id.ToString() + ",");
-			}
-
-			//name
-			if (!string.IsNullOrEmpty(video.name)) {
-				jsonVideo.Append("\"name\": \"" + video.name + "\"");
-			}
-
-			//shortDescription
-			if (!string.IsNullOrEmpty(video.shortDescription)) {
-				jsonVideo.Append(",\"shortDescription\": \"" + video.shortDescription + "\"");
-			}
-
-			//Tags should be a list of strings
-			if (video.tags.Count > 0) {
-				jsonVideo.Append(",\"tags\": [");
-				string append = "";
-				foreach (string tag in video.tags) {
-					jsonVideo.Append(append + "\"" + tag + "\"");
-					append = ",";
-				}
-				jsonVideo.Append("]");
-			}
+			//id
+			if(type.Equals(JSONType.Update))
+				jsonVideo.AppendObject("id", video.id);
 
 			//referenceId
-			if (!string.IsNullOrEmpty(video.referenceId)) {
-				jsonVideo.Append(",\"referenceId\": \"" + video.referenceId + "\"");
-			}
+			if (!string.IsNullOrEmpty(video.referenceId))
+				jsonVideo.AppendField("referenceId", video.referenceId);
+			
+			//name
+			if (!string.IsNullOrEmpty(video.name))
+				jsonVideo.AppendField("name", video.name);
+			
+			//shortDescription
+			if (!string.IsNullOrEmpty(video.shortDescription))
+				jsonVideo.AppendField("shortDescription", video.shortDescription);
+
+			//longDescription
+			if (!string.IsNullOrEmpty(video.longDescription))
+				jsonVideo.AppendField("longDescription", video.longDescription);
+			
+			//Tags should be a list of strings
+			if (video.tags.Count > 0)
+				jsonVideo.AppendStringArray("tags", video.tags);
 
 			//videoStillURL
-			if (!string.IsNullOrEmpty(video.videoStillURL)) {
-				jsonVideo.Append(",\"videoStillURL\": \"" + HttpUtility.UrlEncode(video.videoStillURL) + "\"");
-			}
-
-			//thumbnailURL
-			if (!string.IsNullOrEmpty(video.thumbnailURL)) {
-				jsonVideo.Append(",\"thumbnailURL\": \"" + HttpUtility.UrlEncode(video.thumbnailURL) + "\"");
-			}
+			if (!string.IsNullOrEmpty(video.videoStillURL))
+				jsonVideo.AppendField("videoStillURL", HttpUtility.UrlEncode(video.videoStillURL));
 			
-			//longDescription
-			if (!string.IsNullOrEmpty(video.longDescription)) {
-				jsonVideo.Append(",\"longDescription\": \"" + video.longDescription + "\"");
-			}
-
-            if (video.cuePoints.Count > 0) {
-                jsonVideo.Append(",\"cuePoints\": " + video.cuePoints.ToJSON());
-            }
-
-			if (video.renditions.Count > 0) {
-				jsonVideo.Append(",\"renditions\": " + video.renditions.ToJSON());
-			}
-
-			if (!string.IsNullOrEmpty(video.videoFullLength.url) || !string.IsNullOrEmpty(video.videoFullLength.remoteUrl)) {
-				jsonVideo.Append(",\"videoFullLength\": " + video.videoFullLength.ToJSON());
-			}
-
-			if (video.customFields.Values.Count > 0) {
-				StringBuilder sbFields = new StringBuilder();
-				foreach(KeyValuePair<string, string> field in video.customFields.Values){
-					if (sbFields.Length > 0)
-						sbFields.Append(",");
-					sbFields.Append("\"" + field.Key + "\":\"" + field.Value + "\"");
-				}
-				jsonVideo.Append(",\"customFields\":{" + sbFields.ToString() + "}");
-			}
-
+			//thumbnailURL
+			if (!string.IsNullOrEmpty(video.thumbnailURL)) 
+				jsonVideo.AppendField("thumbnailURL", HttpUtility.UrlEncode(video.thumbnailURL));
+			
+            if (video.cuePoints.Count > 0)
+                jsonVideo.AppendObject("cuePoints", video.cuePoints.ToJSON());
+            
+			if (video.renditions.Count > 0)
+				jsonVideo.AppendObject("renditions", video.renditions.ToJSON());
+			
+			if (!string.IsNullOrEmpty(video.videoFullLength.url) || !string.IsNullOrEmpty(video.videoFullLength.remoteUrl))
+				jsonVideo.AppendObject("videoFullLength", video.videoFullLength.ToJSON());
+			
+			if (video.customFields.Values.Count > 0)
+				jsonVideo.AppendDictionaryArray("customFields", video.customFields.Values);
+			
 			//startdate
-			if (video.startDate != null) {
-				jsonVideo.Append(",\"startDate\": \"" + BCObject.DateToUnix(video.startDate.Value) + "\"");
-			}
-
+			if (video.startDate != null)
+				jsonVideo.AppendField("startDate", BCObject.DateToUnix(video.startDate.Value));
+			
 			//enddate
-			if (video.endDate != null) {
-				jsonVideo.Append(",\"endDate\": \"" + BCObject.DateToUnix(video.endDate.Value) + "\"");
-			}
+			if (video.endDate != null)
+				jsonVideo.AppendField("endDate", BCObject.DateToUnix(video.endDate.Value));
 
 			//economics
-			jsonVideo.Append(",\"economics\": " + video.economics.ToString());
-
-			jsonVideo.Append("}");
+			jsonVideo.AppendObject("economics", video.economics.ToString());
 
 			return jsonVideo.ToString();
 		}

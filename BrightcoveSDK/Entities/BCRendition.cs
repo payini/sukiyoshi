@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using BrightcoveSDK.JSON;
 
 namespace BrightcoveSDK.Media
 {
@@ -161,56 +162,40 @@ namespace BrightcoveSDK.Media
 
 			//--Build Rendition in JSON -------------------------------------//
 
-			StringBuilder jsonPlaylist = new StringBuilder();
-
-			StringBuilder jsonR = new StringBuilder();
+			Builder jsonR = new Builder(",", "{", "}");
 			
 			//referenceId
-			if (!string.IsNullOrEmpty(rendition.referenceId)) {
-				jsonR.Append("\"referenceId\": \"" + rendition.referenceId + "\"");
-			}
+			if (!string.IsNullOrEmpty(rendition.referenceId)) 
+				jsonR.AppendField("referenceId", rendition.referenceId);
 
 			//remoteUrl
-			if (!string.IsNullOrEmpty(rendition.remoteUrl)) {
-				if (jsonR.Length > 0) jsonR.Append(",");
-				jsonR.Append("\"remoteUrl\": \"" + rendition.remoteUrl + "\"");
-			}
+			if (!string.IsNullOrEmpty(rendition.remoteUrl)) 
+				jsonR.AppendField("remoteUrl", rendition.remoteUrl);
 
 			//encodingRate
-			if (jsonR.Length > 0) jsonR.Append(",");
-			jsonR.Append("\"encodingRate\": \"" + rendition.encodingRate.ToString() + "\"");
+			jsonR.AppendField("encodingRate", rendition.encodingRate.ToString());
 			
 			//remoteStreamName
-			if (!string.IsNullOrEmpty(rendition.remoteStreamName)) {
-				if (jsonR.Length > 0) jsonR.Append(","); 
-				jsonR.Append("\"remoteStreamName\": \"" + rendition.remoteStreamName + "\"");
-			}
-
+			if (!string.IsNullOrEmpty(rendition.remoteStreamName)) 
+				jsonR.AppendField("remoteStreamName", rendition.remoteStreamName);
+			
 			//size
-			if (!string.IsNullOrEmpty(rendition.size.ToString())) {
-				if (jsonR.Length > 0) jsonR.Append(","); 
-				jsonR.Append("\"size\": " + rendition.size.ToString());
-			}
-
+			if (!string.IsNullOrEmpty(rendition.size.ToString())) 
+				jsonR.AppendObject("size", rendition.size.ToString());
+			
 			//videoDuration
-			if (!string.IsNullOrEmpty(rendition.videoDuration.ToString())) {
-				if (jsonR.Length > 0) jsonR.Append(","); 
-				jsonR.Append("\"videoDuration\": " + rendition.videoDuration.ToString());
-			}
-
+			if (!string.IsNullOrEmpty(rendition.videoDuration.ToString())) 
+				jsonR.AppendObject("videoDuration", rendition.videoDuration.ToString());
+			
 			//videoCodec
-			if (!rendition.videoCodec.Equals(VideoCodecEnum.NONE)) {
-				if (jsonR.Length > 0) jsonR.Append(",");
-				jsonR.Append("\"videoCodec\": " + rendition.videoCodec.ToString());
-			}
-
+			if (!rendition.videoCodec.Equals(VideoCodecEnum.NONE)) 
+				jsonR.AppendObject("videoCodec", rendition.videoCodec.ToString());
+			
 			//controllerType
-			if (!rendition.ControllerType.Equals(ControllerType.UNDEFINED)) {
-				if (jsonR.Length > 0) jsonR.Append(",");
-				jsonR.Append("\"controllerType\": " + rendition.ControllerType.ToString());
-			}
-
-			return "{" + jsonR.ToString() + "}";
+			if (!rendition.ControllerType.Equals(ControllerType.UNDEFINED))
+				jsonR.AppendObject("controllerType", rendition.ControllerType.ToString());
+			
+			return jsonR.ToString();
 		}
 
 		#endregion Extension Methods

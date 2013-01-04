@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using BrightcoveSDK.JSON;
 
 namespace BrightcoveSDK.Media
 {
@@ -91,49 +92,41 @@ namespace BrightcoveSDK.Media
         #region Extension Methods
 
         public static string ToJSON(this List<BCCuePoint> cuePoints) {
-            
-            StringBuilder jsonCP = new StringBuilder();
+
+			StringBuilder jsonCP = new StringBuilder();
             
             foreach(BCCuePoint cp in cuePoints){
-                if (jsonCP.Length > 0) {
+                if (jsonCP.Length > 0)
                     jsonCP.Append(",");
-                }
                 jsonCP.Append(cp.ToJSON());
             }
 
-            return "[" + jsonCP.ToString() + "]";
+            return string.Format("[{0}]", jsonCP.ToString());
         }
 
         public static string ToJSON(this BCCuePoint cuePoint) {
 
-            StringBuilder jsonCP = new StringBuilder();
-            jsonCP.Append("{");
-
-            if (!string.IsNullOrEmpty(cuePoint.name)) {
-                //name
-                jsonCP.Append("\"name\": \"" + cuePoint.name + "\",");
-            }
-
+			Builder jsonCP = new Builder(",", "{", "}");
+			
+			//name
+            if (!string.IsNullOrEmpty(cuePoint.name))
+                jsonCP.AppendField("name", cuePoint.name);
+            
             //time
-            if (!string.IsNullOrEmpty(cuePoint.time.ToString())) {
-                jsonCP.Append("\"time\": " + cuePoint.time);
-            }
-
-            //forceStop
-            jsonCP.Append(",\"forceStop\": \"" + cuePoint.forceStop.ToString().ToLower() + "\"");
+            if (!string.IsNullOrEmpty(cuePoint.time.ToString()))
+                jsonCP.AppendObject("time", cuePoint.time);
+            
+			//forceStop
+            jsonCP.AppendField("forceStop", cuePoint.forceStop.ToString().ToLower());
             
             //type
-            if (!string.IsNullOrEmpty(cuePoint.type.ToString())) {
-                jsonCP.Append(",\"type\": " + (int)Enum.Parse(typeof(CuePointType), cuePoint.type.ToString()));
-            }
-
+            if (!string.IsNullOrEmpty(cuePoint.type.ToString()))
+                jsonCP.AppendObject("type", (int)Enum.Parse(typeof(CuePointType), cuePoint.type.ToString()));
+            
             //metadata
-            if (!string.IsNullOrEmpty(cuePoint.metadata)) {
-                jsonCP.Append(",\"metadata\": \"" + cuePoint.metadata + "\"");
-            }
-
-            jsonCP.Append("}");
-
+            if (!string.IsNullOrEmpty(cuePoint.metadata))
+                jsonCP.AppendField("metadata", cuePoint.metadata);
+            
             return jsonCP.ToString();
         }
 

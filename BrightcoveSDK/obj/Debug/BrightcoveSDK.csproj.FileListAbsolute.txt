@@ -18,7 +18,6 @@ E:\websites\wwwroot\Code Library\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK
 E:\websites\wwwroot\Code Library\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.dll
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.pdb
-C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK\obj\Debug\ResolveAssemblyReference.cache
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.dll
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK\obj\Debug\BrightcoveSDK.pdb
 C:\inetpub\wwwroot\genzymeDev_sc62\Libraries\sukiyoshi\BrightcoveSDK\bin\Debug\BrightcoveSDK.dll
