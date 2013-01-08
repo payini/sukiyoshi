@@ -146,9 +146,10 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 
 			//get the selected video
 			Item video = masterDB.Items[VideoTreeview.Value];
+			VideoItem vid = null;
 			string videoid = "";
 			if (video != null && video.TemplateName.Equals(Constants.VideoTemplate)) {
-				VideoItem vid = new VideoItem(video);
+				vid = new VideoItem(video);
                 videoid = vid.VideoID.ToString(); 
 			}
 			
@@ -205,15 +206,14 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 				selectedText = selectedText.Split('>')[1];
 				selectedText = selectedText.Split('<')[0];
 			}
-			if (selectedText.Equals("")) {
-				VideoItem vd = new VideoItem(video);
-				selectedText = "Click To Watch " + vd.VideoName;
+			if (selectedText.Equals("") && vid != null) {
+				selectedText = "Click To Watch " + vid.VideoName;
 			}
 			
 			//build link then send it back
 			StringBuilder mediaUrl = new StringBuilder();
 			mediaUrl.Append("<a href=\"/BrightcoveVideo.ashx?video=" + videoid + "&player=" + vpl.PlayerID);
-			mediaUrl.Append("&playlists=" + playlistStr.ToString() + "&autoStart=" + chkAutoStart.Checked.ToString().ToLower() + "&bgcolor=" + txtBGColor.Value + "&wmode=" + WMode.SelectedItem.Header);
+			mediaUrl.Append("&playlists=" + playlistStr.ToString() + "&autoStart=" + chkAutoStart.Checked.ToString().ToLower() + "&bgcolor=" + txtBGColor.Value.Replace("#", "") + "&wmode=" + WMode.SelectedItem.Header);
 			mediaUrl.Append(sbQstring.ToString());
             mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + " title=\"" + selectedText + "\">" + selectedText + "</a>");
 						
