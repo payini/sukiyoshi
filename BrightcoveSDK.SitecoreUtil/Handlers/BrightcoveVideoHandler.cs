@@ -36,25 +36,35 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 			
 			//return DoProcessRequest(context, request, media);
 			if (context != null) {
-				NameValueCollection nvc = context.Request.QueryString;
-				
+				NameValueCollection source = context.Request.QueryString;
+				var dict = source.Cast<string>()
+						.Select(s => new { Key = s, Value = source[s] })
+						.ToDictionary(x => x.Key, y => y.Value);
+
 				//player
 				long qPlayer = 0;
-				if(nvc.HasKey("player")) 
-					long.TryParse(nvc.Get("player"), out qPlayer);
+				string playerKey = "player";
+				if (dict.ContainsKey(playerKey)) {
+					long.TryParse(dict[playerKey], out qPlayer);
+					dict.Remove(playerKey);
+				}
 				PlayerItem p = PlayerLibraryItem.GetPlayer(qPlayer);
                 if (p == null) { context.Response.Write("The player is null"); return; }
 
 				//video 
 				long qVideo = 0;
-				if(nvc.HasKey("video")) 
-					long.TryParse(nvc.Get("video"), out qVideo);
+				string videoKey = "video";
+				if (dict.ContainsKey(videoKey)) {
+					long.TryParse(dict[videoKey], out qVideo);
+					dict.Remove(videoKey);
+				}
 								
 				//playlist ids
 				long qPlaylist = 0;
 				List<long> qPlaylistIds = new List<long>();
-				if(nvc.HasKey("playlists")) {
-					string[] playlistids = context.Request.QueryString.Get("playlists").Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+				string playlistKey = "playlists";
+				if(dict.ContainsKey(playlistKey)) {
+					string[] playlistids = dict[playlistKey].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 					//if you only want a single
 					if (p.PlaylistType.Equals(PlayerPlaylistType.None)) {
 						if (playlistids.Any())
@@ -66,19 +76,29 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 								qPlaylistIds.Add(plist);
 						}
 					}
+					dict.Remove(playlistKey);
 				}
 
 				//auto start
 				bool qAutoStart = false;
-				if(nvc.HasKey("autoStart")) 
-					bool.TryParse(nvc.Get("autoStart"), out qAutoStart);
-				
+				string autoStartKey = "autoStart";
+				if (dict.ContainsKey(autoStartKey)) {
+					bool.TryParse(dict[autoStartKey], out qAutoStart);
+					dict.Remove(autoStartKey);
+				}
+
 				//bg color
-				string qBgColor = (nvc.HasKey("bgcolor")) ? nvc.Get("bgcolor") : "";
-				
+				string bgKey = "bgcolor";
+				string qBgColor = (dict.ContainsKey(bgKey)) ? dict[bgKey] : "";
+				if (!qBgColor.Contains("#"))
+					qBgColor = "#" + qBgColor;
+				dict.Remove(bgKey);
+
 				//wmode 
-				WMode qWMode = (!nvc.HasKey("wmode") || string.IsNullOrEmpty(nvc.Get("wmode"))) ? BrightcoveSDK.WMode.Transparent : (BrightcoveSDK.WMode)Enum.Parse(typeof(BrightcoveSDK.WMode), nvc.Get("wmode"), true);	
-				
+				string wmodeKey = "wmode";
+				WMode qWMode = (!dict.ContainsKey(wmodeKey) || string.IsNullOrEmpty(dict[wmodeKey])) ? BrightcoveSDK.WMode.Transparent : (BrightcoveSDK.WMode)Enum.Parse(typeof(BrightcoveSDK.WMode), dict[wmodeKey], true);
+				dict.Remove(wmodeKey);
+
                 StringBuilder sb = new StringBuilder();
 				sb.AppendLine("<html><head>");
                 sb.AppendLine("</head><body>");
@@ -86,16 +106,16 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 				string uniqueID = "video_" + DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss.FFFF");
 				switch (p.PlaylistType) {
                     case PlayerPlaylistType.VideoList:
-						sb.AppendLine(EmbedCode.GetVideoListPlayerEmbedCode(qPlayer, qPlaylist, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						sb.AppendLine(EmbedCode.GetVideoListPlayerEmbedCode(qPlayer, qPlaylist, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID, dict));
                         break;
                     case PlayerPlaylistType.Tabbed:
-						sb.AppendLine(EmbedCode.GetTabbedPlayerEmbedCode(qPlayer, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						sb.AppendLine(EmbedCode.GetTabbedPlayerEmbedCode(qPlayer, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID, dict));
 						break;
 					case PlayerPlaylistType.ComboBox:
-                        sb.AppendLine(EmbedCode.GetComboBoxPlayerEmbedCode(qPlayer, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+                        sb.AppendLine(EmbedCode.GetComboBoxPlayerEmbedCode(qPlayer, qPlaylistIds, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID, dict));
 						break;
 					case PlayerPlaylistType.None:
-						sb.AppendLine(EmbedCode.GetVideoPlayerEmbedCode(qPlayer, qVideo, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID));
+						sb.AppendLine(EmbedCode.GetVideoPlayerEmbedCode(qPlayer, qVideo, p.Height, p.Width, qBgColor, qAutoStart, qWMode, uniqueID, dict));
 						break;
 				}
 
