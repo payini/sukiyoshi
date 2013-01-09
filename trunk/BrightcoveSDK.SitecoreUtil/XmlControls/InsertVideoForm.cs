@@ -41,6 +41,8 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 		protected Scrollbox SelectedList;
 		protected Checkbox chkAutoStart;
 		protected Edit txtBGColor;
+		protected Edit txtOParams;
+		protected Edit txtLinkText;
 		protected Combobox WMode;
         protected Database masterDB;
 
@@ -48,6 +50,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 		//Combobox = DropList
 		//Listview = folder explorer
 		//Taskbox = kind of looks like the workbox with list expansion header
+		//Edit = textbox
 
 		/// <summary>
 		/// 
@@ -56,7 +59,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 		protected override void OnLoad(EventArgs e) {
 			Assert.ArgumentNotNull(e, "e");
 			base.OnLoad(e);
-
+			
             masterDB = Sitecore.Client.ContentDatabase;
 
 			if (!Context.ClientPage.IsEvent) {
@@ -86,6 +89,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 								
 				//populate playlists from querystring
 				string[] listIDs = WebUtil.GetQueryString("playlists").Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries);
+				PlaylistTreeview.SelectedIDs.Clear();
 				foreach (string listID in listIDs) {
                     long pID = -1;
                     if (long.TryParse(listID, out pID)) {
@@ -94,7 +98,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
                         if (pl != null) {
                             PlaylistDataContext.Folder = pl.playlistItem.ID.ToString();
                             //set selected items
-                            PlaylistTreeview.SelectedIDs.Add(listID);
+                            PlaylistTreeview.SelectedIDs.Add(pl.playlistItem.ID.ToShortID().ToString());
                         }
                     }
 				}
@@ -115,15 +119,16 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 
 				//get and set the autostart
 				string autostart = WebUtil.GetQueryString("autostart");
-				try {
-					chkAutoStart.Checked = (autostart.ToLower() == "true") ? true : false;
-				}catch{}
-
+				chkAutoStart.Checked = (autostart.ToLower() == "true") ? true : false;
+				
 				//get and set the bgcolor
-				string bgcolor = HttpUtility.UrlDecode(WebUtil.GetQueryString("bgcolor"));
-				try {
-					txtBGColor.Value = (bgcolor == "") ? "#ffffff" : bgcolor;
-				} catch { txtBGColor.Value = "#ffffff"; }
+				txtBGColor.Value = HttpUtility.UrlDecode(WebUtil.GetQueryString("bgcolor", "ffffff"));
+				
+				//get and set the oparams
+				txtOParams.Value = WebUtil.GetQueryString("oparams", string.Empty);
+
+				//get and set the selected text
+				txtLinkText.Value = HttpUtility.UrlDecode(WebUtil.GetQueryString("selectedText", "Click To Watch"));
 			}
 		}
 
@@ -200,22 +205,16 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 				}
 			}
 			
-			//selected text is the link text
-			string selectedText = HttpUtility.UrlDecode(WebUtil.GetQueryString("selectedText"));
-			if (selectedText.Contains("href=")) {
-				selectedText = selectedText.Split('>')[1];
-				selectedText = selectedText.Split('<')[0];
-			}
-			if (selectedText.Equals("") && vid != null) {
-				selectedText = "Click To Watch " + vid.VideoName;
-			}
-			
 			//build link then send it back
 			StringBuilder mediaUrl = new StringBuilder();
 			mediaUrl.Append("<a href=\"/BrightcoveVideo.ashx?video=" + videoid + "&player=" + vpl.PlayerID);
-			mediaUrl.Append("&playlists=" + playlistStr.ToString() + "&autoStart=" + chkAutoStart.Checked.ToString().ToLower() + "&bgcolor=" + txtBGColor.Value.Replace("#", "") + "&wmode=" + WMode.SelectedItem.Header);
+			mediaUrl.Append("&playlists=" + playlistStr.ToString());
+			mediaUrl.Append("&autoStart=" + chkAutoStart.Checked.ToString().ToLower());
+			mediaUrl.Append("&bgcolor=" + txtBGColor.Value.Replace("#", ""));
+			mediaUrl.Append("&wmode=" + WMode.SelectedItem.Header);
+			mediaUrl.Append("&" + txtOParams.Value.Replace(",", "&"));
 			mediaUrl.Append(sbQstring.ToString());
-            mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + " title=\"" + selectedText + "\">" + selectedText + "</a>");
+			mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + " title=\"" + txtLinkText.Value + "\">" + txtLinkText.Value + "</a>");
 						
 			if (this.Mode == "webedit") {
 				SheerResponse.SetDialogValue(StringUtil.EscapeJavascriptString(mediaUrl.ToString()));

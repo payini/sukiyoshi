@@ -34,7 +34,18 @@ namespace BrightcoveSDK.SitecoreUtil.UI
 				    //get background color
 				    string bgcolor = this.Attributes["bgcolor"];
 				    bgcolor = (bgcolor == "") ? "#ffffff" : bgcolor;
-    				
+
+					string oparams = this.Attributes["oparams"];
+					Dictionary<string, string> objectParams = new Dictionary<string, string>();
+					if (!string.IsNullOrEmpty(oparams)) {
+						string[] keys = oparams.Split(',');
+						foreach (string k in keys) {
+							string[] pair = k.Split('=');
+							if (pair.Length > 0)
+								objectParams.Add(pair[0], pair[1]);
+						}
+					}
+
 				    //parse autostart
 				    bool autostart = false; 
 				    try {
@@ -76,7 +87,7 @@ namespace BrightcoveSDK.SitecoreUtil.UI
                             } 
 					    }
 						//get the embed code
-					    sbOut.Append(p.GetEmbedCode(playlists, bgcolor, autostart, wmode));
+						sbOut.Append(p.GetEmbedCode(playlists, bgcolor, autostart, wmode, PlayerExtensions.CreateEmbedID(), objectParams));
 				    } 
 
 				    //Notify the user

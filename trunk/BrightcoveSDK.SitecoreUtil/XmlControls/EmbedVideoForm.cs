@@ -46,6 +46,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 		protected Scrollbox SelectedList;
 		protected Checkbox chkAutoStart;
 		protected Edit txtBGColor;
+		protected Edit txtOParams;
 		protected Combobox WMode;
         protected Database masterDB;
 		/// <summary>
@@ -125,6 +126,12 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 				try {
 					txtBGColor.Value = (bgcolor == "") ? "#ffffff" : bgcolor;
 				} catch { txtBGColor.Value = "#ffffff"; }
+
+				//get and set the oparams
+				string oparams = WebUtil.GetQueryString("oparams");
+				try {
+					txtOParams.Value = oparams;
+				} catch { txtOParams.Value = string.Empty; }
 			}
 		}
 
@@ -191,6 +198,8 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 			mediaUrl.Append("autostart=\"" + chkAutoStart.Checked.ToString().ToLower() + "\" ");
 			mediaUrl.Append("bgcolor=\"" + txtBGColor.Value + "\" ");
 			mediaUrl.Append("wmode=\"" + WMode.SelectedItem.Header + "\" ");
+			mediaUrl.Append("wmode=\"" + WMode.SelectedItem.Header + "\" ");
+			mediaUrl.Append("oparams=\"" + txtOParams.Value + "\" ");
 			
 			//determine what kind of playlist
 			if (vpl.PlaylistType.Equals(PlayerPlaylistType.ComboBox)) {
