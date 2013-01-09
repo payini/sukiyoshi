@@ -12,7 +12,7 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 {
 	public static class PlayerExtensions
 	{
-		private static string CreateEmbedID() {
+		public static string CreateEmbedID() {
 			Random r = new Random();
 			return "BrightcoveVideo_" + r.Next(1001).ToString();
 		}
@@ -33,7 +33,10 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 			return GetEmbedCode(player, BackgroundColor, AutoStart, WMode, CreateEmbedID());
 		}
 		public static string GetEmbedCode(this PlayerItem player, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
-			return GetEmbedCode(player, null, -1, null, BackgroundColor, AutoStart, WMode, objectTagID);
+			return GetEmbedCode(player, BackgroundColor, AutoStart, WMode, objectTagID, new Dictionary<string, string>());
+		}
+		public static string GetEmbedCode(this PlayerItem player, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID, Dictionary<string, string> objectParams) {
+			return GetEmbedCode(player, null, -1, null, BackgroundColor, AutoStart, WMode, objectTagID, objectParams);
 		}
 		
 		//based on list of ids
@@ -50,7 +53,10 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 			return GetEmbedCode(player, PlaylistIDs, BackgroundColor, AutoStart, WMode, CreateEmbedID());
 		}
 		public static string GetEmbedCode(this PlayerItem player, List<long> PlaylistIDs, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
-			return GetEmbedCode(player, null, -1, PlaylistIDs, BackgroundColor, AutoStart, WMode, objectTagID);
+			return GetEmbedCode(player, PlaylistIDs, BackgroundColor, AutoStart, WMode, objectTagID, new Dictionary<string,string>());
+		}
+		public static string GetEmbedCode(this PlayerItem player, List<long> PlaylistIDs, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID, Dictionary<string,string> objectParams) {
+			return GetEmbedCode(player, null, -1, PlaylistIDs, BackgroundColor, AutoStart, WMode, objectTagID, objectParams);
 		}
 
 		//based on single playlist
@@ -67,7 +73,10 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 			return GetEmbedCode(player, PlaylistID, BackgroundColor, AutoStart, WMode, CreateEmbedID());
 		}
 		public static string GetEmbedCode(this PlayerItem player, long PlaylistID, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
-			return GetEmbedCode(player, null, PlaylistID, null, BackgroundColor, AutoStart, WMode, objectTagID);
+			return GetEmbedCode(player, PlaylistID, BackgroundColor, AutoStart, WMode, objectTagID, new Dictionary<string,string>());
+		}
+		public static string GetEmbedCode(this PlayerItem player, long PlaylistID, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID, Dictionary<string, string> objectParams) {
+			return GetEmbedCode(player, null, PlaylistID, null, BackgroundColor, AutoStart, WMode, objectTagID, objectParams);
 		}
 
 		//based on video		
@@ -84,7 +93,10 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 			return GetEmbedCode(player, video, BackgroundColor, AutoStart, WMode, CreateEmbedID());
 		}
 		public static string GetEmbedCode(this PlayerItem player, VideoItem video, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
-			return GetEmbedCode(player, video, -1, null, BackgroundColor, AutoStart, WMode, objectTagID);
+			return GetEmbedCode(player, video, BackgroundColor, AutoStart, WMode, objectTagID, new Dictionary<string, string>());
+		}
+		public static string GetEmbedCode(this PlayerItem player, VideoItem video, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID, Dictionary<string,string> objectParams) {
+			return GetEmbedCode(player, video, -1, null, BackgroundColor, AutoStart, WMode, objectTagID, objectParams);
 		}
 
 		/// <summary>
@@ -99,9 +111,9 @@ namespace BrightcoveSDK.SitecoreUtil.Extensions
 		/// <param name="AutoStart">A flag to cause the video to automatically start playing</param>
 		/// <param name="WMode">The wmode </param>
 		/// <returns></returns>
-		private static string GetEmbedCode(this PlayerItem player, VideoItem video, long PlaylistID, List<long> PlaylistIDs, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID) {
+		private static string GetEmbedCode(this PlayerItem player, VideoItem video, long PlaylistID, List<long> PlaylistIDs, string BackgroundColor, bool AutoStart, WMode WMode, string objectTagID, Dictionary<string, string> objectParams) {
 			long videoID = (video != null) ? video.VideoID : -1;
-			return BrightcoveSDK.Utils.EmbedCode.GetEmbedCode(player.PlayerID, videoID, player.PlaylistType, PlaylistID, PlaylistIDs, player.Height, player.Width, BackgroundColor, AutoStart, WMode, objectTagID);
+			return BrightcoveSDK.Utils.EmbedCode.GetEmbedCode(player.PlayerID, videoID, player.PlaylistType, PlaylistID, PlaylistIDs, player.Height, player.Width, BackgroundColor, AutoStart, WMode, objectTagID, objectParams);
         }
 
         #endregion GetEmbedCode
