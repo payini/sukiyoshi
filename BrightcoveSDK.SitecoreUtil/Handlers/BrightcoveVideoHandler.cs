@@ -94,6 +94,19 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 					qBgColor = "#" + qBgColor;
 				dict.Remove(bgKey);
 
+				//converts oparams to key value pairs
+				string paramKey = "oparams";
+				string qParams = string.Empty;
+				if (dict.ContainsKey(paramKey)) {
+					string[] oparams = dict[paramKey].Split(',');
+					foreach (string pair in oparams) {
+						string[] kv = pair.Split('=');
+						if (kv.Length > 1)
+							dict.Add(kv[0], kv[1]);
+					}
+					dict.Remove(paramKey);
+				}
+				
 				//wmode 
 				string wmodeKey = "wmode";
 				WMode qWMode = (!dict.ContainsKey(wmodeKey) || string.IsNullOrEmpty(dict[wmodeKey])) ? BrightcoveSDK.WMode.Transparent : (BrightcoveSDK.WMode)Enum.Parse(typeof(BrightcoveSDK.WMode), dict[wmodeKey], true);

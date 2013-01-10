@@ -30,6 +30,7 @@ using BrightcoveSDK.Media;
 using scEditor = Sitecore.Shell.Applications.ContentEditor;
 using scWeb = Sitecore.Web;
 using BrightcoveSDK.SitecoreUtil.Entity;
+using BrightcoveSDK.SitecoreUtil.UI.HtmlControls;
 //using scControls = Sitecore.Controls;
 
 namespace BrightcoveSDK.SitecoreUtil.XmlControls
@@ -42,7 +43,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 		protected DataContext PlaylistDataContext;
 		protected TreePicker VideoTreeview;
 		protected TreePicker PlayerTreeview;
-		protected TreeviewEx PlaylistTreeview;
+		protected BCTreeviewEx PlaylistTreeview;
 		protected Scrollbox SelectedList;
 		protected Checkbox chkAutoStart;
 		protected Edit txtBGColor;
@@ -96,11 +97,11 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
                         if(pl != null){
                             PlaylistDataContext.Folder = pl.playlistItem.ID.ToString();
 							//set selected items
-							PlaylistTreeview.SelectedIDs.Add(listID);
+							PlaylistTreeview.SelectedIDs.Add(pl.playlistItem.ID.ToShortID().ToString());
 						} 
 					}
 				}
-
+				
 				//setup the drop list of wmode
 				Item wmodeRoot = masterDB.Items[PlayerDataContext.Root + "/Settings/WMode"];
 				string wmode = WebUtil.GetQueryString("wmode");
@@ -117,21 +118,13 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 
 				//get and set the autostart
 				string autostart = WebUtil.GetQueryString("autostart");
-				try {
-					chkAutoStart.Checked = (autostart.ToLower() == "true") ? true : false;
-				} catch { }
-
+				chkAutoStart.Checked = (autostart.ToLower() == "true") ? true : false;
+				
 				//get and set the bgcolor
-				string bgcolor = HttpUtility.UrlDecode(WebUtil.GetQueryString("bgcolor"));
-				try {
-					txtBGColor.Value = (bgcolor == "") ? "#ffffff" : bgcolor;
-				} catch { txtBGColor.Value = "#ffffff"; }
-
+				txtBGColor.Value = HttpUtility.UrlDecode(WebUtil.GetQueryString("bgcolor", "ffffff"));
+				
 				//get and set the oparams
-				string oparams = WebUtil.GetQueryString("oparams");
-				try {
-					txtOParams.Value = oparams;
-				} catch { txtOParams.Value = string.Empty; }
+				txtOParams.Value = WebUtil.GetQueryString("oparams", string.Empty);
 			}
 		}
 
