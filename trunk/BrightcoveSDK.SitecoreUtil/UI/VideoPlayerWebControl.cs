@@ -34,6 +34,8 @@ namespace BrightcoveSDK.SitecoreUtil.UI
 				    //get background color
 				    string bgcolor = this.Attributes["bgcolor"];
 				    bgcolor = (bgcolor == "") ? "#ffffff" : bgcolor;
+					if (!bgcolor.StartsWith("#"))
+						bgcolor = "#" + bgcolor;
 
 					string oparams = this.Attributes["oparams"];
 					Dictionary<string, string> objectParams = new Dictionary<string, string>();

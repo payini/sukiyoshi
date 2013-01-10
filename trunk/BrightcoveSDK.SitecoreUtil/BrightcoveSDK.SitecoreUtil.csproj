@@ -63,6 +63,7 @@
     <Compile Include="Entity\PlaylistItem.cs" />
     <Compile Include="Entity\VideoItem.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="UI\HtmlControls\BCTreeviewEx.cs" />
     <Compile Include="XmlControls\EmbedVideoForm.cs" />
     <Compile Include="XmlControls\InsertVideoForm.cs" />
     <Compile Include="Entity\ModalLinkSettings.cs" />

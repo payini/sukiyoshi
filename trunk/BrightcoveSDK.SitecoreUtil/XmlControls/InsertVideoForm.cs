@@ -26,6 +26,7 @@ using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Links;
 using BrightcoveSDK.SitecoreUtil.Entity;
+using BrightcoveSDK.SitecoreUtil.UI.HtmlControls;
 
 namespace BrightcoveSDK.SitecoreUtil.XmlControls
 {
@@ -37,7 +38,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 		protected DataContext PlaylistDataContext;
 		protected TreePicker VideoTreeview;
 		protected TreePicker PlayerTreeview;
-		protected TreeviewEx PlaylistTreeview;
+		protected BCTreeviewEx PlaylistTreeview;
 		protected Scrollbox SelectedList;
 		protected Checkbox chkAutoStart;
 		protected Edit txtBGColor;
@@ -99,10 +100,10 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
                             PlaylistDataContext.Folder = pl.playlistItem.ID.ToString();
                             //set selected items
                             PlaylistTreeview.SelectedIDs.Add(pl.playlistItem.ID.ToShortID().ToString());
-                        }
+						}
                     }
 				}
-
+				
 				//setup the drop list of wmode
 				Item wmodeRoot = masterDB.Items[PlayerDataContext.Root + "/Settings/WMode"];
 				string wmode = WebUtil.GetQueryString("wmode");
@@ -212,7 +213,7 @@ namespace BrightcoveSDK.SitecoreUtil.XmlControls
 			mediaUrl.Append("&autoStart=" + chkAutoStart.Checked.ToString().ToLower());
 			mediaUrl.Append("&bgcolor=" + txtBGColor.Value.Replace("#", ""));
 			mediaUrl.Append("&wmode=" + WMode.SelectedItem.Header);
-			mediaUrl.Append("&" + txtOParams.Value.Replace(",", "&"));
+			mediaUrl.Append("&oparams=" + txtOParams.Value);
 			mediaUrl.Append(sbQstring.ToString());
 			mediaUrl.Append("&height=" + (vpl.Height + 20).ToString() + "&width=" + (vpl.Width + 20).ToString() + "\"" + sbAttr.ToString() + " title=\"" + txtLinkText.Value + "\">" + txtLinkText.Value + "</a>");
 						
