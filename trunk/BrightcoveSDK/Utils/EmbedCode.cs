@@ -64,10 +64,14 @@ namespace BrightcoveSDK.Utils
 			if (objectParams == null)
 				objectParams = new Dictionary<string, string>();
 
-			objectParams.Add("bgcolor", BackgroundColor);
-			objectParams.Add("width", width.ToString());
-			objectParams.Add("height", height.ToString());
-			objectParams.Add("playerID", PlayerID.ToString());
+			if(!objectParams.ContainsKey("bgcolor"))
+				objectParams.Add("bgcolor", BackgroundColor);
+			if (!objectParams.ContainsKey("width"))
+				objectParams.Add("width", width.ToString());
+			if (!objectParams.ContainsKey("height"))
+				objectParams.Add("height", height.ToString());
+			if (!objectParams.ContainsKey("playerID"))
+				objectParams.Add("playerID", PlayerID.ToString());
 
 			//add in video ids or playlist ids
 			if (PlaylistType.Equals(PlayerPlaylistType.None) && VideoID != -1) {
