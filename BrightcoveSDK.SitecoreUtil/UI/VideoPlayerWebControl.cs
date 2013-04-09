@@ -33,7 +33,7 @@ namespace BrightcoveSDK.SitecoreUtil.UI
     				
 				    //get background color
 				    string bgcolor = this.Attributes["bgcolor"];
-				    bgcolor = (bgcolor == "") ? "#ffffff" : bgcolor;
+				    bgcolor = (string.IsNullOrEmpty(bgcolor)) ? "#ffffff" : bgcolor;
 					if (!bgcolor.StartsWith("#"))
 						bgcolor = "#" + bgcolor;
 
