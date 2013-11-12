@@ -7,32 +7,34 @@ using BrightcoveSDK;
 using System.Configuration;
 using BrightcoveSDK.HTTP;
 using BrightcoveSDK.Media;
+using BrightcoveSDK.Entities;
 
-namespace BrightcoveSDK
-{
-	public partial class BCAPI
-	{
+namespace BrightcoveSDK {
+	public partial class BCAPI {
 		#region Properties
 
-		protected AccountConfigElement Account;
+		protected AccountConfigElement AccountConfig;
+
+		private BCAccount _Account;
+		public BCAccount Account { get; set; }
 
 		#endregion Properties
 
 		#region Constructors
 
-      /// <summary>
-      /// RJE 10-16-2012
-      /// Construct an API with a supplied configuration
-      /// </summary>
-      public BCAPI(AccountConfigElement account) {
-         Account = account;
-      }
+		/// <summary>
+		/// RJE 10-16-2012
+		/// Construct an API with a supplied configuration
+		/// </summary>
+		public BCAPI(BCAccount account) {
+			Account = account;
+		}
 
 		public BCAPI(string accountName) {
 			BrightcoveConfig bc = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
 			foreach (AccountConfigElement a in bc.Accounts) {
-				if(a.Name.Equals(accountName)){
-					Account = a;
+				if (a.Name.Equals(accountName)) {
+					Account = new BCAccount(a);
 				}
 			}
 		}
@@ -41,7 +43,7 @@ namespace BrightcoveSDK
 			BrightcoveConfig bc = (BrightcoveConfig)ConfigurationManager.GetSection("brightcove");
 			foreach (AccountConfigElement a in bc.Accounts) {
 				if (a.PublisherID.Equals(publisherId)) {
-					Account = a;
+					Account = new BCAccount(a);
 				}
 			}
 		}
@@ -50,8 +52,8 @@ namespace BrightcoveSDK
 
 		#region Main Helper Methods
 
-		private static BCQueryResult MultipleQueryHandler(Dictionary<String, String> reqparams, BCObjectType itemType, AccountConfigElement account) {
-			
+		private static BCQueryResult MultipleQueryHandler(Dictionary<String, String> reqparams, BCObjectType itemType, BCAccount account) {
+
 			//Get the JSon reader returned from the APIRequest
 			BCQueryResult qr = new BCQueryResult();
 			qr.TotalCount = 0;
@@ -59,9 +61,9 @@ namespace BrightcoveSDK
 			try {
 
 				//set some global request paramameters
-                if (!reqparams.ContainsKey("page_number"))
-                    reqparams.Add("page_number", "0");
-                
+				if (!reqparams.ContainsKey("page_number"))
+					reqparams.Add("page_number", "0");
+
 				//determine what the page size should be
 				qr.MaxToGet = (!reqparams.ContainsKey("page_size")) ? -1 : Convert.ToInt32(reqparams["page_size"]);
 				int defaultPageSize = (qr.MaxToGet.Equals(-1)) ? 100 : qr.MaxToGet;
@@ -73,32 +75,32 @@ namespace BrightcoveSDK
 				//convert the result for deserialization
 				qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 				qr.QueryResults.Add(qrp);
-                qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
+				qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
 
 				//make sure you get the correct page num
 				double maxPageNum = 0;
 				if (qr.TotalCount > 0) {
-                    //if you want all use the total count to calculate the number of pages
-                    if (qr.MaxToGet.Equals(-1)) {
+					//if you want all use the total count to calculate the number of pages
+					if (qr.MaxToGet.Equals(-1)) {
 						maxPageNum = Math.Ceiling((double)(qr.TotalCount / defaultPageSize));
-                    }
-                    //or just use the max you want to calculate the number of pages
-				    else {
+					}
+						//or just use the max you want to calculate the number of pages
+					else {
 						maxPageNum = Math.Ceiling((double)(qr.MaxToGet / defaultPageSize));
-				    }
-                }
+					}
+				}
 
 				//if there are more to get move to next page and keep getting them
-				for (int pageNum = 1; pageNum <= maxPageNum; pageNum++ ) {
+				for (int pageNum = 1; pageNum <= maxPageNum; pageNum++) {
 
 					//update page each iteration
 					reqparams["page_number"] = pageNum.ToString();
-					
+
 					QueryResultPair qrp2 = BCAPIRequest.ExecuteRead(reqparams, account);
 					//convert the result for deserialization
 					qrp2.JsonResult = qrp2.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
 					qr.QueryResults.Add(qrp2);
-					qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp2.JsonResult));				
+					qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp2.JsonResult));
 				}
 
 				//sorting on our end
@@ -108,19 +110,19 @@ namespace BrightcoveSDK
 					if (reqparams["sort_by"].Equals("PUBLISH_DATE")) {
 						qr.Videos.Sort(BCVideo.PublishDateComparison);
 					}
-					//PLAYS_TOTAL, 
+						//PLAYS_TOTAL, 
 					else if (reqparams["sort_by"].Equals("PLAYS_TOTAL")) {
 						qr.Videos.Sort(BCVideo.TotalPlaysComparison);
 					}
-					//PLAYS_TRAILING_WEEK
+						//PLAYS_TRAILING_WEEK
 					else if (reqparams["sort_by"].Equals("PLAYS_TRAILING_WEEK")) {
 						qr.Videos.Sort(BCVideo.PlaysTrailingComparison);
 					}
-                    //MODIFIED_DATE,
-                    else if (reqparams["sort_by"].Equals("MODIFIED_DATE")) {
+						//MODIFIED_DATE,
+					else if (reqparams["sort_by"].Equals("MODIFIED_DATE")) {
 						qr.Videos.Sort(BCVideo.ModifiedDateComparison);
 					}
-                    //CREATION_DATE, 
+						//CREATION_DATE, 
 					else {
 						qr.Videos.Sort(BCVideo.CreationDateComparison);
 					}
@@ -129,7 +131,7 @@ namespace BrightcoveSDK
 					if (reqparams["sort_order"].Equals("DESC")) {
 						qr.Videos.Reverse();
 					}
-					
+
 					//trim if specified
 					if (qr.Videos.Count > qr.MaxToGet && !qr.MaxToGet.Equals(-1) && qr.MaxToGet < qr.TotalCount) {
 						List<BCVideo> vidTemp = qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet));
@@ -138,8 +140,7 @@ namespace BrightcoveSDK
 						qr.Videos.AddRange(vidTemp);
 					}
 				}
-			}
-			catch(Exception ex){
+			} catch (Exception ex) {
 				throw new Exception(ex.ToString());
 			}
 

@@ -78,6 +78,7 @@
       <DependentUpon>BCAPI.cs</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\BCAccount.cs" />
     <Compile Include="Entities\BCCaptionSource.cs" />
     <Compile Include="HTTP\BCAPIRequest.cs" />
     <Compile Include="Entities\Containers\BCCollection.cs" />

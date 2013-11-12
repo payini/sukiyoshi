@@ -13,12 +13,13 @@ using BrightcoveSDK.JSON;
 using BrightcoveSDK.HTTP;
 using BrightcoveSDK.Entities.Containers;
 using BrightcoveSDK;
+using BrightcoveSDK.Entities;
 
 namespace BrightcoveSDK.HTTP
 {
 	public class BCAPIRequest
 	{
-		public static QueryResultPair ExecuteRead(Dictionary<String, String> reqParams, AccountConfigElement a) {
+		public static QueryResultPair ExecuteRead(Dictionary<String, String> reqParams, BCAccount a) {
 						
 			String reqUrl = BuildReadQuery(reqParams, a);
 
@@ -33,7 +34,7 @@ namespace BrightcoveSDK.HTTP
 			return qrp;
 		}
 
-		public static RPCResponse<T> ExecuteWrite<T>(Dictionary<String, Object> postParams, AccountConfigElement a) {
+		public static RPCResponse<T> ExecuteWrite<T>(Dictionary<String, Object> postParams, BCAccount a) {
 						
 			// Create request and receive response
 			HttpWebResponse webResponse = PostRequests.MultipartFormDataPost(a.WriteURL.Value, "BCAPI SDK Write Request", postParams);
@@ -50,7 +51,7 @@ namespace BrightcoveSDK.HTTP
 			return rpcr;
 		}
 
-		public static RPCResponse ExecuteWrite(Dictionary<String, Object> postParams, AccountConfigElement a) {
+		public static RPCResponse ExecuteWrite(Dictionary<String, Object> postParams, BCAccount a) {
 
 			// Create request and receive response
 			HttpWebResponse webResponse = PostRequests.MultipartFormDataPost(a.WriteURL.Value, "BCAPI SDK Write Request", postParams);
@@ -69,7 +70,7 @@ namespace BrightcoveSDK.HTTP
 
       #region RJE Begin
 
-      private static string _ExecuteWriteNew(Dictionary<String, Object> postParams, AccountConfigElement a) 
+		private static string _ExecuteWriteNew(Dictionary<String, Object> postParams, BCAccount a) 
       {
          MultipartForm form = new MultipartForm();
          form.BuildForm(a.WriteURL.Value, "BCAPI SDK Write Request", postParams);
@@ -90,7 +91,7 @@ namespace BrightcoveSDK.HTTP
          return jsonResult;
       }
 
-      public static RPCResponse<T> ExecuteWriteNew<T>(Dictionary<String, Object> postParams, AccountConfigElement a) 
+		public static RPCResponse<T> ExecuteWriteNew<T>(Dictionary<String, Object> postParams, BCAccount a) 
       {
          string jsonResult = _ExecuteWriteNew(postParams, a);
 
@@ -99,7 +100,7 @@ namespace BrightcoveSDK.HTTP
 			return rpcr;
 		}
 
-		public static RPCResponse ExecuteWriteNew(Dictionary<String, Object> postParams, AccountConfigElement a) 
+		public static RPCResponse ExecuteWriteNew(Dictionary<String, Object> postParams, BCAccount a) 
       {
          string jsonResult = _ExecuteWriteNew(postParams, a);
 
@@ -110,7 +111,7 @@ namespace BrightcoveSDK.HTTP
 
       #endregion RJE End
 
-      public static String BuildReadQuery(Dictionary<String, String> reqParams, AccountConfigElement a) {
+		public static String BuildReadQuery(Dictionary<String, String> reqParams, BCAccount a) {
 
 			String reqUrl = "";
 
