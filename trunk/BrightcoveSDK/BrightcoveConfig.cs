@@ -175,6 +175,16 @@ namespace BrightcoveSDK
 			}
 		}
 
+		[ConfigurationProperty("ReadTokenURL", IsRequired = false)]
+		public Token ReadTokenURL {
+			get {
+				return (Token)this["ReadTokenURL"];
+			}
+			set {
+				this["ReadTokenURL"] = value;
+			}
+		}
+
 		[ConfigurationProperty("ReadURL", IsRequired = true)]
 		public Token ReadURL {
 			get {
