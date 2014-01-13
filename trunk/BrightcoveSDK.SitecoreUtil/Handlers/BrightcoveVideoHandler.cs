@@ -79,6 +79,15 @@ namespace BrightcoveSDK.SitecoreUtil.Handlers
 					dict.Remove(playlistKey);
 				}
 
+				//remove height, width and iframe
+				string heightKey = "height", widthKey = "width", iframeKey = "iframe";
+				if (dict.ContainsKey(heightKey))
+					dict.Remove(heightKey);
+				if (dict.ContainsKey(widthKey))
+					dict.Remove(widthKey);
+				if (dict.ContainsKey(iframeKey))
+					dict.Remove(iframeKey);
+				
 				//auto start
 				bool qAutoStart = false;
 				string autoStartKey = "autoStart";
