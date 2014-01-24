@@ -22,7 +22,7 @@ These samples are direct from the usage in Sitecore. They use the UI controls an
 
 [https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideo.aspx.cs]
 
-==Video Images
+==Video Images==
 
 [https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoImages.aspx]
 
@@ -33,4 +33,3 @@ These samples are direct from the usage in Sitecore. They use the UI controls an
 [https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoPreview.aspx]
 
 [https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoPreview.aspx.cs]
-
