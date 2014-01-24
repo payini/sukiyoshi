@@ -12,9 +12,9 @@ These samples are direct from the usage in Sitecore. They use the UI controls an
 
 ==Playlist Images==
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcovePlaylistImages.aspx]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcovePlaylistImages.aspx BrightcovePlaylistImagesAspx]
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcovePlaylistImages.aspx.cs]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcovePlaylistImages.aspx.cs BrightcovePlaylistImagesAspxCS]
 
 ==Video==
 
