@@ -18,18 +18,18 @@ These samples are direct from the usage in Sitecore. They use the UI controls an
 
 ==Video==
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideo.aspx]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcoveVideo.aspx BrightcoveVideoAspx]
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideo.aspx.cs]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcoveVideo.aspx.cs BrightcoveVideoAspxCS]
 
 ==Video Images==
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoImages.aspx]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcoveVideoImages.aspx BrightcoveVideoImagesAspx]
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoImages.aspx.cs]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcoveVideoImages.aspx.cs BrightcoveVideoImagesAspxCS]
 
 ==Video Preview==
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoPreview.aspx]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcoveVideoPreview.aspx BrightcoveVideoPreviewAspx]
 
-[https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder/BrightcoveVideoPreview.aspx.cs]
+[https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcoveVideoPreview.aspx.cs BrightcoveVideoPreviewAspxCS]
