@@ -6,7 +6,8 @@ These samples are direct from the usage in Sitecore. They use the UI controls an
 
 ==Playlist==
 
-hey [https://code.google.com/p/sukiyoshi/source/browse/#svn%2Ftrunk%2FWebsite%2Fsitecore%20modules%2FWeb%2FBrightcove%2FMedia%20Folder/BrightcovePlaylist.aspx]
+hey [https://code.google.com/p/sukiyoshi/source/browse/trunk/Website/sitecore%20modules/Web/Brightcove/Media%20Folder/BrightcovePlaylist.aspx]
+hey
 
 [https://sukiyoshi.googlecode.com/svn/trunk/Website/sitecore modules/Web/Brightcove/Media Folder BrightcovePlaylist.aspx]
 
