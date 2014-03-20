@@ -157,6 +157,11 @@ namespace BrightcoveSDK.Media
 			if (!string.IsNullOrEmpty(playlist.shortDescription)) {
 				jsonPlaylist.AppendField("shortDescription", playlist.shortDescription);
 			}
+
+			//tagInclusionRule
+			if (!string.IsNullOrEmpty(playlist.tagInclusionRule)) {
+				jsonPlaylist.AppendField("tagInclusionRule", playlist.tagInclusionRule);
+			}			 
 						
 			return jsonPlaylist.ToString();
 		}
