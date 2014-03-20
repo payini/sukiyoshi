@@ -240,12 +240,6 @@ namespace BrightcoveSDK.Media
 		[DataMember]
 		public string referenceId { get; set; }
 
-		/// <summary>
-		/// A user-specified id that uniquely identifies this Video. ReferenceID can be used as a foreign-key to identify this video in another system. 
-		/// </summary> 
-		[DataMember]
-		public string remoteUrl { get; set; }
-
 		[DataMember]
 		public string HLSURL { get; set; }
 		
@@ -550,6 +544,17 @@ namespace BrightcoveSDK.Media
 			//economics
 			jsonVideo.AppendObject("economics", video.economics.ToString());
 
+			if (video.iosRenditions.Count > 0)
+				jsonVideo.AppendObject("iosRenditions", video.iosRenditions.ToJSON());
+			
+			//remoteURL
+			if (!string.IsNullOrEmpty(video.HLSURL)) 
+				jsonVideo.AppendField("HLSURL", HttpUtility.UrlEncode(video.HLSURL));
+
+			//adKeys
+			if (!string.IsNullOrEmpty(video.adKeys))
+				jsonVideo.AppendField("adKeys", HttpUtility.UrlEncode(video.adKeys));
+			
 			return jsonVideo.ToString();
 		}
 

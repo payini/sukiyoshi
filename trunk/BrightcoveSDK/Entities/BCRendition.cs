@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using BrightcoveSDK.JSON;
+using System.Web.Script.Serialization;
 
 namespace BrightcoveSDK.Media
 {
@@ -154,10 +155,10 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		public ControllerType ControllerType {
 			get {
-				return (string.IsNullOrEmpty(controllerType)) ? ControllerType.UNDEFINED : (ControllerType)Enum.Parse(typeof(ControllerType), controllerType, true);
+				return (string.IsNullOrEmpty(controllerType)) ? ControllerType.DEFAULT : (ControllerType)Enum.Parse(typeof(ControllerType), controllerType, true);
 			}
 			set {
-				controllerType = value.ToString();
+				controllerType = Enum.GetName(typeof(ControllerType), value);
 			}
 		}
 			
@@ -222,8 +223,27 @@ namespace BrightcoveSDK.Media
 				jsonR.AppendObject("videoCodec", rendition.videoCodec.ToString());
 			
 			//controllerType
-			if (!rendition.ControllerType.Equals(ControllerType.UNDEFINED))
+			if (!rendition.ControllerType.Equals(ControllerType.DEFAULT))
 				jsonR.AppendObject("controllerType", rendition.ControllerType.ToString());
+			
+			//displayName
+			if (!string.IsNullOrEmpty(rendition.displayName)) 
+				jsonR.AppendField("displayName", rendition.displayName);
+			
+			//audioOnly
+			jsonR.AppendField("audioOnly", rendition.audioOnly.ToString().ToLower());
+			 
+			//id
+			if (!string.IsNullOrEmpty(rendition.id.ToString())) 
+				jsonR.AppendField("id", rendition.id.ToString());
+			
+			//uploadTimestampMillis
+			if (!string.IsNullOrEmpty(rendition.uploadTimestampMillis.ToString())) 
+				jsonR.AppendField("uploadTimestampMillis", rendition.uploadTimestampMillis.ToString());
+
+			//videoContainer
+			if (!string.IsNullOrEmpty(rendition.videoContainer))
+				jsonR.AppendField("videoContainer", rendition.videoContainer);
 			
 			return jsonR.ToString();
 		}
