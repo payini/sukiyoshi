@@ -188,6 +188,24 @@ namespace BrightcoveSDK.Media
 			}
 		}
 
+		private BCCollection<BCRendition> _iosrenditions;
+
+		/// <summary>
+		/// An array of iOSRendition objects for each of the streaming renditions for the Video
+		/// </summary>
+		[DataMember]
+		public BCCollection<BCRendition> iosRenditions {
+			get {
+				if (_iosrenditions == null) {
+					_iosrenditions = new BCCollection<BCRendition>();
+				}
+				return _iosrenditions;
+			}
+			set {
+				_iosrenditions = value;
+			}
+		}
+
 		private BCRendition _videoFullLength;
 		/// <summary>
 		/// A single Rendition that represents the the video file for the Video. 
@@ -223,6 +241,15 @@ namespace BrightcoveSDK.Media
 		public string referenceId { get; set; }
 
 		/// <summary>
+		/// A user-specified id that uniquely identifies this Video. ReferenceID can be used as a foreign-key to identify this video in another system. 
+		/// </summary> 
+		[DataMember]
+		public string remoteUrl { get; set; }
+
+		[DataMember]
+		public string HLSURL { get; set; }
+		
+		/// <summary>
 		/// The length of this video in milliseconds.
 		/// </summary> 
 		[DataMember]
@@ -242,6 +269,12 @@ namespace BrightcoveSDK.Media
 				ecs = value.ToString();
 			}
 		}
+
+		/// <summary>
+		/// A string representing the ad key/value pairs assigned to the video. Key/value pairs are formatted as key=value and are separated by ampersands (&). For example: "adKeys": "category=sports&live=true"
+		/// </summary>
+		[DataMember]
+		public string adKeys { get; set; }
 
 		[DataMember(Name = "playsTotal")]
 		private string plays { get; set; }

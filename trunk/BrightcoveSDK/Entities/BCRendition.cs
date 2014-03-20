@@ -16,6 +16,18 @@ namespace BrightcoveSDK.Media
 	public class BCRendition : BCObject, IComparable<BCRendition>
 	{
 		/// <summary>
+		/// The name of the rendition dynamically created when you upload a video. You can view this name in the Video Files tab in Video Cloud.
+		/// </summary>
+		[DataMember]
+		public string displayName { get; set; }
+
+		/// <summary>
+		/// If true, this rendition is audio-only and has no video content. Audio-only renditions can be used for mobile streaming over low-bandwidth connections. It is recommended that videos in iOS applications should include a 64 kbps audio-only rendition.
+		/// </summary>
+		[DataMember]
+		public bool audioOnly { get; set; }
+
+		/// <summary>
 		/// The URL of the rendition file.
 		/// </summary> 
 		[DataMember]
@@ -72,6 +84,12 @@ namespace BrightcoveSDK.Media
 		}
 
 		/// <summary>
+		/// The rendition ID.
+		/// </summary>
+		[DataMember]
+		public long id { get; set; }
+
+		/// <summary>
 		/// The file size of the rendition, in bytes.
 		/// </summary> 
 		[DataMember]
@@ -94,6 +112,18 @@ namespace BrightcoveSDK.Media
 		/// </summary> 
 		[DataMember]
 		public string remoteStreamName { get; set; }
+
+		/// <summary>
+		/// The date/time that the video was uploaded to Video Cloud, in Epoch milliseconds form.
+		/// </summary>
+		[DataMember]
+		public long uploadTimestampMillis { get; set; }
+
+		/// <summary>
+		/// The format of the wrapper that provides metadata and describes how the video and audio are stored in the file. Valid values is M2TS. See Supported Video Codecs and Containers for more information.
+		/// </summary>
+		[DataMember]
+		public string videoContainer { get; set; }
 
 		/// <summary>
 		/// Required. The length of the remote video asset in milliseconds.
@@ -134,7 +164,7 @@ namespace BrightcoveSDK.Media
 		#region IComparable Comparators
 
 		public int CompareTo(BCRendition other) {
-			return url.CompareTo(other.url);
+			return id.CompareTo(other.id);
 		}
 
 		#endregion

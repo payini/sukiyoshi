@@ -85,16 +85,15 @@
     <Compile Include="Entity\VideoLibraryItem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BrightcoveSDK\BrightcoveSDK.csproj">
-      <Project>{66A5B904-883A-422F-A6E5-CAC6352D06F5}</Project>
-      <Name>BrightcoveSDK</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="bin\Debug\" />
     <Folder Include="bin\Release\" />
     <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BrightcoveSDK\BrightcoveSDK.csproj">
+      <Project>{66a5b904-883a-422f-a6e5-cac6352d06f5}</Project>
+      <Name>BrightcoveSDK</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -81,6 +81,12 @@ namespace BrightcoveSDK.Media
 		}
 
 		/// <summary>
+		/// For a smart playlist, defines whether the video must contain all or contain one or more of the values in filterTags. Use AND for "contains all" and OR for "contains one or more." Not available in Read API methods.
+		/// </summary>
+		[DataMember]
+		public string tagInclusionRule { get; set; }
+
+		/// <summary>
 		/// The account id associated with this Playlist.
 		/// </summary> 
 		public long accountId { get; set; }
