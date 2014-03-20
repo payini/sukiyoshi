@@ -41,3 +41,5 @@ C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.S
 C:\inetpub\wwwroot\genzyme\integration-clean\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.pdb
 C:\inetpub\wwwroot\testsite_sc6\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.csprojResolveAssemblyReference.cache
 C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\obj\Debug\BrightcoveSDK.SitecoreUtil.csprojResolveAssemblyReference.cache
+C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.dll
+C:\inetpub\wwwroot\genzyme\integration\Libraries\sukiyoshi\BrightcoveSDK.SitecoreUtil\bin\Debug\BrightcoveSDK.pdb
