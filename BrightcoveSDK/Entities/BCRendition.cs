@@ -234,7 +234,7 @@ namespace BrightcoveSDK.Media
 			jsonR.AppendField("audioOnly", rendition.audioOnly.ToString().ToLower());
 			 
 			//id
-			if (!string.IsNullOrEmpty(rendition.id.ToString())) 
+			if (!string.IsNullOrEmpty(rendition.id.ToString()) && rendition.id > 0) 
 				jsonR.AppendField("id", rendition.id.ToString());
 			
 			//uploadTimestampMillis
