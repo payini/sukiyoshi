@@ -43,8 +43,17 @@ namespace BrightcoveSDK.Media
 		/// <summary>
 		/// The rendition's encoding rate, in bits per second.
 		/// </summary> 
-		[DataMember]
-		public int encodingRate { get; set; }
+		[DataMember(Name = "encodingRate")]
+		private string eRate { get; set; }
+
+		public int encodingRate {
+			get {
+				return (!String.IsNullOrEmpty(eRate)) ? int.Parse(eRate) : 0;
+			}
+			set {
+				eRate = value.ToString();
+			}
+		}
 		
 		/// <summary>
 		/// The rendition's display height, in pixels.
