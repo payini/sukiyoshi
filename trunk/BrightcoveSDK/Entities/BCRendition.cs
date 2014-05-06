@@ -48,7 +48,7 @@ namespace BrightcoveSDK.Media
 
 		public int encodingRate {
 			get {
-				return (!String.IsNullOrEmpty(eRate)) ? int.Parse(eRate) : 0;
+				return (!String.IsNullOrEmpty(eRate)) ? int.Parse(eRate) : -1;
 			}
 			set {
 				eRate = value.ToString();
@@ -213,7 +213,8 @@ namespace BrightcoveSDK.Media
 				jsonR.AppendField("remoteUrl", rendition.remoteUrl);
 
 			//encodingRate
-			jsonR.AppendField("encodingRate", rendition.encodingRate.ToString());
+			if(rendition.encodingRate > -1)
+				jsonR.AppendField("encodingRate", rendition.encodingRate.ToString());
 			
 			//remoteStreamName
 			if (!string.IsNullOrEmpty(rendition.remoteStreamName)) 
