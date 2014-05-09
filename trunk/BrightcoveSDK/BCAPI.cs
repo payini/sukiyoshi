@@ -58,93 +58,49 @@ namespace BrightcoveSDK {
 			BCQueryResult qr = new BCQueryResult();
 			qr.TotalCount = 0;
 
-			try {
+			int defaultPageSize = 100;
+			if (!reqparams.ContainsKey("page_size")) { // if page size is not set than set it
+				reqparams.Add("page_size", defaultPageSize.ToString());
+				qr.MaxToGet = -1;
+			} else { // else parse it 
+				qr.MaxToGet = Convert.ToInt32(reqparams["page_size"]);
+				defaultPageSize = qr.MaxToGet;
+			}
 
-				//set some global request paramameters
-				if (!reqparams.ContainsKey("page_number"))
-					reqparams.Add("page_number", "0");
-
-				//determine what the page size should be
-				qr.MaxToGet = (!reqparams.ContainsKey("page_size")) ? -1 : Convert.ToInt32(reqparams["page_size"]);
-				int defaultPageSize = (qr.MaxToGet.Equals(-1)) ? 100 : qr.MaxToGet;
-				if (qr.MaxToGet.Equals(-1))
-					reqparams.Add("page_size", defaultPageSize.ToString());
-
-				//get initial query
-				QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, account);
-				//convert the result for deserialization
-				qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
-				qr.QueryResults.Add(qrp);
-				qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
+			if (reqparams.ContainsKey("page_number")) { // if page number is set then pass through one single request
+				MakeRequest(qr, reqparams, itemType, account);
+			} else { // else make recursive calls
+				reqparams.Add("page_number", "0");
 
 				//make sure you get the correct page num
-				double maxPageNum = 0;
-				if (qr.TotalCount > 0) {
-					//if you want all use the total count to calculate the number of pages
-					if (qr.MaxToGet.Equals(-1)) {
-						maxPageNum = Math.Ceiling((double)(qr.TotalCount / defaultPageSize));
-					}
-						//or just use the max you want to calculate the number of pages
-					else {
-						maxPageNum = Math.Ceiling((double)(qr.MaxToGet / defaultPageSize));
-					}
-				}
+				int modifier = (qr.MaxToGet.Equals(-1)) ? qr.TotalCount : qr.MaxToGet;
+				double maxPageNum = (qr.TotalCount > 0) ? Math.Ceiling((double)(modifier / defaultPageSize)) : 0;
 
 				//if there are more to get move to next page and keep getting them
 				for (int pageNum = 1; pageNum <= maxPageNum; pageNum++) {
-
 					//update page each iteration
 					reqparams["page_number"] = pageNum.ToString();
-
-					QueryResultPair qrp2 = BCAPIRequest.ExecuteRead(reqparams, account);
-					//convert the result for deserialization
-					qrp2.JsonResult = qrp2.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
-					qr.QueryResults.Add(qrp2);
-					qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp2.JsonResult));
+					MakeRequest(qr, reqparams, itemType, account);
 				}
 
-				//sorting on our end
-
-				if (itemType.Equals(BCObjectType.videos) && reqparams.ContainsKey("sort_by")) {
-					//PUBLISH_DATE, 
-					if (reqparams["sort_by"].Equals("PUBLISH_DATE")) {
-						qr.Videos.Sort(BCVideo.PublishDateComparison);
-					}
-						//PLAYS_TOTAL, 
-					else if (reqparams["sort_by"].Equals("PLAYS_TOTAL")) {
-						qr.Videos.Sort(BCVideo.TotalPlaysComparison);
-					}
-						//PLAYS_TRAILING_WEEK
-					else if (reqparams["sort_by"].Equals("PLAYS_TRAILING_WEEK")) {
-						qr.Videos.Sort(BCVideo.PlaysTrailingComparison);
-					}
-						//MODIFIED_DATE,
-					else if (reqparams["sort_by"].Equals("MODIFIED_DATE")) {
-						qr.Videos.Sort(BCVideo.ModifiedDateComparison);
-					}
-						//CREATION_DATE, 
-					else {
-						qr.Videos.Sort(BCVideo.CreationDateComparison);
-					}
-
-					//if they want asc
-					if (reqparams["sort_order"].Equals("DESC")) {
-						qr.Videos.Reverse();
-					}
-
+				if (itemType.Equals(BCObjectType.videos)) {
 					//trim if specified
 					if (qr.Videos.Count > qr.MaxToGet && !qr.MaxToGet.Equals(-1) && qr.MaxToGet < qr.TotalCount) {
 						List<BCVideo> vidTemp = qr.Videos.GetRange(0, Convert.ToInt32(qr.MaxToGet));
-
 						qr.Videos.Clear();
 						qr.Videos.AddRange(vidTemp);
 					}
 				}
-			} catch (Exception ex) {
-				throw new Exception(ex.ToString());
 			}
 
 			return qr;
+		}
+
+		private static void MakeRequest(BCQueryResult qr, Dictionary<string, string> reqparams, BCObjectType itemType, BCAccount account) {
+			QueryResultPair qrp = BCAPIRequest.ExecuteRead(reqparams, account);
+			qrp.JsonResult = qrp.JsonResult.Replace("\"items\":", "\"" + itemType.ToString() + "\":");
+			qr.QueryResults.Add(qrp);
+			qr.Merge(JSON.Converter.Deserialize<BCQueryResult>(qrp.JsonResult));
 		}
 
 		private static String Implode(List<String> values) {
