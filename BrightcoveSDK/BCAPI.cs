@@ -67,9 +67,9 @@ namespace BrightcoveSDK {
 				defaultPageSize = qr.MaxToGet;
 			}
 
-			if (reqparams.ContainsKey("page_number")) { // if page number is set then pass through one single request
-				MakeRequest(qr, reqparams, itemType, account);
-			} else { // else make recursive calls
+			
+			MakeRequest(qr, reqparams, itemType, account);
+			if (!reqparams.ContainsKey("page_number")) { // if page number is not set then pass make recursive calls
 				reqparams.Add("page_number", "0");
 
 				//make sure you get the correct page num
